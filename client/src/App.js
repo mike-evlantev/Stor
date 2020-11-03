@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
 import { Container } from 'react-bootstrap';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+import Home from './components/pages/Home';
 
 const App = () => {
   return (
@@ -9,7 +10,7 @@ const App = () => {
       <Header />
       <main className="py-3">
         <Container>
-          <h1>Stor</h1>
+          <Home />
         </Container>
       </main>
       <Footer />
