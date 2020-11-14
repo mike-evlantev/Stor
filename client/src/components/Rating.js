@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Rating = ({value}) => {
+const Rating = ({value, numReviews}) => {
   const totalStars = 5;
   const ratingStars = [];
   if (Number.isInteger(value)) { // true if 'value' is a whole number, false if 'value' is decimal
@@ -21,13 +21,12 @@ const Rating = ({value}) => {
   ratingStars.push('far fa-star');
   
   return (
-    <div className='rating'>
+    <span className='rating'>
       {ratingStars.length > 0 && ratingStars.map(star => (
-        <span>
-          <i className={star}></i>
-        </span>
+        <i className={`${star} text-warning`}></i>
       ))}
-    </div>
+      &nbsp;({numReviews})
+    </span>
   )
 }
 
