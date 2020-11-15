@@ -22,8 +22,8 @@ const Rating = ({value, numReviews}) => {
   
   return (
     <span className='rating'>
-      {ratingStars.length > 0 && ratingStars.map(star => (
-        <i className={`${star} text-warning`}></i>
+      {ratingStars.length > 0 && ratingStars.map((star, i) => (
+        <i key={i} className={`${star} text-warning`}></i>
       ))}
       &nbsp;({numReviews})
     </span>

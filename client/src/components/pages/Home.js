@@ -8,9 +8,9 @@ const Home = () => {
     <Fragment>
       <h1>Latest Products</h1>
       <Row>
-        {products ? products.map(p =>
+        {products ? products.map((p, i) =>
           
-            <Col sm={12} md={6} lg={4} xl={3}>
+            <Col key={i} sm={12} md={6} lg={4} xl={3}>
               <Product product={p} />
             </Col>
           
