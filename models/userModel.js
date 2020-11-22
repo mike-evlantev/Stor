@@ -3,34 +3,34 @@ import mongoose from 'mongoose';
 const userSchema = mongoose.Schema({
   firstName: {
     type: String,
-    require: true
+    required: true
   },
   middleName: {
     type: String,
-    require: false
+    required: false
   },
   lastName: {
     type: String,
-    require: true
+    required: true
   },
   email: {
     type: String,
-    require: true,
+    required: true,
     unique: true
   },
   password: {
     type: String,
-    require: true
+    required: true
   },
   isActive: {
     type: Boolean,
     default: true,
-    require: true,
+    required: true,
   },
   isAdmin: {
     type: Boolean,
     default: true,
-    require: false,
+    required: false,
   }
 }, {
   timestamps: true
