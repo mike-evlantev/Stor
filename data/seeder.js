@@ -23,7 +23,11 @@ const deleteResource = async model => {
 
 const importDataAsync = async () => {
   try {
-    await deleteDataAsync();
+    console.log("Deleting data...");
+    await deleteResource(Order);
+    await deleteResource(Product);
+    await deleteResource(User);
+
     console.log("Importing data...");
     const createdUsers = await createResource(User, users);
     const adminUserId = createdUsers.find(u => u.isAdmin === true)._id;
@@ -32,7 +36,7 @@ const importDataAsync = async () => {
     });
     await createResource(Product, productsWithUsers);
     
-    process.exit();
+    process.exit(0);
   } catch (error) {
     console.error(`Process terminated. ${error}`.red.inverse);
     process.exit(1);
@@ -45,6 +49,7 @@ const deleteDataAsync = async () => {
     await deleteResource(Order);
     await deleteResource(Product);
     await deleteResource(User);
+    process.exit(0);
   } catch (error) {
     console.error(`Process terminated. ${error}`.red.inverse);
     process.exit(1);
@@ -52,10 +57,9 @@ const deleteDataAsync = async () => {
 };
 
 if (process.argv[2] === "-i") {
-  importDataAsync();
+  await importDataAsync();
 } else if (process.argv[2] === "-d") {
-  deleteDataAsync();
-  process.exit();
+  await deleteDataAsync();
 } else {
   console.log("Unrecognized command. Process terminated.");
   process.exit(1);
