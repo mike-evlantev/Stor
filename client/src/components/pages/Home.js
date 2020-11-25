@@ -1,7 +1,9 @@
 import React, {Fragment, useEffect} from 'react';
-import {Row, Col, Spinner} from 'react-bootstrap';
+import {Row, Col} from 'react-bootstrap';
 import {useDispatch, useSelector} from 'react-redux';
-import Product from '../Product';
+import Product from '../Product.js';
+import Loader from '../Loader.js';
+import Message from '../Message.js';
 import {listProducts} from '../../actions/productActions.js';
 
 const Home = () => {
@@ -16,9 +18,9 @@ const Home = () => {
   return (
     <Fragment>      
       {loading 
-        ? (<Spinner animation='border' variant='primary' />)
+        ? (<Loader />)
         : error 
-          ? (<h3>{error}</h3>)
+          ? (<Message variant='danger'>{error}</Message>)
           : (
             <Fragment>
               <h1>Latest Products</h1>
@@ -35,4 +37,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Home;
