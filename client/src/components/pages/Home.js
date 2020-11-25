@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Product from '../Product.js';
 import Loader from '../Loader.js';
 import Message from '../Message.js';
-import {listProducts} from '../../actions/productActions.js';
+import {getProducts} from '../../actions/productActions.js';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -12,7 +12,7 @@ const Home = () => {
   const {loading, error, products} = productList;
   // runs as soon as component loads
   useEffect(() => {
-    dispatch(listProducts()); // calls api
+    dispatch(getProducts()); // calls api
   }, [dispatch]);
 
   return (
