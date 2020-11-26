@@ -1,6 +1,6 @@
 import React, {Fragment, useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
-git adimport {Row, Col, Image, ListGroup, Card, Button, Form, Modal, Container, Table} from 'react-bootstrap';
+import {Row, Col, Image, ListGroup, Card, Button, Form, Modal, Container, Table} from 'react-bootstrap';
 import {useDispatch, useSelector} from 'react-redux';
 import Rating from '../Rating.js';
 import Loader from '../Loader.js';
