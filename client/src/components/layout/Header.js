@@ -1,5 +1,5 @@
 import React from 'react';
-import {Navbar, Nav, Container} from 'react-bootstrap';
+import {Navbar, Nav, Container, Form} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 
 const Header = () => {
@@ -13,19 +13,21 @@ const Header = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
-              <LinkContainer to="/cart">
-                <Nav.Link>
-                  <i className="fas fa-shopping-basket"></i>
-                  &nbsp;&nbsp;Cart
-                </Nav.Link>
-              </LinkContainer>
               <LinkContainer to="/login">
-                <Nav.Link>
-                  <i className="fas fa-user"></i>
-                  &nbsp;&nbsp;Sign In
-                </Nav.Link>
+                <Nav.Link className="my-auto mr-2">Sign In</Nav.Link>
               </LinkContainer>
             </Nav>
+            <Form inline>
+              <Form.Control type="text" placeholder="Search" className="mr-sm-2" />
+            </Form>
+            <LinkContainer to="/bag">
+              <Nav.Link>
+                <span className="fa-layers fa-fw">
+                  <i className="fas fa-shopping-bag fa-2x"></i>
+                  <span className="fa-layers-counter fa-4x fa-layers-top-right">2</span>
+                </span>
+              </Nav.Link>
+            </LinkContainer>
           </Navbar.Collapse>
         </Container>
       </Navbar>
