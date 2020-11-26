@@ -1,10 +1,11 @@
 import React from 'react';
 import {BrowserRouter as Router, Route } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
-import Home from './components/pages/Home';
-import Product from './components/pages/Product';
+import Header from './components/layout/Header.js';
+import Footer from './components/layout/Footer.js';
+import Home from './components/pages/Home.js';
+import Product from './components/pages/Product.js';
+import Bag from './components/pages/Bag.js';
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <Container>
           <Route path='/' component={Home} exact />
           <Route path='/product/:id' component={Product} />
+          <Route path='/bag' component={Bag} />
         </Container>
       </main>
       <Footer />
