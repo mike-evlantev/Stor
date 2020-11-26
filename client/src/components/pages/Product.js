@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Rating from '../Rating.js';
 import Loader from '../Loader.js';
 import Message from '../Message.js';
+import {addToBag} from '../../actions/bagActions.js';
 import {getProductDetails} from '../../actions/productActions.js';
 
 const Product = ({history, match}) => {
@@ -26,8 +27,13 @@ const Product = ({history, match}) => {
   const handleModalClose = () => setShowModal(false);
 
   const handleAddToBag = () => {
+    dispatch(addToBag(match.params.id, qty))
     handleModalShow();
-  }
+  };
+
+  const handleViewBag = () => {
+    history.push('/bag');
+  };
 
   return (
     <Fragment>
@@ -150,7 +156,7 @@ const Product = ({history, match}) => {
           </Container>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>
+          <Button variant="secondary" onClick={handleViewBag}>
             View Bag
           </Button>
           <Button variant="primary" onClick={handleModalClose}>
