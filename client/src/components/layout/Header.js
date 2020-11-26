@@ -1,8 +1,11 @@
 import React from 'react';
+import {useSelector} from 'react-redux';
 import {Navbar, Nav, Container, Form} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 
 const Header = () => {
+  const bag = useSelector(state => state.bag);
+  const {bagItems} = bag;
   return (
     <header>
       <Navbar bg="light" variant='light' expand="lg" collapseOnSelect>
@@ -24,7 +27,9 @@ const Header = () => {
               <Nav.Link>
                 <span className="fa-layers fa-fw">
                   <i className="fas fa-shopping-bag fa-2x"></i>
-                  <span className="fa-layers-counter fa-4x fa-layers-top-right">2</span>
+                  {bagItems && bagItems.length > 0 && (
+                    <span className="fa-layers-counter fa-4x fa-layers-top-right">{bagItems.length}</span>
+                  )}
                 </span>
               </Nav.Link>
             </LinkContainer>
