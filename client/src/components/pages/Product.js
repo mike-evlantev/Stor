@@ -25,7 +25,7 @@ const Product = ({history, match}) => {
   const handleModalShow = () => setShowModal(true);
   const handleModalClose = () => setShowModal(false);
 
-  const handleAddToCard = () => {
+  const handleAddToBag = () => {
     handleModalShow();
   }
 
@@ -102,7 +102,7 @@ const Product = ({history, match}) => {
                         className='btn-block' 
                         type='button' 
                         disabled={!inStock}
-                        onClick={handleAddToCard}>
+                        onClick={handleAddToBag}>
                         Add to bag
                       </Button>
                     </ListGroup.Item>
