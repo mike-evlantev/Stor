@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Rating from '../Rating.js';
 import Loader from '../Loader.js';
 import Message from '../Message.js';
+import QtySelect from '../QtySelect.js';
 import {addToBag} from '../../actions/bagActions.js';
 import {getProductDetails} from '../../actions/productActions.js';
 
@@ -34,6 +35,10 @@ const Product = ({history, match}) => {
   const handleViewBag = () => {
     history.push('/bag');
   };
+
+  const handleQtyChange = (_, e) => {
+    setQty(Number(e.target.value));
+  }
 
   return (
     <Fragment>
@@ -86,19 +91,7 @@ const Product = ({history, match}) => {
                             Qty:
                           </Form.Label>
                           <Col lg="6">
-                            <Form.Control
-                              as='select'
-                              value={qty}
-                              onChange={(e) => setQty(e.target.value)}
-                            >
-                              {
-                                Array
-                                  .from({length: product.countInStock}, (_, i) => i + 1)
-                                  .map(x => (
-                                    <option key={x} value={x}>{x}</option>
-                                  ))
-                              }
-                            </Form.Control>
+                            <QtySelect product={product} qty={qty} onChange={handleQtyChange} />
                           </Col>
                         </Form.Group>             
                       </ListGroup.Item>
