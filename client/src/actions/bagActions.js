@@ -20,3 +20,12 @@ export const addToBag = (id, qty) => async(dispatch, getState) => {
 
   localStorage.setItem('bagItems', JSON.stringify(getState().bag.bagItems));
 };
+
+export const removeFromBag = (id) => async(dispatch, getState) => {
+  dispatch({
+    type: BAG_REMOVE_ITEM,
+    payload: id
+  });
+
+  localStorage.setItem('bagItems', JSON.stringify(getState().bag.bagItems));
+};
