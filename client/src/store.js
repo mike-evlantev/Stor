@@ -13,9 +13,18 @@ const bagItemsFromLocalStorage =
   localStorage.getItem('bagItems')
     ? JSON.parse(localStorage.getItem('bagItems'))
     : [];
+const subtotal = bagItemsFromLocalStorage.reduce((acc, item) => acc + (item.qty * item.price), 0);
+const shipping = 0;
+const tax = 0;
+const total = subtotal + shipping + tax;
+
 const initialState = {
   bag: {
-    bagItems: bagItemsFromLocalStorage
+    bagItems: bagItemsFromLocalStorage,
+    subtotal: subtotal,
+    shipping: shipping,
+    tax: tax,
+    total: total
   }
 };
 const middleware = [thunk];

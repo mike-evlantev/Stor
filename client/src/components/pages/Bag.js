@@ -7,7 +7,7 @@ import {addToBag, removeFromBag} from '../../actions/bagActions.js';
 
 const Bag = ({history}) => {
   const bag = useSelector(state => state.bag);
-  const {bagItems} = bag;
+  const {bagItems, subtotal, shipping, tax, total} = bag;
 
   const dispatch = useDispatch();
 
@@ -16,11 +16,12 @@ const Bag = ({history}) => {
   };
 
   const handleQtyChange = (productId, e) => {
+    console.log('handleQtyChange');
     dispatch(addToBag(productId, Number(e.target.value)));
   }
 
-  const handleRemoveItemFromBag = (productId) => {
-    dispatch(removeFromBag(productId));
+  const handleRemoveItemFromBag = (product) => {
+    dispatch(removeFromBag(product));
   };
 
   const handleCheckout = () => {
@@ -70,7 +71,7 @@ const Bag = ({history}) => {
                                   Qty: <QtySelect product={item} qty={item.qty} onChange={handleQtyChange} />
                                 </Col>
                                 <Col lg={4} className='d-flex'>
-                                  <Button variant="link" size="sm" className='my-auto' onClick={() => handleRemoveItemFromBag(item.product)}>
+                                  <Button variant="link" size="sm" className='my-auto' onClick={() => handleRemoveItemFromBag(item)}>
                                     Remove
                                   </Button>
                                 </Col>
@@ -90,19 +91,19 @@ const Bag = ({history}) => {
               <ListGroup variant='flush'>
                 <ListGroup.Item className='d-flex'>
                   <div>Subtotal</div>
-                  <div className='ml-auto'>${bagItems.reduce((acc, item) => acc + (item.qty * item.price), 0).toFixed(2)}</div>
+                  <div className='ml-auto'>${subtotal.toFixed(2)}{/*bagItems.reduce((acc, item) => acc + (item.qty * item.price), 0).toFixed(2)*/}</div>
                 </ListGroup.Item>
                 <ListGroup.Item className='d-flex'>
                   <div>Shipping</div> 
-                  <div className='ml-auto'>FREE</div>
+                  <div className='ml-auto'>${shipping.toFixed(2)}</div>
                 </ListGroup.Item>
                 <ListGroup.Item className='d-flex'>
                   <div>Tax</div>
-                  <div className='ml-auto'>Calculated at checkout</div>
+                  <div className='ml-auto'>Calculated at checkout (${tax.toFixed(2)})</div>
                 </ListGroup.Item>
                 <ListGroup.Item className='d-flex'>
                   <div><strong>Estimated Total</strong></div>
-                  <div className='ml-auto'><strong>$1.00</strong></div>
+                  <div className='ml-auto'><strong>${total.toFixed(2)}</strong></div>
                 </ListGroup.Item>
               </ListGroup>
               <Button 
