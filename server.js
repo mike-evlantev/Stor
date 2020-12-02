@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import connectDb from './config/db.js';
 import {notFound, errorHandler} from './middleware/errorHandler.js';
 //import authRouter from'./routes/auth.js';
-import productsRouter from'./routes/products.js';
+import productsRouter from'./routes/productRoutes.js';
 dotenv.config();
 
 const app = express();
