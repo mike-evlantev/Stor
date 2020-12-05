@@ -23,3 +23,23 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 });
+
+// @route       GET /api/users/profile
+// @desc        Get user profile
+// @access      Private
+export const userProfile = asyncHandler(async (req, res) => {
+  const user = await User.findOne(req.user._id);
+  if (user) {
+    res.json({
+      _id: user._id,
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      isActive: user.isActive,
+      isAdmin: user.isAdmin,
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
