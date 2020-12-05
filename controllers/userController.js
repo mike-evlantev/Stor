@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler"; // instead of writing try/catches
+import { generateToken } from "../utils/generateToken.js";
 import User from "../models/userModel.js";
 
 // @route       POST /api/users/login
@@ -15,7 +16,7 @@ export const loginUser = asyncHandler(async (req, res) => {
       lastName: user.lastName,
       isActive: user.isActive,
       isAdmin: user.isAdmin,
-      token: null,
+      token: generateToken(user._id),
     });
   } else {
     res.status(401);
