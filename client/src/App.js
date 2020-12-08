@@ -7,6 +7,7 @@ import Home from "./components/pages/Home.js";
 import Product from "./components/pages/Product.js";
 import Bag from "./components/pages/Bag.js";
 import SignIn from "./components/pages/SignIn.js";
+import PrivacyPolicy from "./components/pages/PrivacyPolicy.js";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/product/:id" component={Product} />
           <Route path="/bag" component={Bag} />
           <Route path="/login" component={SignIn} />
+          <Route path="/privacy-policy" component={PrivacyPolicy} />
         </Container>
       </main>
       <Footer />
