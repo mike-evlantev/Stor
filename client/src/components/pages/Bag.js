@@ -24,7 +24,6 @@ const Bag = ({ history }) => {
   };
 
   const handleQtyChange = (productId, e) => {
-    console.log("handleQtyChange");
     dispatch(addToBag(productId, Number(e.target.value)));
   };
 
@@ -115,10 +114,7 @@ const Bag = ({ history }) => {
             <ListGroup variant="flush">
               <ListGroup.Item className="d-flex">
                 <div>Subtotal</div>
-                <div className="ml-auto">
-                  ${subtotal.toFixed(2)}
-                  {/*bagItems.reduce((acc, item) => acc + (item.qty * item.price), 0).toFixed(2)*/}
-                </div>
+                <div className="ml-auto">${subtotal.toFixed(2)}</div>
               </ListGroup.Item>
               <ListGroup.Item className="d-flex">
                 <div>Shipping</div>
@@ -126,9 +122,7 @@ const Bag = ({ history }) => {
               </ListGroup.Item>
               <ListGroup.Item className="d-flex">
                 <div>Tax</div>
-                <div className="ml-auto">
-                  Calculated at checkout (${tax.toFixed(2)})
-                </div>
+                <div className="ml-auto">${tax.toFixed(2)}</div>
               </ListGroup.Item>
               <ListGroup.Item className="d-flex">
                 <div>
