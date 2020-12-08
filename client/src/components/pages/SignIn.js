@@ -17,7 +17,7 @@ const SignIn = ({ history, location }) => {
   const dispatch = useDispatch();
 
   const auth = useSelector((state) => state.auth);
-  const { loading, error, loggedInUser } = auth;
+  const { isAuthenticated, loading, error } = auth;
 
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
@@ -30,11 +30,11 @@ const SignIn = ({ history, location }) => {
   };
 
   useEffect(() => {
-    if (loggedInUser) {
+    if (isAuthenticated) {
       history.push(redirect);
     }
     // eslint-disable-next-line
-  }, [history, loggedInUser, redirect]);
+  }, [history, isAuthenticated, redirect]);
 
   return (
     <Container className="d-flex flex-column py-5">
