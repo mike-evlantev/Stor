@@ -18,6 +18,7 @@ export const registerUser = asyncHandler(async (req, res) => {
       lastName: user.lastName,
       isActive: user.isActive,
       isAdmin: user.isAdmin,
+      isAuthenticated: true,
       token: generateToken(user._id),
     });
   } else {
@@ -40,6 +41,7 @@ export const loginUser = asyncHandler(async (req, res) => {
       lastName: user.lastName,
       isActive: user.isActive,
       isAdmin: user.isAdmin,
+      isAuthenticated: true,
       token: generateToken(user._id),
     });
   } else {
