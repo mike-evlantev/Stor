@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
+import { Link } from "react-router-dom";
 import { Form, Button, Row, Col, Container, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../Message.js";
@@ -170,6 +171,11 @@ const SignIn = ({ history, location }) => {
                 >
                   Create Account
                 </Button>
+                <Form.Text className="text-muted">
+                  To learn more, see our{" "}
+                  <Link to="/privacy">privacy policy</Link> and{" "}
+                  <Link to="/terms">terms of use</Link>.
+                </Form.Text>
               </Form>
             </Col>
           </Row>
