@@ -41,7 +41,7 @@ const SignIn = ({ history, location }) => {
     <Container className="d-flex flex-column py-5">
       {error && <Message variant="danger">{error}</Message>}
       {loading && <Loader />}
-      {!error && !loading && (
+      {!loading && (
         <Fragment>
           {/*This row is only visible on screens lg and larger*/}
           <div className="d-none d-lg-block">
