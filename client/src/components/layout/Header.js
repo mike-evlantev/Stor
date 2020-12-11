@@ -1,11 +1,18 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { Navbar, Nav, Container, Form } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
+import { Navbar, Nav, NavDropdown, Container, Form } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import { logout } from "../../actions/userActions";
 
 const Header = () => {
+  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { bagItems } = useSelector((state) => state.bag);
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <header>
       <Navbar bg="light" variant="light" expand="lg" collapseOnSelect>
@@ -19,9 +26,15 @@ const Header = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
               {isAuthenticated ? (
-                <LinkContainer to="/account">
-                  <Nav.Link className="my-auto mr-2">My Account</Nav.Link>
-                </LinkContainer>
+                <NavDropdown title="My Account" id="nav-my-account-dropdown">
+                  <NavDropdown.Item>Dashboard</NavDropdown.Item>
+                  <NavDropdown.Item>Profile</NavDropdown.Item>
+                  <NavDropdown.Item>Wish List</NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleLogout}>
+                    Sign out
+                  </NavDropdown.Item>
+                </NavDropdown>
               ) : (
                 <LinkContainer to="/login">
                   <Nav.Link className="my-auto mr-2">Sign In</Nav.Link>
