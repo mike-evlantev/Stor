@@ -5,7 +5,7 @@ const userSchema = mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: true,
+      required: false,
     },
     middleName: {
       type: String,
@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: true,
+      required: false,
     },
     email: {
       type: String,
