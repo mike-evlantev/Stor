@@ -4,7 +4,7 @@ import { Form, Button, Row, Col, Container, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../Message.js";
 import Loader from "../Loader.js";
-import { login } from "../../actions/userActions";
+import { login, register } from "../../actions/userActions";
 
 const SignIn = ({ history, location }) => {
   const [loginEmail, setLoginEmail] = useState("");
@@ -17,8 +17,10 @@ const SignIn = ({ history, location }) => {
 
   const dispatch = useDispatch();
 
-  const auth = useSelector((state) => state.auth);
-  const { isAuthenticated, loading, error } = auth;
+  const authState = useSelector((state) => state.auth);
+  const registerState = useSelector((state) => state.register);
+  const { isAuthenticated, loginError, loginLoading } = authState;
+  const { registerError, registerLoading } = registerState;
 
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
@@ -28,6 +30,7 @@ const SignIn = ({ history, location }) => {
   };
   const handleRegister = (e) => {
     e.preventDefault(); // prevent refresh
+    dispatch(register(registerEmail, registerPassword));
   };
 
   useEffect(() => {
@@ -39,9 +42,10 @@ const SignIn = ({ history, location }) => {
 
   return (
     <Container className="d-flex flex-column py-5">
-      {error && <Message variant="danger">{error}</Message>}
-      {loading && <Loader />}
-      {!loading && (
+      {loginError && <Message variant="danger">{loginError}</Message>}
+      {registerError && <Message variant="danger">{registerError}</Message>}
+      {(loginLoading || registerLoading) && <Loader />}
+      {!loginLoading && !registerLoading && (
         <Fragment>
           {/*This row is only visible on screens lg and larger*/}
           <div className="d-none d-lg-block">
@@ -109,9 +113,15 @@ const SignIn = ({ history, location }) => {
                   variant="primary"
                   type="submit"
                   className="btn btn-block"
+                  disabled={loginLoading}
                 >
                   Sign In
                 </Button>
+                <Form.Text className="text-muted">
+                  By continuing, you agree to our{" "}
+                  <Link to="/privacy">privacy policy</Link> and{" "}
+                  <Link to="/terms">terms of use</Link>.
+                </Form.Text>
               </Form>
             </Col>
             <Col lg={6} className="px-5">
@@ -168,11 +178,12 @@ const SignIn = ({ history, location }) => {
                   variant="primary"
                   type="submit"
                   className="btn btn-block"
+                  disabled={registerLoading}
                 >
                   Create Account
                 </Button>
                 <Form.Text className="text-muted">
-                  To learn more, see our{" "}
+                  By continuing, you agree to our{" "}
                   <Link to="/privacy">privacy policy</Link> and{" "}
                   <Link to="/terms">terms of use</Link>.
                 </Form.Text>
