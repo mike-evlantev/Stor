@@ -6,13 +6,14 @@ import {
   productDetailsReducer,
 } from "./reducers/productReducers.js";
 import { bagReducer } from "./reducers/bagReducers.js";
-import { loginReducer } from "./reducers/userReducers.js";
+import { loginReducer, registerReducer } from "./reducers/userReducers.js";
 
 const reducer = combineReducers({
   auth: loginReducer,
   bag: bagReducer,
   productList: productListReducer,
   productDetails: productDetailsReducer,
+  register: registerReducer,
 });
 
 const loggedInUserFromStorage = localStorage.getItem("loggedInUser")
@@ -34,8 +35,8 @@ const initialState = {
   auth: {
     isAuthenticated: false,
     loggedInUser: loggedInUserFromStorage,
-    error: null,
-    loading: false,
+    loginError: null,
+    loginLoading: false,
   },
   bag: {
     bagItems: bagItemsFromLocalStorage,
@@ -43,6 +44,10 @@ const initialState = {
     shipping: shipping,
     tax: tax,
     total: total,
+  },
+  register: {
+    registerError: null,
+    registerLoading: false,
   },
 };
 const middleware = [thunk];
