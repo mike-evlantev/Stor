@@ -33,7 +33,7 @@ const total = subtotal + shipping + tax;
 
 const initialState = {
   auth: {
-    isAuthenticated: false,
+    isAuthenticated: loggedInUserFromStorage ? true : false,
     loggedInUser: loggedInUserFromStorage,
     loginError: null,
     loginLoading: false,
