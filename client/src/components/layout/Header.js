@@ -3,14 +3,20 @@ import { useSelector, useDispatch } from "react-redux";
 import { Navbar, Nav, NavDropdown, Container, Form } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { logout } from "../../actions/userActions";
+import { useHistory } from "react-router-dom";
 
 const Header = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { bagItems } = useSelector((state) => state.bag);
 
   const handleLogout = () => {
     dispatch(logout());
+  };
+
+  const handleProfile = () => {
+    history.push("/profile");
   };
 
   return (
@@ -28,7 +34,9 @@ const Header = () => {
               {isAuthenticated ? (
                 <NavDropdown title="My Account" id="nav-my-account-dropdown">
                   <NavDropdown.Item>Dashboard</NavDropdown.Item>
-                  <NavDropdown.Item>Profile</NavDropdown.Item>
+                  <NavDropdown.Item onClick={handleProfile}>
+                    Profile
+                  </NavDropdown.Item>
                   <NavDropdown.Item>Wish List</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={handleLogout}>
