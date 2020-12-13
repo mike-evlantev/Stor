@@ -15,6 +15,30 @@ const userSchema = mongoose.Schema(
       type: String,
       required: false,
     },
+    address1: {
+      type: String,
+      required: false,
+    },
+    address2: {
+      type: String,
+      required: false,
+    },
+    city: {
+      type: String,
+      required: false,
+    },
+    state: {
+      type: String,
+      required: false,
+    },
+    zip: {
+      type: String,
+      required: false,
+    },
+    phone: {
+      type: String,
+      required: false,
+    },
     email: {
       type: String,
       required: true,
@@ -23,10 +47,6 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
-    },
-    phone: {
-      type: String,
-      required: false,
     },
     isActive: {
       type: Boolean,
