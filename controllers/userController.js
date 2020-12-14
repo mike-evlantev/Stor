@@ -22,6 +22,7 @@ export const registerUser = asyncHandler(async (req, res) => {
       state: user.state,
       zip: user.zip,
       phone: user.phone,
+      email: user.email,
       isActive: user.isActive,
       isAdmin: user.isAdmin,
       token: generateToken(user._id),
@@ -50,6 +51,7 @@ export const loginUser = asyncHandler(async (req, res) => {
       state: user.state,
       zip: user.zip,
       phone: user.phone,
+      email: user.email,
       isActive: user.isActive,
       isAdmin: user.isAdmin,
       token: generateToken(user._id),
@@ -77,6 +79,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
       state: user.state,
       zip: user.zip,
       phone: user.phone,
+      email: user.email,
       isActive: user.isActive,
       isAdmin: user.isAdmin,
     });
@@ -92,7 +95,6 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 export const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findOne(req.user._id);
   if (user) {
-    console.log(req.body);
     const {
       firstName,
       middleName,
@@ -103,6 +105,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       state,
       zip,
       phone,
+      // email, <-- cannot be updated. for now...
       password,
     } = req.body;
 
@@ -131,6 +134,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       state: updatedUser.state,
       zip: updatedUser.zip,
       phone: updatedUser.phone,
+      email: updatedUser.email,
       isActive: updatedUser.isActive,
       isAdmin: updatedUser.isAdmin,
     });
