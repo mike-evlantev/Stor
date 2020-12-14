@@ -69,11 +69,10 @@ const StateSelect = ({ onChange }) => {
   ];
 
   return (
-    <Form.Control
-      as="select"
-      defaultValue="Select a State"
-      onChange={(e) => onChange(e)}
-    >
+    <Form.Control as="select" onChange={(e) => onChange(e)} value={-1}>
+      <option disabled value={-1} key={-1}>
+        State
+      </option>
       {stateAbbreviations.map((st, i) => (
         <option key={i} value={st}>
           {st}
