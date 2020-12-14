@@ -1,6 +1,7 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Route } from "react-router-dom";
 import { Container } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 import Bag from "./components/pages/Bag.js";
 import Footer from "./components/layout/Footer.js";
@@ -13,6 +14,9 @@ import SignIn from "./components/pages/SignIn.js";
 import TermsOfUse from "./components/pages/TermsOfUse.js";
 
 const App = () => {
+  const authState = useSelector((state) => state.auth);
+  const { isAuthenticated } = authState;
+
   return (
     <Router>
       <Header />
@@ -23,7 +27,16 @@ const App = () => {
           <Route path="/login" component={SignIn} />
           <Route path="/privacy" component={PrivacyPolicy} />
           <Route path="/product/:id" component={Product} />
-          <Route path="/profile" component={Profile} />
+          <Route
+            path="/profile"
+            render={(props) =>
+              !isAuthenticated ? (
+                <Redirect to="/login" />
+              ) : (
+                <Profile {...props} />
+              )
+            }
+          />
           <Route path="/terms" component={TermsOfUse} />
         </Container>
       </main>
