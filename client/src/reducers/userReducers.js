@@ -6,6 +6,12 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT,
+  UPDATE_PROFILE_REQUEST,
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PROFILE_FAIL,
+  GET_PROFILE_SUCCESS,
+  GET_PROFILE_REQUEST,
+  GET_PROFILE_FAIL,
 } from "../constants/userConstants.js";
 
 const initialRegisterState = {
@@ -19,6 +25,17 @@ const initialLoginState = {
   loginLoading: false,
   loginError: null,
   loggedInUser: null,
+};
+
+const initialProfileState = {
+  userProfile: {},
+  getProfileLoading: false,
+  getProfileError: null,
+};
+
+const initialUpdateProfileState = {
+  updateProfileLoading: false,
+  updateProfileError: null,
 };
 
 export const registerReducer = (state = initialRegisterState, action) => {
@@ -66,6 +83,52 @@ export const loginReducer = (state = initialLoginState, action) => {
         loginLoading: false,
         loggedInUser: null,
         isAuthenticated: false,
+      };
+    default:
+      return state;
+  }
+};
+
+export const getProfileReducer = (state = initialProfileState, action) => {
+  switch (action.type) {
+    case GET_PROFILE_REQUEST:
+      return { ...state, getProfileLoading: true };
+    case GET_PROFILE_SUCCESS:
+      return {
+        ...state,
+        getProfileLoading: false,
+        userProfile: action.payload,
+      };
+    case GET_PROFILE_FAIL:
+      return {
+        ...state,
+        getProfileLoading: false,
+        getProfileError: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const updateProfileReducer = (
+  state = initialUpdateProfileState,
+  action
+) => {
+  switch (action.type) {
+    case UPDATE_PROFILE_REQUEST:
+      return { ...state, updateProfileLoading: true };
+    case UPDATE_PROFILE_SUCCESS:
+      return {
+        ...state,
+        updateProfileLoading: false,
+        updateProfileSuccess: true,
+      };
+    case UPDATE_PROFILE_FAIL:
+      return {
+        ...state,
+        updateProfileLoading: false,
+        updateProfileSuccess: false,
+        updateProfileError: action.payload,
       };
     default:
       return state;
