@@ -8,6 +8,7 @@ import Loader from "../Loader.js";
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const [updatedProfile, setUpdatedProfile] = useState({});
   const { loggedInUser } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -19,7 +20,6 @@ const Profile = () => {
   const { userProfile, getProfileLoading, getProfileError } = useSelector(
     (state) => state.getProfile
   );
-  console.log(userProfile);
 
   const updateProfileState = useSelector((state) => state.updateProfile);
   const {
@@ -28,13 +28,11 @@ const Profile = () => {
     updateProfileError,
   } = updateProfileState;
 
-  const [profile, setProfile] = useState(userProfile);
-  console.log(profile);
-
   const handleProfileChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setProfile((prevState) => ({
+    setUpdatedProfile(userProfile);
+    setUpdatedProfile((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -42,7 +40,7 @@ const Profile = () => {
 
   const handleUpdateProfile = (e) => {
     e.preventDefault();
-    dispatch(updateProfile(profile));
+    dispatch(updateProfile(updatedProfile));
   };
 
   return (
@@ -65,8 +63,7 @@ const Profile = () => {
                   <Form.Control
                     type="email"
                     name="email"
-                    value={profile.email}
-                    placeholder="Email"
+                    placeholder={userProfile.email}
                     disabled
                   />
                 </Form.Group>
@@ -76,8 +73,7 @@ const Profile = () => {
                   <Form.Label>First Name</Form.Label>
                   <Form.Control
                     name="firstName"
-                    placeholder="First Name"
-                    value={profile.firstName}
+                    placeholder={userProfile.firstName}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
@@ -86,8 +82,7 @@ const Profile = () => {
                   <Form.Label>Middle Name</Form.Label>
                   <Form.Control
                     name="middleName"
-                    placeholder="Middle Name"
-                    value={profile.middleName}
+                    placeholder={userProfile.middleName}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
@@ -96,8 +91,7 @@ const Profile = () => {
                   <Form.Label>Last Name</Form.Label>
                   <Form.Control
                     name="lastName"
-                    placeholder="Last Name"
-                    value={profile.lastName}
+                    placeholder={userProfile.lastName}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
@@ -107,8 +101,7 @@ const Profile = () => {
                   <Form.Label>Address</Form.Label>
                   <Form.Control
                     name="address1"
-                    placeholder="Address"
-                    value={profile.address1}
+                    placeholder={userProfile.address1}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
@@ -117,8 +110,7 @@ const Profile = () => {
                   <Form.Label>Address 2</Form.Label>
                   <Form.Control
                     name="address2"
-                    placeholder="Apt, Ste, Unit"
-                    value={profile.address2}
+                    placeholder={userProfile.address2}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
@@ -128,8 +120,7 @@ const Profile = () => {
                   <Form.Label>City</Form.Label>
                   <Form.Control
                     name="city"
-                    placeholder="City"
-                    value={profile.city}
+                    placeholder={userProfile.city}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
@@ -138,7 +129,7 @@ const Profile = () => {
                   <Form.Label>State</Form.Label>
                   <StateSelect
                     name="state"
-                    value={profile.state}
+                    placeholder={userProfile.state}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
@@ -147,8 +138,7 @@ const Profile = () => {
                   <Form.Label>Zip</Form.Label>
                   <Form.Control
                     name="zip"
-                    placeholder="Zip"
-                    value={profile.zip}
+                    placeholder={userProfile.zip}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
@@ -160,8 +150,7 @@ const Profile = () => {
                   <Form.Control
                     type="tel"
                     name="phone"
-                    placeholder="(000) 000-000"
-                    value={profile.phone}
+                    placeholder={userProfile.phone}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
