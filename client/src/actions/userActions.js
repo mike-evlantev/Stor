@@ -129,10 +129,6 @@ export const updateProfile = (userProfile) => async (dispatch, getState) => {
       auth: { loggedInUser },
     } = getState();
     const isLoggedInUser = loggedInUser._id === userProfile._id;
-    console.log(isLoggedInUser);
-
-    console.log("Update Profile called...");
-
     if (!isLoggedInUser) throw new Error("Failed to update user profile");
 
     dispatch({ type: UPDATE_PROFILE_REQUEST });
@@ -147,6 +143,12 @@ export const updateProfile = (userProfile) => async (dispatch, getState) => {
 
     dispatch({
       type: UPDATE_PROFILE_SUCCESS,
+      payload: data,
+    });
+
+    // update redux state as well
+    dispatch({
+      type: GET_PROFILE_SUCCESS,
       payload: data,
     });
   } catch (error) {
