@@ -13,7 +13,7 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(getProfile(loggedInUser._id));
-
+    setUpdatedProfile(userProfile);
     // eslint-disable-next-line
   }, []);
 
@@ -31,7 +31,7 @@ const Profile = () => {
   const handleProfileChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setUpdatedProfile(userProfile);
+
     setUpdatedProfile((prevState) => ({
       ...prevState,
       [name]: value,
