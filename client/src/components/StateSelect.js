@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Form } from "react-bootstrap";
 
-const StateSelect = ({ placeholder, updateProfileState }) => {
+const StateSelect = ({ updateProfileState }) => {
   // 50 states +
   // American Samoa (AS)      District of Columbia (DC)     Federated States Of Micronesia (FM)
   // Guam (GU)                Marshall Islands (MH)         Northern Mariana Islands (MP)
@@ -68,13 +69,19 @@ const StateSelect = ({ placeholder, updateProfileState }) => {
     "WY",
   ];
 
-  const [selection, setSelection] = useState(placeholder);
+  const { userProfile } = useSelector((state) => state.getProfile);
+  const [selection, setSelection] = useState();
 
   const onChange = (e) => {
     e.preventDefault();
     updateProfileState(e);
     setSelection(e.target.value);
   };
+
+  useEffect(() => {
+    setSelection(userProfile.state);
+    // eslint-disable-next-line
+  }, [userProfile]);
 
   return (
     <Form.Control
@@ -83,7 +90,7 @@ const StateSelect = ({ placeholder, updateProfileState }) => {
       name="state"
       onChange={(e) => onChange(e)}
     >
-      {!placeholder && (
+      {!userProfile.state && (
         <option disabled value={-1} key={-1}>
           State
         </option>
