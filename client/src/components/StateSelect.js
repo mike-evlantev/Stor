@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form } from "react-bootstrap";
 
-const StateSelect = ({ onChange }) => {
+const StateSelect = ({ placeholder, updateProfileState }) => {
   // 50 states +
   // American Samoa (AS)      District of Columbia (DC)     Federated States Of Micronesia (FM)
   // Guam (GU)                Marshall Islands (MH)         Northern Mariana Islands (MP)
@@ -68,11 +68,26 @@ const StateSelect = ({ onChange }) => {
     "WY",
   ];
 
+  const [selection, setSelection] = useState(placeholder);
+
+  const onChange = (e) => {
+    e.preventDefault();
+    updateProfileState(e);
+    setSelection(e.target.value);
+  };
+
   return (
-    <Form.Control as="select" onChange={(e) => onChange(e)} value={-1}>
-      <option disabled value={-1} key={-1}>
-        State
-      </option>
+    <Form.Control
+      as="select"
+      value={selection}
+      name="state"
+      onChange={(e) => onChange(e)}
+    >
+      {!placeholder && (
+        <option disabled value={-1} key={-1}>
+          State
+        </option>
+      )}
       {stateAbbreviations.map((st, i) => (
         <option key={i} value={st}>
           {st}
