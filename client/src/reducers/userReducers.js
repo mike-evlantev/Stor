@@ -12,6 +12,7 @@ import {
   GET_PROFILE_SUCCESS,
   GET_PROFILE_REQUEST,
   GET_PROFILE_FAIL,
+  CLEAR_PROFILE,
 } from "../constants/userConstants.js";
 
 const initialRegisterState = {
@@ -104,6 +105,11 @@ export const getProfileReducer = (state = initialProfileState, action) => {
         ...state,
         getProfileLoading: false,
         getProfileError: action.payload,
+      };
+    case CLEAR_PROFILE:
+      return {
+        ...state,
+        userProfile: {},
       };
     default:
       return state;
