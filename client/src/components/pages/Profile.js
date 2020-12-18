@@ -11,12 +11,6 @@ const Profile = () => {
   const [updatedProfile, setUpdatedProfile] = useState({});
   const { loggedInUser } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    dispatch(getProfile(loggedInUser._id));
-    setUpdatedProfile(userProfile);
-    // eslint-disable-next-line
-  }, []);
-
   const { userProfile, getProfileLoading, getProfileError } = useSelector(
     (state) => state.getProfile
   );
@@ -27,6 +21,12 @@ const Profile = () => {
     updateProfileSuccess,
     updateProfileError,
   } = updateProfileState;
+
+  useEffect(() => {
+    dispatch(getProfile(loggedInUser._id));
+    setUpdatedProfile(userProfile);
+    // eslint-disable-next-line
+  }, []);
 
   const handleProfileChange = (e) => {
     e.preventDefault();
