@@ -44,6 +44,10 @@ const Product = ({ history, match }) => {
     handleModalShow();
   };
 
+  const handleCheckout = () => {
+    history.push("/login?redirect=checkout");
+  };
+
   const handleViewBag = () => {
     history.push("/bag");
   };
@@ -176,7 +180,7 @@ const Product = ({ history, match }) => {
           <Button variant="secondary" onClick={handleViewBag}>
             View Bag
           </Button>
-          <Button variant="primary" onClick={handleModalClose}>
+          <Button variant="primary" onClick={handleCheckout}>
             Checkout
           </Button>
         </Modal.Footer>
