@@ -12,6 +12,7 @@ import Product from "./components/pages/Product.js";
 import Profile from "./components/pages/Profile.js";
 import SignIn from "./components/pages/SignIn.js";
 import TermsOfUse from "./components/pages/TermsOfUse.js";
+import Checkout from "./components/pages/Checkout.js";
 
 const App = () => {
   const authState = useSelector((state) => state.auth);
@@ -24,6 +25,7 @@ const App = () => {
         <Container>
           <Route path="/" component={Home} exact />
           <Route path="/bag" component={Bag} />
+          <Route path="/checkout" component={Checkout} />
           <Route path="/login" component={SignIn} />
           <Route path="/privacy" component={PrivacyPolicy} />
           <Route path="/product/:id" component={Product} />
