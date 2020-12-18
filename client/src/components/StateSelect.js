@@ -90,11 +90,6 @@ const StateSelect = ({ updateProfileState }) => {
       name="state"
       onChange={(e) => onChange(e)}
     >
-      {!userProfile.state && (
-        <option disabled value={-1} key={-1}>
-          State
-        </option>
-      )}
       {stateAbbreviations.map((st, i) => (
         <option key={i} value={st}>
           {st}
