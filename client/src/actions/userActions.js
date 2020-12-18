@@ -13,6 +13,7 @@ import {
   GET_PROFILE_REQUEST,
   GET_PROFILE_SUCCESS,
   GET_PROFILE_FAIL,
+  CLEAR_PROFILE,
 } from "../constants/userConstants.js";
 
 export const register = (email, password) => async (dispatch) => {
@@ -38,6 +39,12 @@ export const register = (email, password) => async (dispatch) => {
     // also log in user on registration
     dispatch({
       type: LOGIN_SUCCESS,
+      payload: data,
+    });
+
+    // update profile with logged in user
+    dispatch({
+      type: GET_PROFILE_SUCCESS,
       payload: data,
     });
 
@@ -73,6 +80,12 @@ export const login = (email, password) => async (dispatch) => {
       payload: data,
     });
 
+    // update profile with logged in user
+    dispatch({
+      type: GET_PROFILE_SUCCESS,
+      payload: data,
+    });
+
     localStorage.setItem("loggedInUser", JSON.stringify(data));
   } catch (error) {
     dispatch({
@@ -88,6 +101,7 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => (dispatch) => {
   localStorage.removeItem("loggedInUser");
   dispatch({ type: LOGOUT });
+  dispatch({ type: CLEAR_PROFILE });
 };
 
 export const getProfile = (id) => async (dispatch, getState) => {
@@ -146,7 +160,7 @@ export const updateProfile = (userProfile) => async (dispatch, getState) => {
       payload: data,
     });
 
-    // update redux state as well
+    // update profile as well
     dispatch({
       type: GET_PROFILE_SUCCESS,
       payload: data,
