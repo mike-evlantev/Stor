@@ -45,7 +45,7 @@ const Product = ({ history, match }) => {
   };
 
   const handleCheckout = () => {
-    history.push("/login?redirect=checkout");
+    history.push("/checkout");
   };
 
   const handleViewBag = () => {

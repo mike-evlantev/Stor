@@ -32,7 +32,7 @@ const Bag = ({ history }) => {
   };
 
   const handleCheckout = () => {
-    history.push("/login?redirect=checkout");
+    history.push("/checkout");
   };
 
   const generateSkuCode = (min, max) => {
