@@ -34,8 +34,11 @@ const subtotal = bagItemsFromLocalStorage.reduce(
   (acc, item) => acc + item.qty * item.price,
   0
 );
+
+const calcTax = (subtotal) => subtotal * 0.0775; // CA tax rate
+
 const shipping = 0;
-const tax = 0;
+const tax = calcTax(subtotal);
 const total = subtotal + shipping + tax;
 
 const initialState = {
