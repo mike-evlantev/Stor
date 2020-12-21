@@ -1,4 +1,8 @@
-import { BAG_ADD_ITEM, BAG_REMOVE_ITEM } from "../constants/bagConstants.js";
+import {
+  BAG_ADD_ITEM,
+  BAG_REMOVE_ITEM,
+  UPDATE_SHIPPING,
+} from "../constants/bagConstants.js";
 
 const initialState = {
   bagItems: [],
@@ -59,6 +63,12 @@ export const bagReducer = (state = initialState, action) => {
         subtotal: updatedSubtotal,
         tax: updatedTax,
         total: updatedSubtotal + state.shipping + updatedTax,
+      };
+    case UPDATE_SHIPPING:
+      return {
+        ...state,
+        shipping: action.payload,
+        total: state.subtotal + action.payload + state.tax,
       };
     default:
       return state;

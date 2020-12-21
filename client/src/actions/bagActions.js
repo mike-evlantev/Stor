@@ -1,11 +1,12 @@
-import axios from 'axios';
-import {  
-  BAG_ADD_ITEM, 
-  BAG_REMOVE_ITEM
-} from '../constants/bagConstants.js';
+import axios from "axios";
+import {
+  BAG_ADD_ITEM,
+  BAG_REMOVE_ITEM,
+  UPDATE_SHIPPING,
+} from "../constants/bagConstants.js";
 
-export const addToBag = (id, qty) => async(dispatch, getState) => {
-  const {data} = await axios.get(`/api/products/${id}`);
+export const addToBag = (id, qty) => async (dispatch, getState) => {
+  const { data } = await axios.get(`/api/products/${id}`);
   dispatch({
     type: BAG_ADD_ITEM,
     payload: {
@@ -14,18 +15,27 @@ export const addToBag = (id, qty) => async(dispatch, getState) => {
       image: data.image,
       price: data.price,
       countInStock: data.countInStock,
-      qty
-    }
+      qty,
+    },
   });
 
-  localStorage.setItem('bagItems', JSON.stringify(getState().bag.bagItems));
+  localStorage.setItem("bagItems", JSON.stringify(getState().bag.bagItems));
 };
 
-export const removeFromBag = (id) => async(dispatch, getState) => {
+export const removeFromBag = (id) => async (dispatch, getState) => {
   dispatch({
     type: BAG_REMOVE_ITEM,
-    payload: id
+    payload: id,
   });
 
-  localStorage.setItem('bagItems', JSON.stringify(getState().bag.bagItems));
+  localStorage.setItem("bagItems", JSON.stringify(getState().bag.bagItems));
+};
+
+export const updateShipping = (shippingCost) => async (dispatch, getState) => {
+  dispatch({
+    type: UPDATE_SHIPPING,
+    payload: shippingCost,
+  });
+
+  localStorage.setItem("bagItems", JSON.stringify(getState().bag.bagItems));
 };
