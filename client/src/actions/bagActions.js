@@ -36,6 +36,4 @@ export const updateShipping = (shippingCost) => async (dispatch, getState) => {
     type: UPDATE_SHIPPING,
     payload: shippingCost,
   });
-
-  localStorage.setItem("bagItems", JSON.stringify(getState().bag.bagItems));
 };
