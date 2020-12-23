@@ -1,5 +1,6 @@
 import React, { Fragment, useRef, useState } from "react";
 import {
+  Accordion,
   Button,
   ButtonGroup,
   Card,
@@ -8,8 +9,10 @@ import {
   Form,
   Image,
   ListGroup,
+  OverlayTrigger,
   Row,
   ToggleButton,
+  Tooltip,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/userActions";
@@ -31,9 +34,26 @@ const Checkout = () => {
     password: "",
   };
 
+  const paymentInitialState = {
+    creditCardNumber: "",
+    expirationDate: "",
+    securityCode: "",
+    nameOnCard: "",
+    address1: "",
+    address2: "",
+    city: "",
+    state: "",
+    zip: "",
+  };
+
+  const securityCodeTooltipMessage =
+    "Typically a three-digit number on the back of the card. American Express cards have a four digit number on the front of the card to the right.";
+
   const dispatch = useDispatch();
 
   const contactInfoRef = useRef();
+  const paymentRef = useRef();
+  const securityCodeTooltipRef = useRef();
   const shippingAddressRef = useRef();
   const shippingOptionRef = useRef();
 
@@ -41,6 +61,7 @@ const Checkout = () => {
   const [guestProfile, setGuestProfile] = useState(guestProfileInitialState);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [payment, setPayment] = useState(paymentInitialState);
   const [shippingOption, setShippingOption] = useState(0);
   const [signInVisible, setSignInVisible] = useState(false);
   const [stepOneVisible, setStepOneVisible] = useState(true);
@@ -91,6 +112,16 @@ const Checkout = () => {
     }));
   };
 
+  const handlePaymentChange = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+
+    setPayment((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const handleShippingOptionChange = (e) => {
     e.preventDefault();
     const selectedOption = parseInt(e.currentTarget.value);
@@ -105,11 +136,7 @@ const Checkout = () => {
 
   const handleToRefClick = (ref, step) => {
     setVisibleStep(step);
-    console.log("step 1 visible: " + stepOneVisible.toString());
-    console.log("step 2 visible: " + stepTwoVisible.toString());
-    console.log("step 3 visible: " + stepThreeVisible.toString());
-    console.log("scrolling");
-    ref.current.scrollIntoView({ behavior: "smooth" });
+    ref.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
   const generateSkuCode = (min, max) => {
@@ -117,23 +144,19 @@ const Checkout = () => {
   };
 
   const setVisibleStep = (step) => {
-    console.log("setVisibleStep(): " + step.toString());
     switch (step) {
       case 3:
-        console.log("Setting Step 3");
         setStepOneVisible(false);
         setStepTwoVisible(false);
         setStepThreeVisible(true);
         break;
       case 2:
-        console.log("Setting Step 2");
         setStepOneVisible(false);
         setStepTwoVisible(true);
         setStepThreeVisible(false);
         break;
       case 1:
       default:
-        console.log("Setting Step 1");
         setStepOneVisible(true);
         setStepTwoVisible(false);
         setStepThreeVisible(false);
@@ -144,6 +167,8 @@ const Checkout = () => {
     console.log("step 3 visible: " + stepThreeVisible.toString());
   };
 
+  const renderTooltip = (msg) => <Tooltip>{msg}</Tooltip>;
+
   return (
     <Container className="d-flex flex-column py-5">
       <Row className="py-1 mx-auto text-center">
@@ -151,67 +176,69 @@ const Checkout = () => {
       </Row>
       <Row className="py-3">
         <Col md={7}>
-          {!isAuthenticated && (
-            <ListGroup variant="flush" className="py-1">
-              <ListGroup.Item>
-                <h2 className="py-3">Already have an account?</h2>
-                <p
-                  key={signInVisible}
-                  onClick={() => setSignInVisible(!signInVisible)}
-                >
-                  <u>Sign in</u> for quick and easy checkout&nbsp;&nbsp;
-                  <i
-                    className={
-                      signInVisible
-                        ? "fas fa-chevron-up fa-lg"
-                        : "fas fa-chevron-down fa-lg"
-                    }
-                  ></i>
-                </p>
-                {signInVisible && (
-                  <div>
-                    <hr />
-                    <Form onSubmit={handleLogin}>
-                      <Form.Group>
-                        <Form.Row>
-                          <Col>
-                            <Form.Control
-                              type="email"
-                              placeholder="Email Address"
-                              value={loginEmail}
-                              onChange={(e) => setLoginEmail(e.target.value)}
-                            />
-                          </Col>
-                          <Col>
-                            <Form.Control
-                              type="password"
-                              placeholder="Password"
-                              value={loginPassword}
-                              onChange={(e) => setLoginPassword(e.target.value)}
-                            />
-                          </Col>
-                        </Form.Row>
-                      </Form.Group>
-
-                      <Button
-                        variant="dark"
-                        type="submit"
-                        className="btn btn-block"
-                        disabled={loginLoading}
-                      >
-                        Sign In
-                      </Button>
-                    </Form>
-                  </div>
-                )}
-              </ListGroup.Item>
-            </ListGroup>
-          )}
           {/*Step 1 - EDIT:
             Contact Info
             Shipping Address
             Shipping Options*/}
           <div className={!stepOneVisible ? "d-none" : ""}>
+            {!isAuthenticated && (
+              <ListGroup variant="flush" className="py-1">
+                <ListGroup.Item>
+                  <h2 className="py-3">Already have an account?</h2>
+                  <p
+                    key={signInVisible}
+                    onClick={() => setSignInVisible(!signInVisible)}
+                  >
+                    <u>Sign in</u> for quick and easy checkout&nbsp;&nbsp;
+                    <i
+                      className={
+                        signInVisible
+                          ? "fas fa-chevron-up fa-lg"
+                          : "fas fa-chevron-down fa-lg"
+                      }
+                    ></i>
+                  </p>
+                  {signInVisible && (
+                    <div>
+                      <hr />
+                      <Form onSubmit={handleLogin}>
+                        <Form.Group>
+                          <Form.Row>
+                            <Col>
+                              <Form.Control
+                                type="email"
+                                placeholder="Email Address"
+                                value={loginEmail}
+                                onChange={(e) => setLoginEmail(e.target.value)}
+                              />
+                            </Col>
+                            <Col>
+                              <Form.Control
+                                type="password"
+                                placeholder="Password"
+                                value={loginPassword}
+                                onChange={(e) =>
+                                  setLoginPassword(e.target.value)
+                                }
+                              />
+                            </Col>
+                          </Form.Row>
+                        </Form.Group>
+
+                        <Button
+                          variant="dark"
+                          type="submit"
+                          className="btn btn-block"
+                          disabled={loginLoading}
+                        >
+                          Sign In
+                        </Button>
+                      </Form>
+                    </div>
+                  )}
+                </ListGroup.Item>
+              </ListGroup>
+            )}
             <ListGroup ref={contactInfoRef} variant="flush" className="py-1">
               <ListGroup.Item>
                 <h2 className="py-3">Contact information</h2>
@@ -333,60 +360,237 @@ const Checkout = () => {
                 </ButtonGroup>
               </ListGroup.Item>
             </ListGroup>
+            <div className="my-2 float-right">
+              <Button
+                variant="primary"
+                className="my-2 float-right"
+                onClick={handleStepTwoClick}
+              >
+                Go to next step
+              </Button>
+              <p className="text-muted">Proceed to step 2 of 3</p>
+            </div>
           </div>
 
           {/*Step 1 - SUMMARY:
             Contact Info
             Shipping Address
             Shipping Options*/}
-          <ListGroup
-            variant="flush"
-            className={stepOneVisible ? "d-none py-1" : "py-1"}
-          >
-            <ListGroup.Item className="d-flex justify-content-between align-items-center">
-              <h4 className="py-3">Notification email:</h4>
-              <strong>{guestProfile.email}</strong>
-              <u onClick={() => handleToRefClick(contactInfoRef, 1)}>Edit</u>
-            </ListGroup.Item>
-            <ListGroup.Item
-              key={stepOneVisible}
-              className="d-flex justify-content-between align-items-center"
-            >
-              <h4 className="py-3">Shipping address:</h4>
-              <strong>
-                <div>
-                  {guestProfile.firstName}&nbsp;{guestProfile.lastName}
-                </div>
-                <div>
-                  {guestProfile.address1}
-                  {", "}
-                  {guestProfile.address2}
-                </div>
-                <div>
-                  {guestProfile.city}
-                  {", "}
-                  {guestProfile.state} {guestProfile.zip}
-                </div>
-              </strong>
-              <u onClick={() => handleToRefClick(shippingAddressRef, 1)}>
-                Edit
-              </u>
-            </ListGroup.Item>
-            <ListGroup.Item className="d-flex justify-content-between align-items-center">
-              <h4 className="py-3">Estimated delivery:</h4>
-              <strong>{shippingOption}</strong>
-              <u onClick={() => handleToRefClick(shippingOptionRef, 1)}>Edit</u>
+          <div className={stepOneVisible ? "d-none" : ""}>
+            <ListGroup variant="flush" className="py-1">
+              <ListGroup.Item className="d-flex justify-content-between align-items-center">
+                <h4 className="py-3">Notification email:</h4>
+                <strong>{guestProfile.email}</strong>
+                <u onClick={() => handleToRefClick(contactInfoRef, 1)}>Edit</u>
+              </ListGroup.Item>
+              <ListGroup.Item
+                key={stepOneVisible}
+                className="d-flex justify-content-between align-items-center"
+              >
+                <h4 className="py-3">Shipping address:</h4>
+                <strong>
+                  <div>
+                    {guestProfile.firstName}&nbsp;{guestProfile.lastName}
+                  </div>
+                  <div>
+                    {guestProfile.address1}
+                    {", "}
+                    {guestProfile.address2}
+                  </div>
+                  <div>
+                    {guestProfile.city}
+                    {", "}
+                    {guestProfile.state} {guestProfile.zip}
+                  </div>
+                </strong>
+                <u onClick={() => handleToRefClick(shippingAddressRef, 1)}>
+                  Edit
+                </u>
+              </ListGroup.Item>
+              <ListGroup.Item className="d-flex justify-content-between align-items-center">
+                <h4 className="py-3">Estimated delivery:</h4>
+                <strong>{shippingOption}</strong>
+                <u onClick={() => handleToRefClick(shippingOptionRef, 1)}>
+                  Edit
+                </u>
+              </ListGroup.Item>
+            </ListGroup>
+          </div>
+
+          {/*Step 2 - EDIT:
+            Payment*/}
+          <ListGroup ref={paymentRef} variant="flush" className="py-1">
+            <ListGroup.Item>
+              <h4>Payment</h4>
+              <Accordion defaultActiveKey="1">
+                <Card>
+                  <Accordion.Toggle as={Card.Header} eventKey="0">
+                    <i className="fab fa-paypal"></i>&nbsp; PayPal
+                  </Accordion.Toggle>
+                  <Accordion.Collapse eventKey="0">
+                    <Card.Body>
+                      <Card.Text>
+                        Sign in to PayPal and return to complete your order
+                      </Card.Text>
+                      <Button
+                        variant="info"
+                        type="submit"
+                        className="btn btn-block"
+                      >
+                        PayPal
+                      </Button>
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+                <Card>
+                  <Accordion.Toggle as={Card.Header} eventKey="1">
+                    <i className="fas fa-credit-card"></i>&nbsp; Credit Card
+                  </Accordion.Toggle>
+                  <Accordion.Collapse eventKey="1">
+                    <Card.Body>
+                      <Form>
+                        <Form.Row>
+                          <Form.Group as={Col}>
+                            <Form.Label>Credit card number</Form.Label>
+                            <Form.Control
+                              name="creditCardNumber"
+                              placeholder={payment.creditCardNumber}
+                              onChange={handlePaymentChange}
+                            />
+                            <Form.Label className="pt-2">
+                              <i className="fab fa-cc-visa fa-3x pr-2"></i>
+                              <i className="fab fa-cc-mastercard fa-3x pr-2"></i>
+                              <i className="fab fa-cc-amex fa-3x pr-2"></i>
+                              <i className="fab fa-cc-discover fa-3x pr-2"></i>
+                              <i className="fab fa-cc-jcb fa-3x pr-2"></i>
+                            </Form.Label>
+                          </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                          <Form.Group as={Col}>
+                            <Form.Label>Exiration date (MM/YY)</Form.Label>
+                            <Form.Control
+                              name="expirationDate"
+                              placeholder={payment.expirationDate}
+                              onChange={handlePaymentChange}
+                            />
+                          </Form.Group>
+                          <Form.Group as={Col}>
+                            <Form.Label>
+                              Security code&nbsp;&nbsp;
+                              <OverlayTrigger
+                                placement="right"
+                                delay={{ hide: 300 }}
+                                overlay={renderTooltip(
+                                  securityCodeTooltipMessage
+                                )}
+                              >
+                                <i className="fas fa-info-circle"></i>
+                              </OverlayTrigger>
+                            </Form.Label>
+                            <Form.Control
+                              name="securityCode"
+                              placeholder={payment.securityCode}
+                              onChange={handlePaymentChange}
+                            />
+                          </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                          <Form.Group as={Col}>
+                            <Form.Label>Name on card</Form.Label>
+                            <Form.Control
+                              name="nameOnCard"
+                              placeholder={payment.nameOnCard}
+                              onChange={handlePaymentChange}
+                            />
+                          </Form.Group>
+                        </Form.Row>
+                        <h4 className="pt-3">Billing address</h4>
+                        <Form.Check
+                          type="checkbox"
+                          label="Same as shipping"
+                          className="pb-3"
+                        />
+                        <Form.Row>
+                          <Form.Group as={Col}>
+                            <Form.Label>First Name</Form.Label>
+                            <Form.Control
+                              name="firstName"
+                              placeholder={payment.firstName}
+                              onChange={handlePaymentChange}
+                            />
+                          </Form.Group>
+                          <Form.Group as={Col}>
+                            <Form.Label>Last Name</Form.Label>
+                            <Form.Control
+                              name="lastName"
+                              placeholder={payment.lastName}
+                              onChange={handlePaymentChange}
+                            />
+                          </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                          <Form.Group as={Col}>
+                            <Form.Label>Address</Form.Label>
+                            <Form.Control
+                              name="address1"
+                              placeholder={payment.address1}
+                              onChange={handlePaymentChange}
+                            />
+                          </Form.Group>
+
+                          <Form.Group as={Col} lg={4}>
+                            <Form.Label>Address 2</Form.Label>
+                            <Form.Control
+                              name="address2"
+                              placeholder={payment.address2}
+                              onChange={handlePaymentChange}
+                            />
+                          </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                          <Form.Group as={Col}>
+                            <Form.Label>City</Form.Label>
+                            <Form.Control
+                              name="city"
+                              placeholder={payment.city}
+                              onChange={handlePaymentChange}
+                            />
+                          </Form.Group>
+                          <Form.Group as={Col} lg={2}>
+                            <Form.Label>State</Form.Label>
+                            <StateSelect
+                              updateProfileState={handlePaymentChange}
+                            />
+                          </Form.Group>
+
+                          <Form.Group as={Col} lg={3}>
+                            <Form.Label>Zip</Form.Label>
+                            <Form.Control
+                              name="zip"
+                              placeholder={payment.zip}
+                              onChange={handlePaymentChange}
+                            />
+                          </Form.Group>
+                        </Form.Row>
+                      </Form>
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+              </Accordion>
             </ListGroup.Item>
           </ListGroup>
-          <div className="my-2 float-right">
-            <Button
-              variant="primary"
-              className="my-2 float-right"
-              onClick={handleStepTwoClick}
-            >
-              Go to next step
-            </Button>
-            <p className="text-muted">Proceed to step 2 of 3</p>
+
+          {/*Step 2 - SUMMARY:
+            Payment*/}
+          <div className={stepTwoVisible ? "d-none" : ""}>
+            <ListGroup variant="flush" className="py-1">
+              <ListGroup.Item className="d-flex justify-content-between align-items-center">
+                <h4 className="py-3">Payment:</h4>
+                <strong>{guestProfile.email}</strong>
+                <u onClick={() => handleToRefClick(paymentRef, 2)}>Edit</u>
+              </ListGroup.Item>
+            </ListGroup>
           </div>
         </Col>
         <Col md={5}>
