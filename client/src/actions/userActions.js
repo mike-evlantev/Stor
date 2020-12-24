@@ -14,6 +14,7 @@ import {
   GET_PROFILE_SUCCESS,
   GET_PROFILE_FAIL,
   CLEAR_PROFILE,
+  UPDATE_CURRENT_USER,
 } from "../constants/userConstants.js";
 
 export const register = (email, password) => async (dispatch) => {
@@ -174,4 +175,11 @@ export const updateProfile = (userProfile) => async (dispatch, getState) => {
           : error.message,
     });
   }
+};
+
+export const updateCurrentUser = (userData) => async (dispatch) => {
+  dispatch({
+    type: UPDATE_CURRENT_USER,
+    payload: userData,
+  });
 };

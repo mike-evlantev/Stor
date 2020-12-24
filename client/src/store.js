@@ -10,6 +10,7 @@ import {
   getProfileReducer,
   loginReducer,
   registerReducer,
+  updateCurrentUserReducer,
   updateProfileReducer,
 } from "./reducers/userReducers.js";
 
@@ -21,6 +22,7 @@ const reducer = combineReducers({
   register: registerReducer,
   getProfile: getProfileReducer,
   updateProfile: updateProfileReducer,
+  currentUser: updateCurrentUserReducer,
 });
 
 const loggedInUserFromStorage = localStorage.getItem("loggedInUser")

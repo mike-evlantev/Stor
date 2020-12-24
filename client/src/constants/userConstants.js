@@ -7,6 +7,9 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAIL = "LOGIN_FAIL";
 export const LOGOUT = "LOGOUT";
 
+// A 'current user' can be a guest or a registered user
+export const UPDATE_CURRENT_USER = "UPDATE_CURRENT_USER";
+
 export const GET_PROFILE_REQUEST = "GET_PROFILE_REQUEST";
 export const GET_PROFILE_SUCCESS = "GET_PROFILE_SUCCESS";
 export const GET_PROFILE_FAIL = "GET_PROFILE_FAIL";

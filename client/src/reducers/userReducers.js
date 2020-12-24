@@ -13,6 +13,7 @@ import {
   GET_PROFILE_REQUEST,
   GET_PROFILE_FAIL,
   CLEAR_PROFILE,
+  UPDATE_CURRENT_USER,
 } from "../constants/userConstants.js";
 
 const initialRegisterState = {
@@ -135,6 +136,18 @@ export const updateProfileReducer = (
         updateProfileLoading: false,
         updateProfileSuccess: false,
         updateProfileError: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const updateCurrentUserReducer = (state = {}, action) => {
+  switch (action.type) {
+    case UPDATE_CURRENT_USER:
+      return {
+        ...state,
+        currentUser: action.payload,
       };
     default:
       return state;
