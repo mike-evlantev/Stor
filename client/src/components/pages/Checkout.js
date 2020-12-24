@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Accordion,
   Button,
@@ -20,7 +20,7 @@ import { updateShipping } from "../../actions/bagActions";
 import StateSelect from "../StateSelect";
 
 const Checkout = () => {
-  const guestProfileInitialState = {
+  const currentUserInitialState = {
     firstName: "",
     middleName: "",
     lastName: "",
@@ -53,15 +53,16 @@ const Checkout = () => {
 
   const contactInfoRef = useRef();
   const paymentRef = useRef();
-  const securityCodeTooltipRef = useRef();
+  //const securityCodeTooltipRef = useRef();
   const shippingAddressRef = useRef();
   const shippingOptionRef = useRef();
 
   const [bagItemsVisible, setBagItemsVisible] = useState(true);
-  const [guestProfile, setGuestProfile] = useState(guestProfileInitialState);
+  const [currentUser, setCurrentUser] = useState(currentUserInitialState);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [payment, setPayment] = useState(paymentInitialState);
+  const [sameAsShippingChecked, setSameAsShippingChecked] = useState(false);
   const [shippingOption, setShippingOption] = useState(0);
   const [signInVisible, setSignInVisible] = useState(false);
   const [stepOneVisible, setStepOneVisible] = useState(true);
@@ -69,7 +70,7 @@ const Checkout = () => {
   const [stepThreeVisible, setStepThreeVisible] = useState(false);
 
   const authState = useSelector((state) => state.auth);
-  const { isAuthenticated, loginError, loginLoading } = authState;
+  const { isAuthenticated, loggedInUser, loginError, loginLoading } = authState;
   const bag = useSelector((state) => state.bag);
   const { bagItems, subtotal, shipping, tax, total } = bag;
 
@@ -106,7 +107,7 @@ const Checkout = () => {
     e.preventDefault();
     const { name, value } = e.target;
 
-    setGuestProfile((prevState) => ({
+    setCurrentUser((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -127,6 +128,24 @@ const Checkout = () => {
     const selectedOption = parseInt(e.currentTarget.value);
     setShippingOption(selectedOption);
     dispatch(updateShipping(selectedOption));
+  };
+
+  const handleSameAsShipping = () => {
+    const clearedAddress = {
+      address1: "",
+      address2: "",
+      city: "",
+      state: "",
+      zip: "",
+    };
+
+    setSameAsShippingChecked(!sameAsShippingChecked);
+
+    if (sameAsShippingChecked) {
+      setPayment(clearedAddress);
+    } else {
+      setPayment(currentUser);
+    }
   };
 
   const handleStepTwoClick = () => {
@@ -167,7 +186,15 @@ const Checkout = () => {
     console.log("step 3 visible: " + stepThreeVisible.toString());
   };
 
-  const renderTooltip = (msg) => <Tooltip>{msg}</Tooltip>;
+  const renderTooltip = (msg) => <Tooltip id="tooltip">{msg}</Tooltip>;
+
+  useEffect(() => {
+    if (isAuthenticated) setCurrentUser(loggedInUser);
+    else setPayment(paymentInitialState);
+    setSameAsShippingChecked(false);
+
+    // eslint-disable-next-line
+  }, [isAuthenticated, loggedInUser]);
 
   return (
     <Container className="d-flex flex-column py-5">
@@ -248,7 +275,7 @@ const Checkout = () => {
                     <Form.Control
                       type="email"
                       name="email"
-                      placeholder={guestProfile.email}
+                      placeholder={currentUser.email}
                       onChange={handleProfileChange}
                     />
                   </Form.Group>
@@ -268,7 +295,7 @@ const Checkout = () => {
                       <Form.Label>First Name</Form.Label>
                       <Form.Control
                         name="firstName"
-                        placeholder={guestProfile.firstName}
+                        placeholder={currentUser.firstName}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -276,7 +303,7 @@ const Checkout = () => {
                       <Form.Label>Last Name</Form.Label>
                       <Form.Control
                         name="lastName"
-                        placeholder={guestProfile.lastName}
+                        placeholder={currentUser.lastName}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -286,7 +313,7 @@ const Checkout = () => {
                       <Form.Label>Address</Form.Label>
                       <Form.Control
                         name="address1"
-                        placeholder={guestProfile.address1}
+                        placeholder={currentUser.address1}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -295,7 +322,7 @@ const Checkout = () => {
                       <Form.Label>Address 2</Form.Label>
                       <Form.Control
                         name="address2"
-                        placeholder={guestProfile.address2}
+                        placeholder={currentUser.address2}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -305,7 +332,7 @@ const Checkout = () => {
                       <Form.Label>City</Form.Label>
                       <Form.Control
                         name="city"
-                        placeholder={guestProfile.city}
+                        placeholder={currentUser.city}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -318,7 +345,7 @@ const Checkout = () => {
                       <Form.Label>Zip</Form.Label>
                       <Form.Control
                         name="zip"
-                        placeholder={guestProfile.zip}
+                        placeholder={currentUser.zip}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -380,7 +407,7 @@ const Checkout = () => {
             <ListGroup variant="flush" className="py-1">
               <ListGroup.Item className="d-flex justify-content-between align-items-center">
                 <h4 className="py-3">Notification email:</h4>
-                <strong>{guestProfile.email}</strong>
+                <strong>{currentUser.email}</strong>
                 <u onClick={() => handleToRefClick(contactInfoRef, 1)}>Edit</u>
               </ListGroup.Item>
               <ListGroup.Item
@@ -390,17 +417,17 @@ const Checkout = () => {
                 <h4 className="py-3">Shipping address:</h4>
                 <strong>
                   <div>
-                    {guestProfile.firstName}&nbsp;{guestProfile.lastName}
+                    {currentUser.firstName}&nbsp;{currentUser.lastName}
                   </div>
                   <div>
-                    {guestProfile.address1}
+                    {currentUser.address1}
                     {", "}
-                    {guestProfile.address2}
+                    {currentUser.address2}
                   </div>
                   <div>
-                    {guestProfile.city}
+                    {currentUser.city}
                     {", "}
-                    {guestProfile.state} {guestProfile.zip}
+                    {currentUser.state} {currentUser.zip}
                   </div>
                 </strong>
                 <u onClick={() => handleToRefClick(shippingAddressRef, 1)}>
@@ -485,7 +512,7 @@ const Checkout = () => {
                                   securityCodeTooltipMessage
                                 )}
                               >
-                                <i className="fas fa-info-circle"></i>
+                                <i className="fas fa-info-circle position-absolute"></i>
                               </OverlayTrigger>
                             </Form.Label>
                             <Form.Control
@@ -510,6 +537,8 @@ const Checkout = () => {
                           type="checkbox"
                           label="Same as shipping"
                           className="pb-3"
+                          checked={sameAsShippingChecked}
+                          onChange={() => handleSameAsShipping()}
                         />
                         <Form.Row>
                           <Form.Group as={Col}>
@@ -587,7 +616,7 @@ const Checkout = () => {
             <ListGroup variant="flush" className="py-1">
               <ListGroup.Item className="d-flex justify-content-between align-items-center">
                 <h4 className="py-3">Payment:</h4>
-                <strong>{guestProfile.email}</strong>
+                <strong>{currentUser.email}</strong>
                 <u onClick={() => handleToRefClick(paymentRef, 2)}>Edit</u>
               </ListGroup.Item>
             </ListGroup>
