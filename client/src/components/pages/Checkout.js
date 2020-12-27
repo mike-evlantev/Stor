@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../actions/userActions";
+import { login, updateCurrentUser } from "../../actions/userActions";
 import { updateShipping } from "../../actions/bagActions";
 import StateSelect from "../StateSelect";
 
@@ -53,12 +53,10 @@ const Checkout = () => {
 
   const contactInfoRef = useRef();
   const paymentRef = useRef();
-  //const securityCodeTooltipRef = useRef();
   const shippingAddressRef = useRef();
   const shippingOptionRef = useRef();
 
   const [bagItemsVisible, setBagItemsVisible] = useState(true);
-  const [currentUser, setCurrentUser] = useState(currentUserInitialState);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [payment, setPayment] = useState(paymentInitialState);
@@ -73,6 +71,7 @@ const Checkout = () => {
   const { isAuthenticated, loggedInUser, loginError, loginLoading } = authState;
   const bag = useSelector((state) => state.bag);
   const { bagItems, subtotal, shipping, tax, total } = bag;
+  const { user } = useSelector((state) => state.currentUser);
 
   const shippingOptions = [
     {
@@ -106,11 +105,8 @@ const Checkout = () => {
   const handleProfileChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-
-    setCurrentUser((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    if (!user) user = {};
+    user[name] = value;
   };
 
   const handlePaymentChange = (e) => {
@@ -144,13 +140,15 @@ const Checkout = () => {
     if (sameAsShippingChecked) {
       setPayment(clearedAddress);
     } else {
-      setPayment(currentUser);
+      setPayment(user);
     }
   };
 
   const handleStepTwoClick = () => {
     console.log("To Step 2 click");
     setVisibleStep(2);
+    // dispatch current user info to redux store
+    dispatch(updateCurrentUser(user));
   };
 
   const handleToRefClick = (ref, step) => {
@@ -188,13 +186,17 @@ const Checkout = () => {
 
   const renderTooltip = (msg) => <Tooltip id="tooltip">{msg}</Tooltip>;
 
-  useEffect(() => {
-    if (isAuthenticated) setCurrentUser(loggedInUser);
-    else setPayment(paymentInitialState);
-    setSameAsShippingChecked(false);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     //setCurrentUser(loggedInUser);
+  //     //updateCurrentUser(loggedInUser);
+  //   } else {
+  //     setPayment(paymentInitialState);
+  //     setSameAsShippingChecked(false);
+  //   }
 
-    // eslint-disable-next-line
-  }, [isAuthenticated, loggedInUser]);
+  //   // eslint-disable-next-line
+  // }, [isAuthenticated, loggedInUser]);
 
   return (
     <Container className="d-flex flex-column py-5">
@@ -275,7 +277,7 @@ const Checkout = () => {
                     <Form.Control
                       type="email"
                       name="email"
-                      placeholder={currentUser.email}
+                      placeholder={user?.email}
                       onChange={handleProfileChange}
                     />
                   </Form.Group>
@@ -295,7 +297,7 @@ const Checkout = () => {
                       <Form.Label>First Name</Form.Label>
                       <Form.Control
                         name="firstName"
-                        placeholder={currentUser.firstName}
+                        placeholder={user?.firstName}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -303,7 +305,7 @@ const Checkout = () => {
                       <Form.Label>Last Name</Form.Label>
                       <Form.Control
                         name="lastName"
-                        placeholder={currentUser.lastName}
+                        placeholder={user?.lastName}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -313,7 +315,7 @@ const Checkout = () => {
                       <Form.Label>Address</Form.Label>
                       <Form.Control
                         name="address1"
-                        placeholder={currentUser.address1}
+                        placeholder={user?.address1}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -322,7 +324,7 @@ const Checkout = () => {
                       <Form.Label>Address 2</Form.Label>
                       <Form.Control
                         name="address2"
-                        placeholder={currentUser.address2}
+                        placeholder={user?.address2}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -332,20 +334,23 @@ const Checkout = () => {
                       <Form.Label>City</Form.Label>
                       <Form.Control
                         name="city"
-                        placeholder={currentUser.city}
+                        placeholder={user?.city}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
                     <Form.Group as={Col} lg={2}>
                       <Form.Label>State</Form.Label>
-                      <StateSelect updateProfileState={handleProfileChange} />
+                      <StateSelect
+                        selectedState={user?.state}
+                        updateProfileState={handleProfileChange}
+                      />
                     </Form.Group>
 
                     <Form.Group as={Col} lg={3}>
                       <Form.Label>Zip</Form.Label>
                       <Form.Control
                         name="zip"
-                        placeholder={currentUser.zip}
+                        placeholder={user?.zip}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -407,7 +412,7 @@ const Checkout = () => {
             <ListGroup variant="flush" className="py-1">
               <ListGroup.Item className="d-flex justify-content-between align-items-center">
                 <h4 className="py-3">Notification email:</h4>
-                <strong>{currentUser.email}</strong>
+                <strong>{user?.email}</strong>
                 <u onClick={() => handleToRefClick(contactInfoRef, 1)}>Edit</u>
               </ListGroup.Item>
               <ListGroup.Item
@@ -417,17 +422,17 @@ const Checkout = () => {
                 <h4 className="py-3">Shipping address:</h4>
                 <strong>
                   <div>
-                    {currentUser.firstName}&nbsp;{currentUser.lastName}
+                    {user?.firstName}&nbsp;{user?.lastName}
                   </div>
                   <div>
-                    {currentUser.address1}
+                    {user?.address1}
                     {", "}
-                    {currentUser.address2}
+                    {user?.address2}
                   </div>
                   <div>
-                    {currentUser.city}
+                    {user?.city}
                     {", "}
-                    {currentUser.state} {currentUser.zip}
+                    {user?.state} {user?.zip}
                   </div>
                 </strong>
                 <u onClick={() => handleToRefClick(shippingAddressRef, 1)}>
@@ -589,6 +594,7 @@ const Checkout = () => {
                           <Form.Group as={Col} lg={2}>
                             <Form.Label>State</Form.Label>
                             <StateSelect
+                              selectedState={payment.state}
                               updateProfileState={handlePaymentChange}
                             />
                           </Form.Group>
@@ -616,7 +622,7 @@ const Checkout = () => {
             <ListGroup variant="flush" className="py-1">
               <ListGroup.Item className="d-flex justify-content-between align-items-center">
                 <h4 className="py-3">Payment:</h4>
-                <strong>{currentUser.email}</strong>
+                <strong>{user?.email}</strong>
                 <u onClick={() => handleToRefClick(paymentRef, 2)}>Edit</u>
               </ListGroup.Item>
             </ListGroup>
