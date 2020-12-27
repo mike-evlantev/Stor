@@ -127,7 +127,10 @@ const Profile = () => {
 
                 <Form.Group as={Col} lg={2} controlId="formGridState">
                   <Form.Label>State</Form.Label>
-                  <StateSelect updateProfileState={handleProfileChange} />
+                  <StateSelect
+                    selectedState={userProfile.state}
+                    updateProfileState={handleProfileChange}
+                  />
                 </Form.Group>
 
                 <Form.Group as={Col} lg={3} controlId="formGridZip">
