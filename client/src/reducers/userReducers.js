@@ -14,6 +14,7 @@ import {
   GET_PROFILE_FAIL,
   CLEAR_PROFILE,
   UPDATE_CURRENT_USER,
+  CLEAR_CURRENT_USER,
 } from "../constants/userConstants.js";
 
 const initialRegisterState = {
@@ -147,7 +148,12 @@ export const updateCurrentUserReducer = (state = {}, action) => {
     case UPDATE_CURRENT_USER:
       return {
         ...state,
-        currentUser: action.payload,
+        user: action.payload,
+      };
+    case CLEAR_CURRENT_USER:
+      return {
+        ...state,
+        user: {},
       };
     default:
       return state;
