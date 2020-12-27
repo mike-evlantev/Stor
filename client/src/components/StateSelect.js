@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { Form } from "react-bootstrap";
 
-const StateSelect = ({ updateProfileState }) => {
+const StateSelect = ({ selectedState, updateProfileState }) => {
   // 50 states +
   // American Samoa (AS)      District of Columbia (DC)     Federated States Of Micronesia (FM)
   // Guam (GU)                Marshall Islands (MH)         Northern Mariana Islands (MP)
@@ -69,7 +68,6 @@ const StateSelect = ({ updateProfileState }) => {
     "WY",
   ];
 
-  const { userProfile } = useSelector((state) => state.getProfile);
   const [selection, setSelection] = useState();
 
   const onChange = (e) => {
@@ -79,9 +77,9 @@ const StateSelect = ({ updateProfileState }) => {
   };
 
   useEffect(() => {
-    setSelection(userProfile.state);
+    setSelection(selectedState);
     // eslint-disable-next-line
-  }, [userProfile]);
+  }, [selectedState]);
 
   return (
     <Form.Control
@@ -90,6 +88,7 @@ const StateSelect = ({ updateProfileState }) => {
       name="state"
       onChange={(e) => onChange(e)}
     >
+      <option>Select...</option>
       {stateAbbreviations.map((st, i) => (
         <option key={i} value={st}>
           {st}
