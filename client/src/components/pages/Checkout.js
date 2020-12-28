@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { login, updateCurrentUser } from "../../actions/userActions";
+import { login } from "../../actions/userActions";
 import { updateShipping } from "../../actions/bagActions";
 import StateSelect from "../StateSelect";
 
@@ -57,6 +57,7 @@ const Checkout = () => {
   const shippingOptionRef = useRef();
 
   const [bagItemsVisible, setBagItemsVisible] = useState(true);
+  const [currentUser, setCurrentUser] = useState(currentUserInitialState);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [payment, setPayment] = useState(paymentInitialState);
@@ -71,7 +72,6 @@ const Checkout = () => {
   const { isAuthenticated, loggedInUser, loginError, loginLoading } = authState;
   const bag = useSelector((state) => state.bag);
   const { bagItems, subtotal, shipping, tax, total } = bag;
-  const { user } = useSelector((state) => state.currentUser);
 
   const shippingOptions = [
     {
@@ -105,8 +105,10 @@ const Checkout = () => {
   const handleProfileChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    if (!user) user = {};
-    user[name] = value;
+    setCurrentUser((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handlePaymentChange = (e) => {
@@ -140,7 +142,7 @@ const Checkout = () => {
     if (sameAsShippingChecked) {
       setPayment(clearedAddress);
     } else {
-      setPayment(user);
+      setPayment(currentUser);
     }
   };
 
@@ -148,7 +150,7 @@ const Checkout = () => {
     console.log("To Step 2 click");
     setVisibleStep(2);
     // dispatch current user info to redux store
-    dispatch(updateCurrentUser(user));
+    //dispatch(updateCurrentUser(user));
   };
 
   const handleToRefClick = (ref, step) => {
@@ -186,17 +188,16 @@ const Checkout = () => {
 
   const renderTooltip = (msg) => <Tooltip id="tooltip">{msg}</Tooltip>;
 
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     //setCurrentUser(loggedInUser);
-  //     //updateCurrentUser(loggedInUser);
-  //   } else {
-  //     setPayment(paymentInitialState);
-  //     setSameAsShippingChecked(false);
-  //   }
+  useEffect(() => {
+    if (isAuthenticated) {
+      setCurrentUser(loggedInUser);
+    } else {
+      setPayment(paymentInitialState);
+      setSameAsShippingChecked(false);
+    }
 
-  //   // eslint-disable-next-line
-  // }, [isAuthenticated, loggedInUser]);
+    // eslint-disable-next-line
+  }, [isAuthenticated, loggedInUser]);
 
   return (
     <Container className="d-flex flex-column py-5">
@@ -277,7 +278,7 @@ const Checkout = () => {
                     <Form.Control
                       type="email"
                       name="email"
-                      placeholder={user?.email}
+                      placeholder={currentUser.email}
                       onChange={handleProfileChange}
                     />
                   </Form.Group>
@@ -297,7 +298,7 @@ const Checkout = () => {
                       <Form.Label>First Name</Form.Label>
                       <Form.Control
                         name="firstName"
-                        placeholder={user?.firstName}
+                        placeholder={currentUser.firstName}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -305,7 +306,7 @@ const Checkout = () => {
                       <Form.Label>Last Name</Form.Label>
                       <Form.Control
                         name="lastName"
-                        placeholder={user?.lastName}
+                        placeholder={currentUser.lastName}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -315,7 +316,7 @@ const Checkout = () => {
                       <Form.Label>Address</Form.Label>
                       <Form.Control
                         name="address1"
-                        placeholder={user?.address1}
+                        placeholder={currentUser.address1}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -324,7 +325,7 @@ const Checkout = () => {
                       <Form.Label>Address 2</Form.Label>
                       <Form.Control
                         name="address2"
-                        placeholder={user?.address2}
+                        placeholder={currentUser.address2}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -334,14 +335,14 @@ const Checkout = () => {
                       <Form.Label>City</Form.Label>
                       <Form.Control
                         name="city"
-                        placeholder={user?.city}
+                        placeholder={currentUser.city}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
                     <Form.Group as={Col} lg={2}>
                       <Form.Label>State</Form.Label>
                       <StateSelect
-                        selectedState={user?.state}
+                        selectedState={currentUser.state}
                         updateProfileState={handleProfileChange}
                       />
                     </Form.Group>
@@ -350,7 +351,7 @@ const Checkout = () => {
                       <Form.Label>Zip</Form.Label>
                       <Form.Control
                         name="zip"
-                        placeholder={user?.zip}
+                        placeholder={currentUser.zip}
                         onChange={handleProfileChange}
                       />
                     </Form.Group>
@@ -412,7 +413,7 @@ const Checkout = () => {
             <ListGroup variant="flush" className="py-1">
               <ListGroup.Item className="d-flex justify-content-between align-items-center">
                 <h4 className="py-3">Notification email:</h4>
-                <strong>{user?.email}</strong>
+                <strong>{currentUser.email}</strong>
                 <u onClick={() => handleToRefClick(contactInfoRef, 1)}>Edit</u>
               </ListGroup.Item>
               <ListGroup.Item
@@ -422,17 +423,17 @@ const Checkout = () => {
                 <h4 className="py-3">Shipping address:</h4>
                 <strong>
                   <div>
-                    {user?.firstName}&nbsp;{user?.lastName}
+                    {currentUser.firstName}&nbsp;{currentUser.lastName}
                   </div>
                   <div>
-                    {user?.address1}
+                    {currentUser.address1}
                     {", "}
-                    {user?.address2}
+                    {currentUser.address2}
                   </div>
                   <div>
-                    {user?.city}
+                    {currentUser.city}
                     {", "}
-                    {user?.state} {user?.zip}
+                    {currentUser.state} {currentUser.zip}
                   </div>
                 </strong>
                 <u onClick={() => handleToRefClick(shippingAddressRef, 1)}>
@@ -451,178 +452,180 @@ const Checkout = () => {
 
           {/*Step 2 - EDIT:
             Payment*/}
-          <ListGroup ref={paymentRef} variant="flush" className="py-1">
-            <ListGroup.Item>
-              <h4>Payment</h4>
-              <Accordion defaultActiveKey="1">
-                <Card>
-                  <Accordion.Toggle as={Card.Header} eventKey="0">
-                    <i className="fab fa-paypal"></i>&nbsp; PayPal
-                  </Accordion.Toggle>
-                  <Accordion.Collapse eventKey="0">
-                    <Card.Body>
-                      <Card.Text>
-                        Sign in to PayPal and return to complete your order
-                      </Card.Text>
-                      <Button
-                        variant="info"
-                        type="submit"
-                        className="btn btn-block"
-                      >
-                        PayPal
-                      </Button>
-                    </Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-                <Card>
-                  <Accordion.Toggle as={Card.Header} eventKey="1">
-                    <i className="fas fa-credit-card"></i>&nbsp; Credit Card
-                  </Accordion.Toggle>
-                  <Accordion.Collapse eventKey="1">
-                    <Card.Body>
-                      <Form>
-                        <Form.Row>
-                          <Form.Group as={Col}>
-                            <Form.Label>Credit card number</Form.Label>
-                            <Form.Control
-                              name="creditCardNumber"
-                              placeholder={payment.creditCardNumber}
-                              onChange={handlePaymentChange}
-                            />
-                            <Form.Label className="pt-2">
-                              <i className="fab fa-cc-visa fa-3x pr-2"></i>
-                              <i className="fab fa-cc-mastercard fa-3x pr-2"></i>
-                              <i className="fab fa-cc-amex fa-3x pr-2"></i>
-                              <i className="fab fa-cc-discover fa-3x pr-2"></i>
-                              <i className="fab fa-cc-jcb fa-3x pr-2"></i>
-                            </Form.Label>
-                          </Form.Group>
-                        </Form.Row>
-                        <Form.Row>
-                          <Form.Group as={Col}>
-                            <Form.Label>Exiration date (MM/YY)</Form.Label>
-                            <Form.Control
-                              name="expirationDate"
-                              placeholder={payment.expirationDate}
-                              onChange={handlePaymentChange}
-                            />
-                          </Form.Group>
-                          <Form.Group as={Col}>
-                            <Form.Label>
-                              Security code&nbsp;&nbsp;
-                              <OverlayTrigger
-                                placement="right"
-                                delay={{ hide: 300 }}
-                                overlay={renderTooltip(
-                                  securityCodeTooltipMessage
-                                )}
-                              >
-                                <i className="fas fa-info-circle position-absolute"></i>
-                              </OverlayTrigger>
-                            </Form.Label>
-                            <Form.Control
-                              name="securityCode"
-                              placeholder={payment.securityCode}
-                              onChange={handlePaymentChange}
-                            />
-                          </Form.Group>
-                        </Form.Row>
-                        <Form.Row>
-                          <Form.Group as={Col}>
-                            <Form.Label>Name on card</Form.Label>
-                            <Form.Control
-                              name="nameOnCard"
-                              placeholder={payment.nameOnCard}
-                              onChange={handlePaymentChange}
-                            />
-                          </Form.Group>
-                        </Form.Row>
-                        <h4 className="pt-3">Billing address</h4>
-                        <Form.Check
-                          type="checkbox"
-                          label="Same as shipping"
-                          className="pb-3"
-                          checked={sameAsShippingChecked}
-                          onChange={() => handleSameAsShipping()}
-                        />
-                        <Form.Row>
-                          <Form.Group as={Col}>
-                            <Form.Label>First Name</Form.Label>
-                            <Form.Control
-                              name="firstName"
-                              placeholder={payment.firstName}
-                              onChange={handlePaymentChange}
-                            />
-                          </Form.Group>
-                          <Form.Group as={Col}>
-                            <Form.Label>Last Name</Form.Label>
-                            <Form.Control
-                              name="lastName"
-                              placeholder={payment.lastName}
-                              onChange={handlePaymentChange}
-                            />
-                          </Form.Group>
-                        </Form.Row>
-                        <Form.Row>
-                          <Form.Group as={Col}>
-                            <Form.Label>Address</Form.Label>
-                            <Form.Control
-                              name="address1"
-                              placeholder={payment.address1}
-                              onChange={handlePaymentChange}
-                            />
-                          </Form.Group>
+          <div className={!stepTwoVisible ? "d-none" : ""}>
+            <ListGroup ref={paymentRef} variant="flush" className="py-1">
+              <ListGroup.Item>
+                <h4>Payment</h4>
+                <Accordion defaultActiveKey="1">
+                  <Card>
+                    <Accordion.Toggle as={Card.Header} eventKey="0">
+                      <i className="fab fa-paypal"></i>&nbsp; PayPal
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey="0">
+                      <Card.Body>
+                        <Card.Text>
+                          Sign in to PayPal and return to complete your order
+                        </Card.Text>
+                        <Button
+                          variant="info"
+                          type="submit"
+                          className="btn btn-block"
+                        >
+                          PayPal
+                        </Button>
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                  <Card>
+                    <Accordion.Toggle as={Card.Header} eventKey="1">
+                      <i className="fas fa-credit-card"></i>&nbsp; Credit Card
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey="1">
+                      <Card.Body>
+                        <Form>
+                          <Form.Row>
+                            <Form.Group as={Col}>
+                              <Form.Label>Credit card number</Form.Label>
+                              <Form.Control
+                                name="creditCardNumber"
+                                placeholder={payment.creditCardNumber}
+                                onChange={handlePaymentChange}
+                              />
+                              <Form.Label className="pt-2">
+                                <i className="fab fa-cc-visa fa-3x pr-2"></i>
+                                <i className="fab fa-cc-mastercard fa-3x pr-2"></i>
+                                <i className="fab fa-cc-amex fa-3x pr-2"></i>
+                                <i className="fab fa-cc-discover fa-3x pr-2"></i>
+                                <i className="fab fa-cc-jcb fa-3x pr-2"></i>
+                              </Form.Label>
+                            </Form.Group>
+                          </Form.Row>
+                          <Form.Row>
+                            <Form.Group as={Col}>
+                              <Form.Label>Exiration date (MM/YY)</Form.Label>
+                              <Form.Control
+                                name="expirationDate"
+                                placeholder={payment.expirationDate}
+                                onChange={handlePaymentChange}
+                              />
+                            </Form.Group>
+                            <Form.Group as={Col}>
+                              <Form.Label>
+                                Security code&nbsp;&nbsp;
+                                <OverlayTrigger
+                                  placement="right"
+                                  delay={{ hide: 300 }}
+                                  overlay={renderTooltip(
+                                    securityCodeTooltipMessage
+                                  )}
+                                >
+                                  <i className="fas fa-info-circle position-absolute"></i>
+                                </OverlayTrigger>
+                              </Form.Label>
+                              <Form.Control
+                                name="securityCode"
+                                placeholder={payment.securityCode}
+                                onChange={handlePaymentChange}
+                              />
+                            </Form.Group>
+                          </Form.Row>
+                          <Form.Row>
+                            <Form.Group as={Col}>
+                              <Form.Label>Name on card</Form.Label>
+                              <Form.Control
+                                name="nameOnCard"
+                                placeholder={payment.nameOnCard}
+                                onChange={handlePaymentChange}
+                              />
+                            </Form.Group>
+                          </Form.Row>
+                          <h4 className="pt-3">Billing address</h4>
+                          <Form.Check
+                            type="checkbox"
+                            label="Same as shipping"
+                            className="pb-3"
+                            checked={sameAsShippingChecked}
+                            onChange={() => handleSameAsShipping()}
+                          />
+                          <Form.Row>
+                            <Form.Group as={Col}>
+                              <Form.Label>First Name</Form.Label>
+                              <Form.Control
+                                name="firstName"
+                                placeholder={payment.firstName}
+                                onChange={handlePaymentChange}
+                              />
+                            </Form.Group>
+                            <Form.Group as={Col}>
+                              <Form.Label>Last Name</Form.Label>
+                              <Form.Control
+                                name="lastName"
+                                placeholder={payment.lastName}
+                                onChange={handlePaymentChange}
+                              />
+                            </Form.Group>
+                          </Form.Row>
+                          <Form.Row>
+                            <Form.Group as={Col}>
+                              <Form.Label>Address</Form.Label>
+                              <Form.Control
+                                name="address1"
+                                placeholder={payment.address1}
+                                onChange={handlePaymentChange}
+                              />
+                            </Form.Group>
 
-                          <Form.Group as={Col} lg={4}>
-                            <Form.Label>Address 2</Form.Label>
-                            <Form.Control
-                              name="address2"
-                              placeholder={payment.address2}
-                              onChange={handlePaymentChange}
-                            />
-                          </Form.Group>
-                        </Form.Row>
-                        <Form.Row>
-                          <Form.Group as={Col}>
-                            <Form.Label>City</Form.Label>
-                            <Form.Control
-                              name="city"
-                              placeholder={payment.city}
-                              onChange={handlePaymentChange}
-                            />
-                          </Form.Group>
-                          <Form.Group as={Col} lg={2}>
-                            <Form.Label>State</Form.Label>
-                            <StateSelect
-                              selectedState={payment.state}
-                              updateProfileState={handlePaymentChange}
-                            />
-                          </Form.Group>
+                            <Form.Group as={Col} lg={4}>
+                              <Form.Label>Address 2</Form.Label>
+                              <Form.Control
+                                name="address2"
+                                placeholder={payment.address2}
+                                onChange={handlePaymentChange}
+                              />
+                            </Form.Group>
+                          </Form.Row>
+                          <Form.Row>
+                            <Form.Group as={Col}>
+                              <Form.Label>City</Form.Label>
+                              <Form.Control
+                                name="city"
+                                placeholder={payment.city}
+                                onChange={handlePaymentChange}
+                              />
+                            </Form.Group>
+                            <Form.Group as={Col} lg={2}>
+                              <Form.Label>State</Form.Label>
+                              <StateSelect
+                                selectedState={payment.state}
+                                updateProfileState={handlePaymentChange}
+                              />
+                            </Form.Group>
 
-                          <Form.Group as={Col} lg={3}>
-                            <Form.Label>Zip</Form.Label>
-                            <Form.Control
-                              name="zip"
-                              placeholder={payment.zip}
-                              onChange={handlePaymentChange}
-                            />
-                          </Form.Group>
-                        </Form.Row>
-                      </Form>
-                    </Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-              </Accordion>
-            </ListGroup.Item>
-          </ListGroup>
+                            <Form.Group as={Col} lg={3}>
+                              <Form.Label>Zip</Form.Label>
+                              <Form.Control
+                                name="zip"
+                                placeholder={payment.zip}
+                                onChange={handlePaymentChange}
+                              />
+                            </Form.Group>
+                          </Form.Row>
+                        </Form>
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                </Accordion>
+              </ListGroup.Item>
+            </ListGroup>
+          </div>
 
           {/*Step 2 - SUMMARY:
             Payment*/}
-          <div className={stepTwoVisible ? "d-none" : ""}>
+          <div className={!stepOneVisible && stepTwoVisible ? "d-none" : ""}>
             <ListGroup variant="flush" className="py-1">
               <ListGroup.Item className="d-flex justify-content-between align-items-center">
                 <h4 className="py-3">Payment:</h4>
-                <strong>{user?.email}</strong>
+                <strong>{currentUser.email}</strong>
                 <u onClick={() => handleToRefClick(paymentRef, 2)}>Edit</u>
               </ListGroup.Item>
             </ListGroup>
