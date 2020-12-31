@@ -145,15 +145,9 @@ const Checkout = () => {
     }
   };
 
-  const handleToRefClick = (ref) => {
-    ref.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  };
-
   const generateSkuCode = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
-
-  const renderTooltip = (msg) => <Tooltip id="tooltip">{msg}</Tooltip>;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -165,23 +159,10 @@ const Checkout = () => {
 
     window.scrollTo(0, 0);
 
-    // if (contactInfoRef.current) {
-    //   handleToRefClick(contactInfoRef);
-    // }
-    // if (paymentRef.current) {
-    //   handleToRefClick(paymentRef);
-    // }
-    // if (shippingAddressRef.current) {
-    //   handleToRefClick(shippingAddressRef);
-    // }
-    // if (shippingOptionRef.current) {
-    //   handleToRefClick(shippingOptionRef);
-    // }
-
     // eslint-disable-next-line
   }, [isAuthenticated, loggedInUser, step]);
 
-  const renderCheckoutFunc = () => {
+  const renderCheckout = () => {
     switch (step) {
       case 1:
         return <Fragment>{renderShippingInfoForm()}</Fragment>;
@@ -261,7 +242,6 @@ const Checkout = () => {
 
   // Step 1 (Contact Info)
   const renderdContactInfoForm = () => {
-    console.log("Contact Form");
     return (
       <ListGroup ref={contactInfoRef} variant="flush" className="py-1">
         <ListGroup.Item>
@@ -284,7 +264,6 @@ const Checkout = () => {
 
   // Step 1 (Shipping Address)
   const renderdShippingAddressForm = () => {
-    console.log("Shipping Address");
     return (
       <ListGroup ref={shippingAddressRef} variant="flush" className="py-1">
         <ListGroup.Item>
@@ -361,7 +340,6 @@ const Checkout = () => {
 
   // Step 1 (Shipping Method)
   const renderdShippingMethodForm = () => {
-    console.log("Shipping Method");
     return (
       <ListGroup ref={shippingOptionRef} variant="flush" className="py-1">
         <ListGroup.Item>
@@ -400,9 +378,17 @@ const Checkout = () => {
 
   // "Go To Step" Button
   const renderGoToStepButton = (selectedStep) => {
-    console.log("Go To Step " + selectedStep);
     return (
       <div>
+        {step === 2 && (
+          <Button
+            variant="light"
+            className="my-2"
+            onClick={() => setStep(step - 1)}
+          >
+            Go Back
+          </Button>
+        )}
         <div className="my-2 float-right">
           <Button
             variant="primary"
@@ -417,32 +403,17 @@ const Checkout = () => {
     );
   };
 
-  // "Go Back A Step" Button
-  const renderGoBackButton = () => {
-    return (
-      <Button
-        variant="light"
-        className="my-2"
-        onClick={() => setStep(step - 1)}
-      >
-        Go Back
-      </Button>
-    );
-  };
-
   // Step 2:
   const renderPaymentInfoForm = () => (
     <Fragment>
       {renderStepOneSummary()}
       {renderPaymentForm()}
-      {renderGoBackButton()}
       {renderGoToStepButton(3)}
     </Fragment>
   );
 
   // Step 2 (Step 1 Summary)
   const renderStepOneSummary = () => {
-    console.log("Step 1 Summary");
     return (
       <ListGroup variant="flush" className="py-1">
         <ListGroup.Item className="d-flex justify-content-between align-items-center">
@@ -541,11 +512,14 @@ const Checkout = () => {
                         <Form.Label>
                           Security code&nbsp;&nbsp;
                           <OverlayTrigger
+                            key="1"
                             placement="right"
                             delay={{ hide: 300 }}
-                            overlay={renderTooltip(securityCodeTooltipMessage)}
+                            overlay={
+                              <Tooltip id="tooltip">Awesome Tooltip</Tooltip>
+                            }
                           >
-                            <i className="fas fa-info-circle position-absolute"></i>
+                            <i className="fas fa-info-circle"></i>
                           </OverlayTrigger>
                         </Form.Label>
                         <Form.Control
@@ -648,23 +622,30 @@ const Checkout = () => {
 
   // Step 3:
   const renderSubmitOrder = () => {
-    console.log("Submit Order");
-    <Fragment>
-      {renderStepOneSummary()}
-      {renderStepTwoSummary()}
-      <Button
-        variant="primary"
-        className="my-2 float-right"
-        onClick={() => console.log("Order Submitted")}
-      >
-        Submit Order
-      </Button>
-    </Fragment>;
+    return (
+      <Fragment>
+        {renderStepOneSummary()}
+        {renderStepTwoSummary()}
+        <Button
+          variant="light"
+          className="my-2"
+          onClick={() => setStep(step - 1)}
+        >
+          Go Back
+        </Button>
+        <Button
+          variant="primary"
+          className="my-2 float-right"
+          onClick={() => console.log("Order Submitted")}
+        >
+          Submit Order
+        </Button>
+      </Fragment>
+    );
   };
 
   // Step 3 (Step 2 Summary)
   const renderStepTwoSummary = () => {
-    console.log("Step 2 Summary");
     return (
       <ListGroup variant="flush" className="py-1">
         <ListGroup.Item className="d-flex justify-content-between align-items-center">
@@ -754,7 +735,7 @@ const Checkout = () => {
         <h1>Checkout</h1>
       </Row>
       <Row className="py-3">
-        <Col md={7}>{renderCheckoutFunc()}</Col>
+        <Col md={7}>{renderCheckout()}</Col>
         <Col md={5}>
           <div className="sticky-top">{renderOrderSummary()}</div>
         </Col>
