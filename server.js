@@ -5,6 +5,7 @@ import connectDb from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import productsRouter from "./routes/productRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import orderRouter from "./routes/orderRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.json({ extended: false })); // Allows to accept data within a bo
 // Routes
 app.use("/api/products", productsRouter);
 app.use("/api/users", userRouter);
+app.use("/api/orders", orderRouter);
 
 app.use(notFound);
 app.use(errorHandler);
