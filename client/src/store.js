@@ -6,6 +6,7 @@ import {
   productDetailsReducer,
 } from "./reducers/productReducers.js";
 import { bagReducer } from "./reducers/bagReducers.js";
+import { submitOrderReducer } from "./reducers/orderReducers.js";
 import {
   getProfileReducer,
   loginReducer,
@@ -23,6 +24,7 @@ const reducer = combineReducers({
   getProfile: getProfileReducer,
   updateProfile: updateProfileReducer,
   currentUser: updateCurrentUserReducer,
+  submitOrder: submitOrderReducer,
 });
 
 const loggedInUserFromStorage = localStorage.getItem("loggedInUser")
