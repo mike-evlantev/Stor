@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Accordion,
   Button,
@@ -17,6 +17,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/userActions";
 import { updateShipping } from "../../actions/bagActions";
+import { createOrder } from "../../actions/orderActions";
 import StateSelect from "../StateSelect";
 import { Fragment } from "react";
 
@@ -51,11 +52,6 @@ const Checkout = () => {
     "Typically a three-digit number on the back of the card. American Express cards have a four digit number on the front of the card to the right.";
 
   const dispatch = useDispatch();
-
-  const contactInfoRef = useRef();
-  const paymentRef = useRef();
-  const shippingAddressRef = useRef();
-  const shippingOptionRef = useRef();
 
   const [bagItemsVisible, setBagItemsVisible] = useState(true);
   const [currentUser, setCurrentUser] = useState(currentUserInitialState);
@@ -147,6 +143,31 @@ const Checkout = () => {
 
   const generateSkuCode = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+
+  const handleSubmitOrder = () => {
+    // clear state
+    // create order
+    const shippingAddress = {
+      address1: currentUser.address1,
+      address2: currentUser.address2,
+      city: currentUser.city,
+      state: currentUser.state,
+      zip: currentUser.zip,
+    };
+    const order = {
+      firstName: currentUser.firstName,
+      middleName: currentUser.middleName,
+      lastName: currentUser.lastName,
+      orderItems: bagItems,
+      shippingAddress,
+      taxAmount: tax,
+      shippingAmount: shipping,
+      totalAmount: total,
+    };
+    console.log("Creating Order:");
+    console.log(order);
+    dispatch(createOrder(order));
   };
 
   useEffect(() => {
@@ -243,7 +264,7 @@ const Checkout = () => {
   // Step 1 (Contact Info)
   const renderdContactInfoForm = () => {
     return (
-      <ListGroup ref={contactInfoRef} variant="flush" className="py-1">
+      <ListGroup variant="flush" className="py-1">
         <ListGroup.Item>
           <h2 className="py-3">Contact information</h2>
           <Form>
@@ -265,7 +286,7 @@ const Checkout = () => {
   // Step 1 (Shipping Address)
   const renderdShippingAddressForm = () => {
     return (
-      <ListGroup ref={shippingAddressRef} variant="flush" className="py-1">
+      <ListGroup variant="flush" className="py-1">
         <ListGroup.Item>
           <h2 className="py-3">Shipping address</h2>
           <Form>
@@ -341,7 +362,7 @@ const Checkout = () => {
   // Step 1 (Shipping Method)
   const renderdShippingMethodForm = () => {
     return (
-      <ListGroup ref={shippingOptionRef} variant="flush" className="py-1">
+      <ListGroup variant="flush" className="py-1">
         <ListGroup.Item>
           <h2 className="py-3">Shipping options</h2>
           <ButtonGroup toggle>
@@ -452,7 +473,7 @@ const Checkout = () => {
   // Step 2 (Payment)
   const renderPaymentForm = () => {
     return (
-      <ListGroup ref={paymentRef} variant="flush" className="py-1">
+      <ListGroup variant="flush" className="py-1">
         <ListGroup.Item>
           <h4>Payment</h4>
           <Accordion defaultActiveKey="1">
@@ -636,7 +657,7 @@ const Checkout = () => {
         <Button
           variant="primary"
           className="my-2 float-right"
-          onClick={() => console.log("Order Submitted")}
+          onClick={() => handleSubmitOrder()}
         >
           Submit Order
         </Button>
