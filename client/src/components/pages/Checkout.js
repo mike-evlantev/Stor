@@ -20,6 +20,8 @@ import { updateShipping } from "../../actions/bagActions";
 import { createOrder } from "../../actions/orderActions";
 import StateSelect from "../StateSelect";
 import { Fragment } from "react";
+import Message from "../Message";
+import Loader from "../Loader";
 
 const Checkout = () => {
   const currentUserInitialState = {
@@ -67,6 +69,12 @@ const Checkout = () => {
   const { isAuthenticated, loggedInUser, loginError, loginLoading } = authState;
   const bag = useSelector((state) => state.bag);
   const { bagItems, subtotal, shipping, tax, total } = bag;
+  const submitOrder = useSelector((state) => state.submitOrder);
+  const {
+    orderSubmitLoading,
+    orderSubmitSuccess,
+    orderSubmitError,
+  } = submitOrder;
 
   const shippingOptions = [
     {
@@ -752,15 +760,23 @@ const Checkout = () => {
 
   return (
     <Container className="d-flex flex-column py-5">
-      <Row className="py-1 mx-auto text-center">
-        <h1>Checkout</h1>
-      </Row>
-      <Row className="py-3">
-        <Col md={7}>{renderCheckout()}</Col>
-        <Col md={5}>
-          <div className="sticky-top">{renderOrderSummary()}</div>
-        </Col>
-      </Row>
+      {loginLoading || orderSubmitLoading ? (
+        <Loader />
+      ) : loginError || orderSubmitError ? (
+        <Message variant="danger">{loginError + orderSubmitError}</Message>
+      ) : (
+        <Fragment>
+          <Row className="py-1 mx-auto text-center">
+            <h1>Checkout</h1>
+          </Row>
+          <Row className="py-3">
+            <Col md={7}>{renderCheckout()}</Col>
+            <Col md={5}>
+              <div className="sticky-top">{renderOrderSummary()}</div>
+            </Col>
+          </Row>
+        </Fragment>
+      )}
     </Container>
   );
 };
