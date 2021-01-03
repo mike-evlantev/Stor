@@ -761,8 +761,10 @@ const Checkout = () => {
   return (
     <Container className="d-flex flex-column py-5">
       {loginLoading || orderSubmitLoading ? (
+        // TODO: move Loader to app level
         <Loader />
       ) : loginError || orderSubmitError ? (
+        // TODO: move Message to app level
         <Message variant="danger">{loginError + orderSubmitError}</Message>
       ) : (
         <Fragment>

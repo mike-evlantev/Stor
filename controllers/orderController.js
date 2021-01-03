@@ -22,7 +22,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     middleName,
     lastName,
     orderItems,
-    user: req.user._id,
+    //user: req.user._id,
     shippingAddress,
     paymentMethod,
     taxAmount,

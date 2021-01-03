@@ -45,6 +45,7 @@ const Profile = () => {
 
   return (
     <Container className="d-flex flex-column py-5">
+      {/* TODO: move Message to app level */}
       {getProfileError && <Message variant="danger">{getProfileError}</Message>}
       {updateProfileError && (
         <Message variant="danger">{updateProfileError}</Message>
@@ -52,6 +53,7 @@ const Profile = () => {
       {updateProfileSuccess && (
         <Message variant="success">Profile updated successfully</Message>
       )}
+      {/* TODO: move Loader to app level */}
       {(getProfileLoading || updateProfileLoading) && <Loader />}
       {!getProfileLoading && !updateProfileLoading && (
         <Row className="d-flex justify-content-center p-5">

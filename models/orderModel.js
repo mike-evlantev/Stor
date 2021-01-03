@@ -55,11 +55,12 @@ const orderSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User", // reference specific model
-    },
+    // User removed to allow non-users to submit orders
+    // user: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   required: true,
+    //   ref: "User", // reference specific model
+    // },
     orderItems: [orderItemSchema],
     shippingAddress: addressSchema,
     paymentMethod: {

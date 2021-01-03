@@ -42,8 +42,10 @@ const SignIn = ({ history, location }) => {
 
   return (
     <Container className="d-flex flex-column py-5">
+      {/* TODO: move Message to app level */}
       {loginError && <Message variant="danger">{loginError}</Message>}
       {registerError && <Message variant="danger">{registerError}</Message>}
+      {/* TODO: move Loader to app level */}
       {(loginLoading || registerLoading) && <Loader />}
       {!loginLoading && !registerLoading && (
         <Fragment>
