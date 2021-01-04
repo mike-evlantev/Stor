@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { Fragment } from "react";
 import { Form } from "react-bootstrap";
 
-const StateSelect = ({ selectedState, updateProfileState }) => {
+const StateSelect = ({
+  selectedState,
+  updateProfileState,
+  validateForm,
+  error,
+}) => {
   // 50 states +
   // American Samoa (AS)      District of Columbia (DC)     Federated States Of Micronesia (FM)
   // Guam (GU)                Marshall Islands (MH)         Northern Mariana Islands (MP)
@@ -82,19 +88,24 @@ const StateSelect = ({ selectedState, updateProfileState }) => {
   }, [selectedState]);
 
   return (
-    <Form.Control
-      as="select"
-      value={selection}
-      name="state"
-      onChange={(e) => onChange(e)}
-    >
-      <option>Select...</option>
-      {stateAbbreviations.map((st, i) => (
-        <option key={i} value={st}>
-          {st}
-        </option>
-      ))}
-    </Form.Control>
+    <Fragment>
+      <Form.Control
+        onBlur={validateForm}
+        isInvalid={error}
+        as="select"
+        value={selection}
+        name="state"
+        onChange={(e) => onChange(e)}
+      >
+        <option>Select...</option>
+        {stateAbbreviations.map((st, i) => (
+          <option key={i} value={st}>
+            {st}
+          </option>
+        ))}
+      </Form.Control>
+      <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
+    </Fragment>
   );
 };
 

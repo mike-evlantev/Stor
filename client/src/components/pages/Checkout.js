@@ -575,14 +575,11 @@ const Checkout = () => {
               <Form.Group as={Col} lg={2}>
                 <Form.Label>State</Form.Label>
                 <StateSelect
-                  onBlur={validateForm}
-                  isInvalid={errors.state}
+                  validateForm={validateForm}
+                  error={errors.state}
                   selectedState={currentUser.state}
                   updateProfileState={handleProfileChange}
                 />
-                <Form.Control.Feedback type="invalid">
-                  {errors.state}
-                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group as={Col} lg={3}>
