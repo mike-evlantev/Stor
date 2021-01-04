@@ -38,6 +38,19 @@ const Checkout = () => {
     password: "",
   };
 
+  const errorsInitialState = {
+    firstName: "",
+    lastName: "",
+    address1: "",
+    address2: "",
+    city: "",
+    state: "",
+    zip: "",
+    email: "",
+    phone: "",
+    password: "",
+  };
+
   const paymentInitialState = {
     creditCardNumber: "",
     expirationDate: "",
@@ -51,12 +64,14 @@ const Checkout = () => {
   };
 
   const securityCodeTooltipMessage =
-    "Typically a three-digit number on the back of the card. American Express cards have a four digit number on the front of the card to the right.";
+    "Typically a three-digit number on the back of the card. American Express cards have a four-digit number on the front of the card to the right.";
 
   const dispatch = useDispatch();
 
   const [bagItemsVisible, setBagItemsVisible] = useState(true);
   const [currentUser, setCurrentUser] = useState(currentUserInitialState);
+  const [errors, setErrors] = useState(errorsInitialState);
+  const [formValid, setFormValid] = useState(true);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [payment, setPayment] = useState(paymentInitialState);
@@ -147,6 +162,189 @@ const Checkout = () => {
     } else {
       setPayment(currentUser);
     }
+  };
+
+  const validateForm = () => {
+    let valid = true;
+    const {
+      firstName,
+      lastName,
+      address1,
+      address2,
+      city,
+      state,
+      zip,
+      email,
+    } = currentUser;
+
+    if (!firstName) {
+      setErrors((prevState) => ({
+        ...prevState,
+        firstName: "First name is required",
+      }));
+      valid = false;
+    } else {
+      if (firstName.length > 100) {
+        setErrors((prevState) => ({
+          ...prevState,
+          firstName: "First name is too long",
+        }));
+        valid = false;
+      } else {
+        setErrors((prevState) => ({
+          ...prevState,
+          firstName: "",
+        }));
+      }
+    }
+
+    if (!lastName) {
+      setErrors((prevState) => ({
+        ...prevState,
+        lastName: "Last name is required",
+      }));
+      valid = false;
+    } else {
+      if (lastName.length > 100) {
+        setErrors((prevState) => ({
+          ...prevState,
+          lastName: "Last name is too long",
+        }));
+        valid = false;
+      } else {
+        setErrors((prevState) => ({
+          ...prevState,
+          lastName: "",
+        }));
+      }
+    }
+
+    if (!address1) {
+      setErrors((prevState) => ({
+        ...prevState,
+        address1: "Address is required",
+      }));
+      valid = false;
+    } else {
+      if (address1.length > 255) {
+        setErrors((prevState) => ({
+          ...prevState,
+          address1: "Address is too long",
+        }));
+        valid = false;
+      } else {
+        setErrors((prevState) => ({
+          ...prevState,
+          address1: "",
+        }));
+      }
+    }
+
+    if (address2.length > 255) {
+      setErrors((prevState) => ({
+        ...prevState,
+        address2: "Address is too long",
+      }));
+      valid = false;
+    } else {
+      setErrors((prevState) => ({
+        ...prevState,
+        address2: "",
+      }));
+    }
+
+    if (!city) {
+      setErrors((prevState) => ({
+        ...prevState,
+        city: "City is required",
+      }));
+      valid = false;
+    } else {
+      if (city.length > 255) {
+        setErrors((prevState) => ({
+          ...prevState,
+          city: "City is too long",
+        }));
+        valid = false;
+      } else {
+        setErrors((prevState) => ({
+          ...prevState,
+          city: "",
+        }));
+      }
+    }
+
+    if (!state) {
+      setErrors((prevState) => ({
+        ...prevState,
+        state: "State is required",
+      }));
+      valid = false;
+    } else {
+      setErrors((prevState) => ({
+        ...prevState,
+        state: "",
+      }));
+    }
+
+    if (!zip) {
+      setErrors((prevState) => ({
+        ...prevState,
+        zip: "Zip code is required",
+      }));
+      valid = false;
+    } else {
+      if (zip.length > 10) {
+        setErrors((prevState) => ({
+          ...prevState,
+          zip: "Valid zip code is required",
+        }));
+        valid = false;
+      } else {
+        setErrors((prevState) => ({
+          ...prevState,
+          zip: "",
+        }));
+      }
+    }
+
+    // anystring@anystring.anystring
+    const regexEmail = /\S+@\S+\.\S+/;
+    if (!regexEmail.test(email)) {
+      setErrors((prevState) => ({
+        ...prevState,
+        email: "Valid Email is required",
+      }));
+      valid = false;
+    } else {
+      setErrors((prevState) => ({
+        ...prevState,
+        email: "",
+      }));
+    }
+
+    // '1234567890', 1234567890, '(078)789-8908', '123-345-3456'
+    // const regexPhone = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    // if (!regexPhone.test(phone)) {
+    //   setErrors((prevState) => ({
+    //     ...prevState,
+    //     phone: "Valid Email is required",
+    //   }));
+    //   valid = false;
+    // } else {
+    //   setErrors((prevState) => ({
+    //     ...prevState,
+    //     phone: "",
+    //   }));
+    // }
+
+    setFormValid(valid);
+    return valid;
+  };
+
+  const handleGoToStep = (selectedStep) => {
+    const isValid = validateForm();
+    if (isValid) setStep(selectedStep);
   };
 
   const generateSkuCode = (min, max) => {
@@ -279,11 +477,16 @@ const Checkout = () => {
             <Form.Group>
               <Form.Label>Email address for notifications</Form.Label>
               <Form.Control
+                onBlur={validateForm}
+                isInvalid={errors.email}
                 type="email"
                 name="email"
                 placeholder={currentUser.email}
                 onChange={handleProfileChange}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.email}
+              </Form.Control.Feedback>
             </Form.Group>
           </Form>
         </ListGroup.Item>
@@ -302,63 +505,98 @@ const Checkout = () => {
               <Form.Group as={Col}>
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
+                  onBlur={validateForm}
+                  isInvalid={errors.firstName}
                   name="firstName"
                   placeholder={currentUser.firstName}
                   onChange={handleProfileChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.firstName}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
+                  onBlur={validateForm}
+                  isInvalid={errors.lastName}
                   name="lastName"
                   placeholder={currentUser.lastName}
                   onChange={handleProfileChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.lastName}
+                </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
             <Form.Row>
               <Form.Group as={Col}>
                 <Form.Label>Address</Form.Label>
                 <Form.Control
+                  onBlur={validateForm}
+                  isInvalid={errors.address1}
                   name="address1"
                   placeholder={currentUser.address1}
                   onChange={handleProfileChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.address1}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group as={Col} lg={4}>
                 <Form.Label>Address 2</Form.Label>
                 <Form.Control
+                  onBlur={validateForm}
+                  isInvalid={errors.address2}
                   name="address2"
                   placeholder={currentUser.address2}
                   onChange={handleProfileChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.address2}
+                </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
             <Form.Row>
               <Form.Group as={Col}>
                 <Form.Label>City</Form.Label>
                 <Form.Control
+                  onBlur={validateForm}
+                  isInvalid={errors.city}
                   name="city"
                   placeholder={currentUser.city}
                   onChange={handleProfileChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.city}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group as={Col} lg={2}>
                 <Form.Label>State</Form.Label>
                 <StateSelect
+                  onBlur={validateForm}
+                  isInvalid={errors.state}
                   selectedState={currentUser.state}
                   updateProfileState={handleProfileChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.state}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group as={Col} lg={3}>
                 <Form.Label>Zip</Form.Label>
                 <Form.Control
+                  onBlur={validateForm}
+                  isInvalid={errors.zip}
                   name="zip"
                   placeholder={currentUser.zip}
                   onChange={handleProfileChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.zip}
+                </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
           </Form>
@@ -420,9 +658,10 @@ const Checkout = () => {
         )}
         <div className="my-2 float-right">
           <Button
+            disabled={!formValid}
             variant="primary"
             className="my-2 float-right"
-            onClick={() => setStep(selectedStep)}
+            onClick={() => handleGoToStep(selectedStep)}
           >
             Go to next step
           </Button>
