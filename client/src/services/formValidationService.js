@@ -1,3 +1,11 @@
+// anystring@anystring.anystring
+const emailRegex = /\S+@\S+\.\S+/;
+// '1234567890', 1234567890, '(078)789-8908', '123-345-3456'
+const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+const letterRegex = /[a-zA-Z]/;
+// Minimum eight characters, at least one letter and one number:
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
 export const formValidationService = {
   validateFirstName(firstName) {
     let error = "";
@@ -60,36 +68,105 @@ export const formValidationService = {
   },
   validateEmail(email) {
     let error = "";
-    // anystring@anystring.anystring
-    const regex = /\S+@\S+\.\S+/;
-    if (!regex.test(email)) {
+    if (!emailRegex.test(email)) {
       error = "Valid Email is required";
     }
     return error;
   },
   validatePhone(phone) {
     let error = "";
-    // '1234567890', 1234567890, '(078)789-8908', '123-345-3456'
-    const regex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-    if (!regex.test(phone)) {
+    if (!phoneRegex.test(phone)) {
       error = "Valid Phone is required";
     }
     return error;
   },
   validatePassword(password) {
     let error = "";
-    // Minimum eight characters, at least one letter and one number:
-    //const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    const regExp = /[a-zA-Z]/;
     if (!password) {
       error = "Password is required";
     } else if (password.length < 8) {
       error = "Password must contain at least 8 characters";
     } else if (!isNaN(password)) {
       error = "Password must contain at least one number";
-    } else if (regExp.test(password)) {
+    } else if (letterRegex.test(password)) {
       error = "Password must contain at least one letter";
     }
+    return error;
+  },
+  validateField(key, value) {
+    let error = "";
+    console.log(`FVS Validating ${key}:${value}`);
+    switch (key) {
+      case "firstName":
+        if (!value) {
+          error = "First name is required";
+        } else if (value.length > 100) {
+          error = "First name is too long";
+        }
+        break;
+      case "lastName":
+        if (!value) {
+          error = "Last name is required";
+        } else if (value.length > 100) {
+          error = "Last name is too long";
+        }
+        break;
+      case "address1":
+        if (!value) {
+          error = "Address is required";
+        } else if (value.length > 255) {
+          error = "Address is too long";
+        }
+        break;
+      case "address2":
+        if (value.length > 255) {
+          error = "Address is too long";
+        }
+        break;
+      case "city":
+        if (!value) {
+          error = "City is required";
+        } else if (value.length > 100) {
+          error = "City is too long";
+        }
+        break;
+      case "state":
+        if (!value) {
+          error = "State is required";
+        }
+        break;
+      case "zip":
+        if (!value) {
+          error = "Zip code is required";
+        } else if (value.length > 10) {
+          error = "Valid zip code is required";
+        }
+        break;
+      case "phone":
+        if (!phoneRegex.test(value)) {
+          error = "Valid Phone is required";
+        }
+        break;
+      case "email":
+        if (!emailRegex.test(value)) {
+          error = "Valid Email is required";
+        }
+        break;
+      case "password":
+        if (!value) {
+          error = "Password is required";
+        } else if (value.length < 8) {
+          error = "Password must contain at least 8 characters";
+        } else if (!isNaN(value)) {
+          error = "Password must contain at least one number";
+        } else if (letterRegex.test(value)) {
+          error = "Password must contain at least one letter";
+        }
+        break;
+      default:
+        break;
+    }
+    console.log(`FVS Validation result: ${error}`);
     return error;
   },
 };
