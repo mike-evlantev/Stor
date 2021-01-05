@@ -22,6 +22,7 @@ import StateSelect from "../StateSelect";
 import { Fragment } from "react";
 import Message from "../Message";
 import Loader from "../Loader";
+import { formValidationService } from "../../services/formValidationService";
 
 const Checkout = () => {
   const currentUserInitialState = {
@@ -177,166 +178,61 @@ const Checkout = () => {
       email,
     } = currentUser;
 
-    if (!firstName) {
-      setErrors((prevState) => ({
-        ...prevState,
-        firstName: "First name is required",
-      }));
-      valid = false;
-    } else {
-      if (firstName.length > 100) {
-        setErrors((prevState) => ({
-          ...prevState,
-          firstName: "First name is too long",
-        }));
-        valid = false;
-      } else {
-        setErrors((prevState) => ({
-          ...prevState,
-          firstName: "",
-        }));
-      }
-    }
+    const firstNameError = formValidationService.validateFirstName(firstName);
+    setErrors((prevState) => ({
+      ...prevState,
+      firstName: firstNameError,
+    }));
+    if (firstNameError) valid = false;
 
-    if (!lastName) {
-      setErrors((prevState) => ({
-        ...prevState,
-        lastName: "Last name is required",
-      }));
-      valid = false;
-    } else {
-      if (lastName.length > 100) {
-        setErrors((prevState) => ({
-          ...prevState,
-          lastName: "Last name is too long",
-        }));
-        valid = false;
-      } else {
-        setErrors((prevState) => ({
-          ...prevState,
-          lastName: "",
-        }));
-      }
-    }
+    const lastNameError = formValidationService.validateLastName(lastName);
+    setErrors((prevState) => ({
+      ...prevState,
+      lastName: lastNameError,
+    }));
+    if (lastNameError) valid = false;
 
-    if (!address1) {
-      setErrors((prevState) => ({
-        ...prevState,
-        address1: "Address is required",
-      }));
-      valid = false;
-    } else {
-      if (address1.length > 255) {
-        setErrors((prevState) => ({
-          ...prevState,
-          address1: "Address is too long",
-        }));
-        valid = false;
-      } else {
-        setErrors((prevState) => ({
-          ...prevState,
-          address1: "",
-        }));
-      }
-    }
+    const address1Error = formValidationService.validateAddress1(address1);
+    setErrors((prevState) => ({
+      ...prevState,
+      address1: address1Error,
+    }));
+    if (address1Error) valid = false;
 
-    if (address2.length > 255) {
-      setErrors((prevState) => ({
-        ...prevState,
-        address2: "Address is too long",
-      }));
-      valid = false;
-    } else {
-      setErrors((prevState) => ({
-        ...prevState,
-        address2: "",
-      }));
-    }
+    const address2Error = formValidationService.validateAddress2(address2);
+    setErrors((prevState) => ({
+      ...prevState,
+      address2: address2Error,
+    }));
+    if (address2Error) valid = false;
 
-    if (!city) {
-      setErrors((prevState) => ({
-        ...prevState,
-        city: "City is required",
-      }));
-      valid = false;
-    } else {
-      if (city.length > 255) {
-        setErrors((prevState) => ({
-          ...prevState,
-          city: "City is too long",
-        }));
-        valid = false;
-      } else {
-        setErrors((prevState) => ({
-          ...prevState,
-          city: "",
-        }));
-      }
-    }
+    const cityError = formValidationService.validateCity(city);
+    setErrors((prevState) => ({
+      ...prevState,
+      city: cityError,
+    }));
+    if (cityError) valid = false;
 
-    if (!state) {
-      setErrors((prevState) => ({
-        ...prevState,
-        state: "State is required",
-      }));
-      valid = false;
-    } else {
-      setErrors((prevState) => ({
-        ...prevState,
-        state: "",
-      }));
-    }
+    const stateError = formValidationService.validateState(state);
+    setErrors((prevState) => ({
+      ...prevState,
+      state: stateError,
+    }));
+    if (stateError) valid = false;
 
-    if (!zip) {
-      setErrors((prevState) => ({
-        ...prevState,
-        zip: "Zip code is required",
-      }));
-      valid = false;
-    } else {
-      if (zip.length > 10) {
-        setErrors((prevState) => ({
-          ...prevState,
-          zip: "Valid zip code is required",
-        }));
-        valid = false;
-      } else {
-        setErrors((prevState) => ({
-          ...prevState,
-          zip: "",
-        }));
-      }
-    }
+    const zipError = formValidationService.validateZip(zip);
+    setErrors((prevState) => ({
+      ...prevState,
+      zip: zipError,
+    }));
+    if (zipError) valid = false;
 
-    // anystring@anystring.anystring
-    const regexEmail = /\S+@\S+\.\S+/;
-    if (!regexEmail.test(email)) {
-      setErrors((prevState) => ({
-        ...prevState,
-        email: "Valid Email is required",
-      }));
-      valid = false;
-    } else {
-      setErrors((prevState) => ({
-        ...prevState,
-        email: "",
-      }));
-    }
-
-    // '1234567890', 1234567890, '(078)789-8908', '123-345-3456'
-    // const regexPhone = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-    // if (!regexPhone.test(phone)) {
-    //   setErrors((prevState) => ({
-    //     ...prevState,
-    //     phone: "Valid Email is required",
-    //   }));
-    //   valid = false;
-    // } else {
-    //   setErrors((prevState) => ({
-    //     ...prevState,
-    //     phone: "",
-    //   }));
-    // }
+    const emailError = formValidationService.validateEmail(email);
+    setErrors((prevState) => ({
+      ...prevState,
+      email: emailError,
+    }));
+    if (emailError) valid = false;
 
     setFormValid(valid);
     return valid;
@@ -388,6 +284,14 @@ const Checkout = () => {
 
     // eslint-disable-next-line
   }, [isAuthenticated, loggedInUser, step]);
+
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(
+  //     () => validateForm(),
+  //     1000
+  //   );
+  //   return () => clearTimeout(timeoutId);
+  // }, [currentUser]);
 
   const renderCheckout = () => {
     switch (step) {
