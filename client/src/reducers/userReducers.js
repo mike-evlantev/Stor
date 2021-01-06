@@ -30,11 +30,11 @@ const initialLoginState = {
   loggedInUser: null,
 };
 
-const initialProfileState = {
-  userProfile: {},
-  getProfileLoading: false,
-  getProfileError: null,
-};
+// const initialProfileState = {
+//   userProfile: {},
+//   getProfileLoading: false,
+//   getProfileError: null,
+// };
 
 const initialUpdateProfileState = {
   updateProfileLoading: false,
@@ -92,31 +92,31 @@ export const loginReducer = (state = initialLoginState, action) => {
   }
 };
 
-export const getProfileReducer = (state = initialProfileState, action) => {
-  switch (action.type) {
-    case GET_PROFILE_REQUEST:
-      return { ...state, getProfileLoading: true };
-    case GET_PROFILE_SUCCESS:
-      return {
-        ...state,
-        getProfileLoading: false,
-        userProfile: action.payload,
-      };
-    case GET_PROFILE_FAIL:
-      return {
-        ...state,
-        getProfileLoading: false,
-        getProfileError: action.payload,
-      };
-    case CLEAR_PROFILE:
-      return {
-        ...state,
-        userProfile: {},
-      };
-    default:
-      return state;
-  }
-};
+// export const getProfileReducer = (state = initialProfileState, action) => {
+//   switch (action.type) {
+//     case GET_PROFILE_REQUEST:
+//       return { ...state, getProfileLoading: true };
+//     case GET_PROFILE_SUCCESS:
+//       return {
+//         ...state,
+//         getProfileLoading: false,
+//         userProfile: action.payload,
+//       };
+//     case GET_PROFILE_FAIL:
+//       return {
+//         ...state,
+//         getProfileLoading: false,
+//         getProfileError: action.payload,
+//       };
+//     case CLEAR_PROFILE:
+//       return {
+//         ...state,
+//         userProfile: {},
+//       };
+//     default:
+//       return state;
+//   }
+// };
 
 export const updateProfileReducer = (
   state = initialUpdateProfileState,
