@@ -8,7 +8,7 @@ import {
 import { bagReducer } from "./reducers/bagReducers.js";
 import { submitOrderReducer } from "./reducers/orderReducers.js";
 import {
-  getProfileReducer,
+  //getProfileReducer,
   loginReducer,
   registerReducer,
   updateCurrentUserReducer,
@@ -21,7 +21,7 @@ const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
   register: registerReducer,
-  getProfile: getProfileReducer,
+  //getProfile: getProfileReducer,
   updateProfile: updateProfileReducer,
   currentUser: updateCurrentUserReducer,
   submitOrder: submitOrderReducer,
@@ -46,12 +46,16 @@ const tax = calcTax(subtotal);
 const total = subtotal + shipping + tax;
 
 const initialState = {
+  loading: false,
+  error: null,
+  loggedInUser: loggedInUserFromStorage,
   auth: {
     isAuthenticated: loggedInUserFromStorage ? true : false,
     loggedInUser: loggedInUserFromStorage,
     loginError: null,
     loginLoading: false,
   },
+  currentUser: {},
   bag: {
     bagItems: bagItemsFromLocalStorage,
     subtotal: subtotal,
