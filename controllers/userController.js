@@ -94,7 +94,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 // @access      Private
 export const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findOne(req.user._id);
-  if (user) {
+  if (user && req.body._id === req.user._id) {
     const {
       firstName,
       middleName,
@@ -120,7 +120,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.state = state || user.state;
     user.zip = zip || user.zip;
     user.phone = phone || user.phone;
-    if (password) user.password = password || user.password;
+    // if (password) user.password = password || user.password;
 
     const updatedUser = await user.save();
     res.json({
