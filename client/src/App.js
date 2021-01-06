@@ -16,7 +16,7 @@ import Checkout from "./components/pages/Checkout.js";
 
 const App = () => {
   const authState = useSelector((state) => state.auth);
-  const { isAuthenticated } = authState;
+  const { isAuthenticated, loggedInUser } = authState;
 
   return (
     <Router>
@@ -35,7 +35,7 @@ const App = () => {
               !isAuthenticated ? (
                 <Redirect to="/login" />
               ) : (
-                <Profile {...props} />
+                <Profile {...props} loggedInUser={loggedInUser} />
               )
             }
           />

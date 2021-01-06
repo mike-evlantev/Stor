@@ -7,7 +7,7 @@ import Message from "../Message.js";
 import Loader from "../Loader.js";
 import { formValidationService } from "../../services/formValidationService.js";
 
-const Profile = () => {
+const Profile = ({ loggedInUser }) => {
   const errorsInitialState = {
     firstName: "",
     lastName: "",
@@ -24,12 +24,13 @@ const Profile = () => {
   const dispatch = useDispatch();
   const [errors, setErrors] = useState(errorsInitialState);
   const [formValid, setFormValid] = useState(true);
-  const [updatedProfile, setUpdatedProfile] = useState({});
+  // const [updatedProfile, setUpdatedProfile] = useState({});
+  const [profile, setProfile] = useState(loggedInUser);
 
-  const { loggedInUser } = useSelector((state) => state.auth);
-  const { userProfile, getProfileLoading, getProfileError } = useSelector(
-    (state) => state.getProfile
-  );
+  //const { loggedInUser } = useSelector((state) => state.auth);
+  // const { userProfile, getProfileLoading, getProfileError } = useSelector(
+  //   (state) => state.getProfile
+  // );
   const updateProfileState = useSelector((state) => state.updateProfile);
   const {
     updateProfileLoading,
@@ -37,11 +38,11 @@ const Profile = () => {
     updateProfileError,
   } = updateProfileState;
 
-  useEffect(() => {
-    dispatch(getProfile(loggedInUser._id));
-    setUpdatedProfile(userProfile);
-    // eslint-disable-next-line
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getProfile(loggedInUser._id));
+  //   setUpdatedProfile(userProfile);
+  //   // eslint-disable-next-line
+  // }, []);
 
   const validateForm = () => {
     let valid = true;
@@ -56,8 +57,8 @@ const Profile = () => {
     //   phone,
     // } = userProfile;
 
-    Object.keys(userProfile).map((key) => {
-      const value = userProfile[key];
+    Object.keys(profile).map((key) => {
+      const value = profile[key];
       const error = formValidationService.validateField(key, value);
       setErrors((prevState) => ({
         ...prevState,
@@ -131,7 +132,7 @@ const Profile = () => {
     e.preventDefault();
     const { name, value } = e.target;
 
-    setUpdatedProfile((prevState) => ({
+    setProfile((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -139,13 +140,12 @@ const Profile = () => {
 
   const handleUpdateProfile = (e) => {
     e.preventDefault();
-    dispatch(updateProfile(updatedProfile));
+    dispatch(updateProfile(profile));
   };
 
   return (
     <Container className="d-flex flex-column py-5">
       {/* TODO: move Message to app level */}
-      {getProfileError && <Message variant="danger">{getProfileError}</Message>}
       {updateProfileError && (
         <Message variant="danger">{updateProfileError}</Message>
       )}
@@ -153,8 +153,8 @@ const Profile = () => {
         <Message variant="success">Profile updated successfully</Message>
       )}
       {/* TODO: move Loader to app level */}
-      {(getProfileLoading || updateProfileLoading) && <Loader />}
-      {!getProfileLoading && !updateProfileLoading && (
+      {updateProfileLoading && <Loader />}
+      {!updateProfileLoading && (
         <Row className="d-flex justify-content-center p-5">
           <Col md={8}>
             <Form onSubmit={handleUpdateProfile}>
@@ -164,7 +164,7 @@ const Profile = () => {
                   <Form.Control
                     type="email"
                     name="email"
-                    placeholder={userProfile.email}
+                    placeholder={profile.email}
                     disabled
                   />
                 </Form.Group>
@@ -176,7 +176,7 @@ const Profile = () => {
                     onBlur={validateForm}
                     isInvalid={errors.firstName}
                     name="firstName"
-                    placeholder={userProfile.firstName}
+                    placeholder={profile.firstName}
                     onChange={handleProfileChange}
                   />
                   <Form.Control.Feedback type="invalid">
@@ -188,7 +188,7 @@ const Profile = () => {
                   <Form.Label>Middle Name</Form.Label>
                   <Form.Control
                     name="middleName"
-                    placeholder={userProfile.middleName}
+                    placeholder={profile.middleName}
                     onChange={handleProfileChange}
                   />
                 </Form.Group>
@@ -199,7 +199,7 @@ const Profile = () => {
                     onBlur={validateForm}
                     isInvalid={errors.lastName}
                     name="lastName"
-                    placeholder={userProfile.lastName}
+                    placeholder={profile.lastName}
                     onChange={handleProfileChange}
                   />
                   <Form.Control.Feedback type="invalid">
@@ -214,7 +214,7 @@ const Profile = () => {
                     onBlur={validateForm}
                     isInvalid={errors.address1}
                     name="address1"
-                    placeholder={userProfile.address1}
+                    placeholder={profile.address1}
                     onChange={handleProfileChange}
                   />
                   <Form.Control.Feedback type="invalid">
@@ -228,7 +228,7 @@ const Profile = () => {
                     name="address2"
                     onBlur={validateForm}
                     isInvalid={errors.address2}
-                    placeholder={userProfile.address2}
+                    placeholder={profile.address2}
                     onChange={handleProfileChange}
                   />
                   <Form.Control.Feedback type="invalid">
@@ -243,7 +243,7 @@ const Profile = () => {
                     onBlur={validateForm}
                     isInvalid={errors.city}
                     name="city"
-                    placeholder={userProfile.city}
+                    placeholder={profile.city}
                     onChange={handleProfileChange}
                   />
                   <Form.Control.Feedback type="invalid">
@@ -256,7 +256,7 @@ const Profile = () => {
                   <StateSelect
                     validateForm={validateForm}
                     error={errors.state}
-                    selectedState={userProfile.state}
+                    selectedState={profile.state}
                     updateProfileState={handleProfileChange}
                   />
                 </Form.Group>
@@ -267,7 +267,7 @@ const Profile = () => {
                     onBlur={validateForm}
                     isInvalid={errors.zip}
                     name="zip"
-                    placeholder={userProfile.zip}
+                    placeholder={profile.zip}
                     onChange={handleProfileChange}
                   />
                   <Form.Control.Feedback type="invalid">
@@ -284,7 +284,7 @@ const Profile = () => {
                     isInvalid={errors.phone}
                     type="tel"
                     name="phone"
-                    placeholder={userProfile.phone}
+                    placeholder={profile.phone}
                     onChange={handleProfileChange}
                   />
                   <Form.Control.Feedback type="invalid">
