@@ -5,26 +5,27 @@ import {
 } from "../constants/orderConstants.js";
 
 const initialOrderSubmitState = {
-  orderSubmitLoading: false,
-  orderSubmitSuccess: false,
-  orderSubmitError: null,
+  loading: false,
+  success: false,
+  error: null,
 };
 
 export const submitOrderReducer = (state = initialOrderSubmitState, action) => {
   switch (action.type) {
     case ORDER_SUBMIT_REQUEST:
-      return { ...state, orderSubmitLoading: true };
+      return { ...state, loading: true };
     case ORDER_SUBMIT_SUCCESS:
       return {
         ...state,
-        orderSubmitLoading: false,
-        orderSubmitSuccess: true,
+        loading: false,
+        success: true,
+        error: null,
       };
     case ORDER_SUBMIT_FAIL:
       return {
         ...state,
-        orderSubmitLoading: false,
-        orderSubmitError: action.payload,
+        loading: false,
+        error: action.payload,
       };
     default:
       return state;
