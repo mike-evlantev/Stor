@@ -1,26 +1,21 @@
 import axios from "axios";
+import { setMessage } from "./messageActions.js";
 import {
-  REGISTER_REQUEST,
-  REGISTER_SUCCESS,
-  REGISTER_FAIL,
-  LOGIN_REQUEST,
-  LOGIN_SUCCESS,
-  LOGIN_FAIL,
-  LOGOUT,
-  UPDATE_PROFILE_REQUEST,
-  UPDATE_PROFILE_SUCCESS,
-  UPDATE_PROFILE_FAIL,
-  GET_PROFILE_REQUEST,
-  GET_PROFILE_SUCCESS,
-  GET_PROFILE_FAIL,
-  CLEAR_PROFILE,
-  UPDATE_CURRENT_USER,
-  CLEAR_CURRENT_USER,
+  REGISTER_USER_REQUEST,
+  REGISTER_USER_SUCCESS,
+  REGISTER_USER_FAIL,
+  LOGIN_USER_REQUEST,
+  LOGIN_USER_SUCCESS,
+  LOGIN_USER_FAIL,
+  LOGOUT_USER,
+  UPDATE_USER_REQUEST,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_FAIL,
 } from "../constants/userConstants.js";
 
 export const register = (email, password) => async (dispatch) => {
   try {
-    dispatch({ type: REGISTER_REQUEST });
+    dispatch({ type: REGISTER_USER_REQUEST });
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -34,43 +29,27 @@ export const register = (email, password) => async (dispatch) => {
     );
 
     dispatch({
-      type: REGISTER_SUCCESS,
-      payload: data,
-    });
-
-    // also log in user on registration
-    dispatch({
-      type: LOGIN_SUCCESS,
-      payload: data,
-    });
-
-    // update profile with logged in user - used in /Profile
-    dispatch({
-      type: GET_PROFILE_SUCCESS,
-      payload: data,
-    });
-
-    // set current user - aims to capture a guest or registered user
-    dispatch({
-      type: UPDATE_CURRENT_USER,
+      type: REGISTER_USER_SUCCESS,
       payload: data,
     });
 
     localStorage.setItem("loggedInUser", JSON.stringify(data));
   } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch(setMessage(message, "danger"));
     dispatch({
-      type: REGISTER_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
+      type: REGISTER_USER_FAIL,
+      payload: message,
     });
   }
 };
 
 export const login = (email, password) => async (dispatch) => {
   try {
-    dispatch({ type: LOGIN_REQUEST });
+    dispatch({ type: LOGIN_USER_REQUEST });
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -84,83 +63,38 @@ export const login = (email, password) => async (dispatch) => {
     );
 
     dispatch({
-      type: LOGIN_SUCCESS,
-      payload: data,
-    });
-
-    // update profile with logged in user
-    dispatch({
-      type: GET_PROFILE_SUCCESS,
-      payload: data,
-    });
-
-    // set current user - aims to capture a guest or registered user
-    dispatch({
-      type: UPDATE_CURRENT_USER,
+      type: LOGIN_USER_SUCCESS,
       payload: data,
     });
 
     localStorage.setItem("loggedInUser", JSON.stringify(data));
   } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch(setMessage(message, "danger"));
     dispatch({
-      type: LOGIN_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
+      type: LOGIN_USER_FAIL,
+      payload: message,
     });
   }
 };
 
 export const logout = () => (dispatch) => {
   localStorage.removeItem("loggedInUser");
-  dispatch({ type: LOGOUT });
-  dispatch({ type: CLEAR_PROFILE });
-  dispatch({ type: CLEAR_CURRENT_USER });
+  dispatch({ type: LOGOUT_USER });
 };
 
-export const getProfile = (id) => async (dispatch, getState) => {
+export const updateUser = (userData) => async (dispatch, getState) => {
   try {
     const {
       auth: { loggedInUser },
     } = getState();
-    const isLoggedInUser = loggedInUser._id === id;
-    if (!isLoggedInUser) throw new Error("Failed to get user profile");
-
-    dispatch({ type: GET_PROFILE_REQUEST });
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${loggedInUser.token}`,
-      },
-    };
-
-    const { data } = await axios.get("/api/users/profile", config);
-
-    dispatch({
-      type: GET_PROFILE_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: GET_PROFILE_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
-
-export const updateProfile = (userProfile) => async (dispatch, getState) => {
-  try {
-    const {
-      auth: { loggedInUser },
-    } = getState();
-    const isLoggedInUser = loggedInUser._id === userProfile._id;
+    const isLoggedInUser = loggedInUser._id === userData._id;
     if (!isLoggedInUser) throw new Error("Failed to update user profile");
 
-    dispatch({ type: UPDATE_PROFILE_REQUEST });
+    dispatch({ type: UPDATE_USER_REQUEST });
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -168,38 +102,26 @@ export const updateProfile = (userProfile) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.put("/api/users/profile", userProfile, config);
+    const { data } = await axios.put("/api/users/update", userData, config);
 
     dispatch({
-      type: UPDATE_PROFILE_SUCCESS,
-      payload: data,
+      type: UPDATE_USER_SUCCESS,
+      payload: { ...data, token: loggedInUser.token },
     });
 
-    // update profile as well
-    dispatch({
-      type: GET_PROFILE_SUCCESS,
-      payload: data,
-    });
-
-    // set current user - aims to capture a guest or registered user
-    dispatch({
-      type: UPDATE_CURRENT_USER,
-      payload: data,
-    });
+    localStorage.setItem(
+      "loggedInUser",
+      JSON.stringify({ ...data, token: loggedInUser.token })
+    );
   } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch(setMessage(message, "danger"));
     dispatch({
-      type: UPDATE_PROFILE_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
+      type: UPDATE_USER_FAIL,
+      payload: message,
     });
   }
-};
-
-export const updateCurrentUser = (userData) => async (dispatch) => {
-  dispatch({
-    type: UPDATE_CURRENT_USER,
-    payload: userData,
-  });
 };

@@ -1,159 +1,60 @@
 import {
-  REGISTER_REQUEST,
-  REGISTER_SUCCESS,
-  REGISTER_FAIL,
-  LOGIN_REQUEST,
-  LOGIN_SUCCESS,
-  LOGIN_FAIL,
-  LOGOUT,
-  UPDATE_PROFILE_REQUEST,
-  UPDATE_PROFILE_SUCCESS,
-  UPDATE_PROFILE_FAIL,
-  GET_PROFILE_SUCCESS,
-  GET_PROFILE_REQUEST,
-  GET_PROFILE_FAIL,
-  CLEAR_PROFILE,
-  UPDATE_CURRENT_USER,
-  CLEAR_CURRENT_USER,
+  REGISTER_USER_REQUEST,
+  REGISTER_USER_SUCCESS,
+  REGISTER_USER_FAIL,
+  LOGIN_USER_REQUEST,
+  LOGIN_USER_SUCCESS,
+  LOGIN_USER_FAIL,
+  LOGOUT_USER,
+  UPDATE_USER_REQUEST,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_FAIL,
 } from "../constants/userConstants.js";
 
-const initialRegisterState = {
-  registerLoading: false,
-  registerError: null,
-  userToRegister: null,
+const initialAuthState = {
+  loading: false,
+  error: null,
+  success: false,
 };
 
-const initialLoginState = {
-  isAuthenticated: false,
-  loginLoading: false,
-  loginError: null,
-  loggedInUser: null,
-};
-
-// const initialProfileState = {
-//   userProfile: {},
-//   getProfileLoading: false,
-//   getProfileError: null,
-// };
-
-const initialUpdateProfileState = {
-  updateProfileLoading: false,
-  updateProfileError: null,
-};
-
-export const registerReducer = (state = initialRegisterState, action) => {
+export const authReducer = (state = initialAuthState, action) => {
   switch (action.type) {
-    case REGISTER_REQUEST:
-      return { ...state, registerLoading: true };
-    case REGISTER_SUCCESS:
+    case REGISTER_USER_REQUEST:
+    case LOGIN_USER_REQUEST:
+    case UPDATE_USER_REQUEST:
+      return { ...state, loading: true };
+    case REGISTER_USER_SUCCESS:
+    case LOGIN_USER_SUCCESS:
+    case UPDATE_USER_SUCCESS:
       return {
         ...state,
-        registerLoading: false,
-        userToRegister: action.payload,
-      };
-    case REGISTER_FAIL:
-      return {
-        ...state,
-        registerLoading: false,
-        registerError: action.payload,
-      };
-    default:
-      return state;
-  }
-};
-
-export const loginReducer = (state = initialLoginState, action) => {
-  switch (action.type) {
-    case LOGIN_REQUEST:
-      return { ...state, loginLoading: true };
-    case LOGIN_SUCCESS:
-      return {
-        ...state,
-        loginLoading: false,
+        loading: false,
         loggedInUser: action.payload,
         isAuthenticated: true,
+        success: true,
+        error: null,
       };
-    case LOGIN_FAIL:
+    case REGISTER_USER_FAIL:
+    case LOGIN_USER_FAIL:
       return {
         ...state,
-        loginLoading: false,
-        loginError: action.payload,
+        loading: false,
+        error: action.payload,
         isAuthenticated: false,
       };
-    case LOGOUT:
+    case UPDATE_USER_FAIL:
       return {
         ...state,
-        loginLoading: false,
+        loading: false,
+        error: action.payload,
+      };
+    case LOGOUT_USER:
+      return {
+        ...state,
+        loading: false,
         loggedInUser: null,
         isAuthenticated: false,
-      };
-    default:
-      return state;
-  }
-};
-
-// export const getProfileReducer = (state = initialProfileState, action) => {
-//   switch (action.type) {
-//     case GET_PROFILE_REQUEST:
-//       return { ...state, getProfileLoading: true };
-//     case GET_PROFILE_SUCCESS:
-//       return {
-//         ...state,
-//         getProfileLoading: false,
-//         userProfile: action.payload,
-//       };
-//     case GET_PROFILE_FAIL:
-//       return {
-//         ...state,
-//         getProfileLoading: false,
-//         getProfileError: action.payload,
-//       };
-//     case CLEAR_PROFILE:
-//       return {
-//         ...state,
-//         userProfile: {},
-//       };
-//     default:
-//       return state;
-//   }
-// };
-
-export const updateProfileReducer = (
-  state = initialUpdateProfileState,
-  action
-) => {
-  switch (action.type) {
-    case UPDATE_PROFILE_REQUEST:
-      return { ...state, updateProfileLoading: true };
-    case UPDATE_PROFILE_SUCCESS:
-      return {
-        ...state,
-        updateProfileLoading: false,
-        updateProfileSuccess: true,
-      };
-    case UPDATE_PROFILE_FAIL:
-      return {
-        ...state,
-        updateProfileLoading: false,
-        updateProfileSuccess: false,
-        updateProfileError: action.payload,
-      };
-    default:
-      return state;
-  }
-};
-
-export const updateCurrentUserReducer = (state = {}, action) => {
-  switch (action.type) {
-    case UPDATE_CURRENT_USER:
-      return {
-        ...state,
-        user: action.payload,
-      };
-    case CLEAR_CURRENT_USER:
-      return {
-        ...state,
-        user: {},
+        error: null,
       };
     default:
       return state;
