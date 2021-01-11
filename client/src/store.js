@@ -5,25 +5,17 @@ import {
   productListReducer,
   productDetailsReducer,
 } from "./reducers/productReducers.js";
+import { authReducer } from "./reducers/userReducers.js";
 import { bagReducer } from "./reducers/bagReducers.js";
+import { messageReducer } from "./reducers/messageReducers.js";
 import { submitOrderReducer } from "./reducers/orderReducers.js";
-import {
-  //getProfileReducer,
-  loginReducer,
-  registerReducer,
-  updateCurrentUserReducer,
-  updateProfileReducer,
-} from "./reducers/userReducers.js";
 
 const reducer = combineReducers({
-  auth: loginReducer,
+  auth: authReducer,
   bag: bagReducer,
+  messages: messageReducer,
   productList: productListReducer,
   productDetails: productDetailsReducer,
-  register: registerReducer,
-  //getProfile: getProfileReducer,
-  updateProfile: updateProfileReducer,
-  currentUser: updateCurrentUserReducer,
   submitOrder: submitOrderReducer,
 });
 
@@ -46,26 +38,21 @@ const tax = calcTax(subtotal);
 const total = subtotal + shipping + tax;
 
 const initialState = {
-  loading: false,
-  error: null,
-  loggedInUser: loggedInUserFromStorage,
   auth: {
-    isAuthenticated: loggedInUserFromStorage ? true : false,
-    loggedInUser: loggedInUserFromStorage,
-    loginError: null,
-    loginLoading: false,
+    isAuthenticated: loggedInUserFromStorage?.token ? true : false,
+    loggedInUser: loggedInUserFromStorage?.token
+      ? loggedInUserFromStorage
+      : null,
+    loading: false,
+    error: null,
+    success: false,
   },
-  currentUser: {},
   bag: {
     bagItems: bagItemsFromLocalStorage,
     subtotal: subtotal,
     shipping: shipping,
     tax: tax,
     total: total,
-  },
-  register: {
-    registerError: null,
-    registerLoading: false,
   },
 };
 const middleware = [thunk];
