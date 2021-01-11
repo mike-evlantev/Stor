@@ -15,7 +15,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import Rating from "../Rating.js";
 import Loader from "../Loader.js";
-import Message from "../Message.js";
 import QtySelect from "../QtySelect.js";
 import { addToBag } from "../../actions/bagActions.js";
 import { getProductDetails } from "../../actions/productActions.js";
@@ -25,7 +24,7 @@ const Product = ({ history, match }) => {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const productDetails = useSelector((state) => state.productDetails); // bring in the product details part of the state
-  const { loading, error, product } = productDetails;
+  const { loading, product } = productDetails;
   // runs as soon as component loads
   useEffect(() => {
     dispatch(getProductDetails(match.params.id)); // calls api
@@ -63,8 +62,6 @@ const Product = ({ history, match }) => {
       </Link>
       {loading ? (
         <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
       ) : (
         <Row>
           <Col md={6}>

@@ -20,7 +20,6 @@ import { updateShipping } from "../../actions/bagActions";
 import { createOrder } from "../../actions/orderActions";
 import StateSelect from "../StateSelect";
 import { Fragment } from "react";
-import Message from "../Message";
 import Loader from "../Loader";
 import { formValidationService } from "../../services/formValidationService";
 
@@ -81,16 +80,13 @@ const Checkout = () => {
   const [signInVisible, setSignInVisible] = useState(false);
   const [step, setStep] = useState(1);
 
-  const authState = useSelector((state) => state.auth);
-  const { isAuthenticated, loggedInUser, loginError, loginLoading } = authState;
+  const { isAuthenticated, loggedInUser, loading: authLoading } = useSelector(
+    (state) => state.auth
+  );
   const bag = useSelector((state) => state.bag);
   const { bagItems, subtotal, shipping, tax, total } = bag;
   const submitOrder = useSelector((state) => state.submitOrder);
-  const {
-    orderSubmitLoading,
-    orderSubmitSuccess,
-    orderSubmitError,
-  } = submitOrder;
+  const { loading: orderSubmitLoading } = submitOrder;
 
   const shippingOptions = [
     {
@@ -349,7 +345,7 @@ const Checkout = () => {
                 variant="dark"
                 type="submit"
                 className="btn btn-block"
-                disabled={loginLoading}
+                disabled={authLoading}
               >
                 Sign In
               </Button>
@@ -900,12 +896,8 @@ const Checkout = () => {
 
   return (
     <Container className="d-flex flex-column py-5">
-      {loginLoading || orderSubmitLoading ? (
-        // TODO: move Loader to app level
+      {authLoading || orderSubmitLoading ? (
         <Loader />
-      ) : loginError || orderSubmitError ? (
-        // TODO: move Message to app level
-        <Message variant="danger">{loginError + orderSubmitError}</Message>
       ) : (
         <Fragment>
           <Row className="py-1 mx-auto text-center">
