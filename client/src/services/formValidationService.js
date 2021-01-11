@@ -1,10 +1,10 @@
-// anystring@anystring.anystring
-const emailRegex = /\S+@\S+\.\S+/;
-// '1234567890', 1234567890, '(078)789-8908', '123-345-3456'
-const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-const letterRegex = /[a-zA-Z]/;
-// Minimum eight characters, at least one letter and one number:
-const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+const regex = {
+  email: /\S+@\S+\.\S+/, // anystring@anystring.anystring
+  phone: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/, // '1234567890', 1234567890, '(078)789-8908', '123-345-3456'
+  containsNumber: /\d+/,
+  containsAlphabet: /[a-zA-Z]/,
+  password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, // Minimum eight characters, at least one letter and one number:
+};
 
 export const formValidationService = {
   validateFirstName(firstName) {
@@ -68,14 +68,14 @@ export const formValidationService = {
   },
   validateEmail(email) {
     let error = "";
-    if (!emailRegex.test(email)) {
+    if (!regex.email.test(email)) {
       error = "Valid Email is required";
     }
     return error;
   },
   validatePhone(phone) {
     let error = "";
-    if (!phoneRegex.test(phone)) {
+    if (!regex.phone.test(phone)) {
       error = "Valid Phone is required";
     }
     return error;
@@ -86,9 +86,9 @@ export const formValidationService = {
       error = "Password is required";
     } else if (password.length < 8) {
       error = "Password must contain at least 8 characters";
-    } else if (!isNaN(password)) {
+    } else if (!regex.containsNumber.test(password)) {
       error = "Password must contain at least one number";
-    } else if (letterRegex.test(password)) {
+    } else if (!regex.containsAlphabet.test(password)) {
       error = "Password must contain at least one letter";
     }
     return error;
@@ -143,12 +143,12 @@ export const formValidationService = {
         }
         break;
       case "phone":
-        if (!phoneRegex.test(value)) {
+        if (!regex.phone.test(value)) {
           error = "Valid Phone is required";
         }
         break;
       case "email":
-        if (!emailRegex.test(value)) {
+        if (!regex.email.test(value)) {
           error = "Valid Email is required";
         }
         break;
@@ -157,9 +157,9 @@ export const formValidationService = {
           error = "Password is required";
         } else if (value.length < 8) {
           error = "Password must contain at least 8 characters";
-        } else if (!isNaN(value)) {
+        } else if (!regex.containsNumber.test(value)) {
           error = "Password must contain at least one number";
-        } else if (letterRegex.test(value)) {
+        } else if (!regex.containsAlphabet.test(value)) {
           error = "Password must contain at least one letter";
         }
         break;
