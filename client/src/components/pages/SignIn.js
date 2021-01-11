@@ -2,11 +2,22 @@ import React, { useState, useEffect, Fragment } from "react";
 import { Link } from "react-router-dom";
 import { Form, Button, Row, Col, Container, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import Message from "../Message.js";
 import Loader from "../Loader.js";
 import { login, register } from "../../actions/userActions";
+import { formValidationService } from "../../services/formValidationService.js";
 
 const SignIn = ({ history, location }) => {
+  const errorsInitialState = {
+    loginEmail: "",
+    loginPassword: "",
+    registerEmail: "",
+    registerPassword: "",
+  };
+
+  const [errors, setErrors] = useState(errorsInitialState);
+  const [loginFormValid, setLoginFormValid] = useState(true);
+  const [registerFormValid, setRegisterFormValid] = useState(true);
+
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
@@ -17,12 +28,47 @@ const SignIn = ({ history, location }) => {
 
   const dispatch = useDispatch();
 
-  const authState = useSelector((state) => state.auth);
-  const registerState = useSelector((state) => state.register);
-  const { isAuthenticated, loginError, loginLoading } = authState;
-  const { registerError, registerLoading } = registerState;
+  const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
   const redirect = location.search ? location.search.split("=")[1] : "/";
+
+  const validateLoginForm = () => {
+    let valid = true;
+
+    const loginEmailError = formValidationService.validateEmail(loginEmail);
+    setErrors((prevState) => ({
+      ...prevState,
+      loginEmail: loginEmailError,
+    }));
+    if (loginEmailError) valid = false;
+    setLoginFormValid(valid);
+    return valid;
+  };
+
+  const validateRegisterForm = () => {
+    let valid = true;
+
+    const registerEmailError = formValidationService.validateEmail(
+      registerEmail
+    );
+    setErrors((prevState) => ({
+      ...prevState,
+      registerEmail: registerEmailError,
+    }));
+    if (registerEmailError) valid = false;
+
+    const registerPasswordError = formValidationService.validatePassword(
+      registerPassword
+    );
+    setErrors((prevState) => ({
+      ...prevState,
+      registerPassword: registerPasswordError,
+    }));
+    if (registerPasswordError) valid = false;
+
+    setRegisterFormValid(valid);
+    return valid;
+  };
 
   const handleLogin = (e) => {
     e.preventDefault(); // prevent refresh
@@ -42,12 +88,9 @@ const SignIn = ({ history, location }) => {
 
   return (
     <Container className="d-flex flex-column py-5">
-      {/* TODO: move Message to app level */}
-      {loginError && <Message variant="danger">{loginError}</Message>}
-      {registerError && <Message variant="danger">{registerError}</Message>}
-      {/* TODO: move Loader to app level */}
-      {(loginLoading || registerLoading) && <Loader />}
-      {!loginLoading && !registerLoading && (
+      {loading ? (
+        <Loader />
+      ) : (
         <Fragment>
           {/*This row is only visible on screens lg and larger*/}
           <div className="d-none d-lg-block">
@@ -97,11 +140,16 @@ const SignIn = ({ history, location }) => {
               <Form onSubmit={handleLogin}>
                 <Form.Group>
                   <Form.Control
+                    onBlur={validateLoginForm}
+                    isInvalid={errors.loginEmail}
                     type="email"
                     placeholder="Email Address"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.loginEmail}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group>
                   <Form.Control
@@ -115,7 +163,7 @@ const SignIn = ({ history, location }) => {
                   variant="primary"
                   type="submit"
                   className="btn btn-block"
-                  disabled={loginLoading}
+                  disabled={loading || !loginFormValid}
                 >
                   Sign In
                 </Button>
@@ -131,15 +179,22 @@ const SignIn = ({ history, location }) => {
               <Form onSubmit={handleRegister}>
                 <Form.Group>
                   <Form.Control
+                    onBlur={validateRegisterForm}
+                    isInvalid={errors.registerEmail}
                     type="email"
                     placeholder="Email Address"
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.registerEmail}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group>
                   <InputGroup>
                     <Form.Control
+                      onBlur={validateRegisterForm}
+                      isInvalid={errors.registerPassword}
                       type={registerPasswordVisible ? "text" : "password"}
                       placeholder="Password"
                       value={registerPassword}
@@ -166,6 +221,9 @@ const SignIn = ({ history, location }) => {
                         ></i>
                       </Button>
                     </InputGroup.Append>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.registerPassword}
+                    </Form.Control.Feedback>
                   </InputGroup>
                 </Form.Group>
                 <Form.Group controlId="formBasicCheckbox">
@@ -180,7 +238,7 @@ const SignIn = ({ history, location }) => {
                   variant="primary"
                   type="submit"
                   className="btn btn-block"
-                  disabled={registerLoading}
+                  disabled={loading || !registerFormValid}
                 >
                   Create Account
                 </Button>
