@@ -2,9 +2,12 @@ import {
   BAG_ADD_ITEM,
   BAG_REMOVE_ITEM,
   UPDATE_SHIPPING,
+  BAG_ERROR,
 } from "../constants/bagConstants.js";
 
 const initialState = {
+  loading: false,
+  error: null,
   bagItems: [],
   subtotal: 0,
   shipping: 0,
@@ -70,6 +73,8 @@ export const bagReducer = (state = initialState, action) => {
         shipping: action.payload,
         total: state.subtotal + action.payload + state.tax,
       };
+    case BAG_ERROR:
+      return { ...state, loading: false, error: action.payload };
     default:
       return state;
   }
