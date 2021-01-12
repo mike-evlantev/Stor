@@ -11,13 +11,13 @@ import {
   UPDATE_USER_FAIL,
 } from "../constants/userConstants.js";
 
-const initialAuthState = {
+const initialState = {
   loading: false,
   error: null,
   success: false,
 };
 
-export const authReducer = (state = initialAuthState, action) => {
+export const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case REGISTER_USER_REQUEST:
     case LOGIN_USER_REQUEST:
