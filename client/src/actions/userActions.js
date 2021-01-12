@@ -123,5 +123,8 @@ export const updateUser = (userData) => async (dispatch, getState) => {
       type: UPDATE_USER_FAIL,
       payload: message,
     });
+    // Logging user out because something went wrong with using a protected route
+    // TODO: There should be a better way to handle this
+    dispatch(logout());
   }
 };
