@@ -1,4 +1,5 @@
 import axios from "axios";
+import { setMessage } from "./messageActions.js";
 import {
   ORDER_SUBMIT_REQUEST,
   ORDER_SUBMIT_SUCCESS,
@@ -21,12 +22,14 @@ export const createOrder = (order) => async (dispatch, getState) => {
       payload: data,
     });
   } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch(setMessage(message, "danger"));
     dispatch({
       type: ORDER_SUBMIT_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
+      payload: message,
     });
   }
 };
