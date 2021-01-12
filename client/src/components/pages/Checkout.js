@@ -24,20 +24,6 @@ import Loader from "../Loader";
 import { formValidationService } from "../../services/formValidationService";
 
 const Checkout = () => {
-  const currentUserInitialState = {
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    address1: "",
-    address2: "",
-    city: "",
-    state: "",
-    zip: "",
-    email: "",
-    phone: "",
-    password: "",
-  };
-
   const errorsInitialState = {
     firstName: "",
     lastName: "",
@@ -52,6 +38,7 @@ const Checkout = () => {
   };
 
   const paymentInitialState = {
+    method: "",
     creditCardNumber: "",
     expirationDate: "",
     securityCode: "",
@@ -68,8 +55,12 @@ const Checkout = () => {
 
   const dispatch = useDispatch();
 
+  const { isAuthenticated, loggedInUser, loading: authLoading } = useSelector(
+    (state) => state.auth
+  );
+
   const [bagItemsVisible, setBagItemsVisible] = useState(true);
-  const [currentUser, setCurrentUser] = useState(currentUserInitialState);
+  const [currentUser, setCurrentUser] = useState(loggedInUser || {});
   const [errors, setErrors] = useState(errorsInitialState);
   const [formValid, setFormValid] = useState(true);
   const [loginEmail, setLoginEmail] = useState("");
@@ -80,11 +71,9 @@ const Checkout = () => {
   const [signInVisible, setSignInVisible] = useState(false);
   const [step, setStep] = useState(1);
 
-  const { isAuthenticated, loggedInUser, loading: authLoading } = useSelector(
-    (state) => state.auth
+  const { bagItems, subtotal, shipping, tax, total } = useSelector(
+    (state) => state.bag
   );
-  const bag = useSelector((state) => state.bag);
-  const { bagItems, subtotal, shipping, tax, total } = bag;
   const submitOrder = useSelector((state) => state.submitOrder);
   const { loading: orderSubmitLoading } = submitOrder;
 
@@ -163,72 +152,17 @@ const Checkout = () => {
 
   const validateForm = () => {
     let valid = true;
-    const {
-      firstName,
-      lastName,
-      address1,
-      address2,
-      city,
-      state,
-      zip,
-      email,
-    } = currentUser;
 
-    const firstNameError = formValidationService.validateFirstName(firstName);
-    setErrors((prevState) => ({
-      ...prevState,
-      firstName: firstNameError,
-    }));
-    if (firstNameError) valid = false;
-
-    const lastNameError = formValidationService.validateLastName(lastName);
-    setErrors((prevState) => ({
-      ...prevState,
-      lastName: lastNameError,
-    }));
-    if (lastNameError) valid = false;
-
-    const address1Error = formValidationService.validateAddress1(address1);
-    setErrors((prevState) => ({
-      ...prevState,
-      address1: address1Error,
-    }));
-    if (address1Error) valid = false;
-
-    const address2Error = formValidationService.validateAddress2(address2);
-    setErrors((prevState) => ({
-      ...prevState,
-      address2: address2Error,
-    }));
-    if (address2Error) valid = false;
-
-    const cityError = formValidationService.validateCity(city);
-    setErrors((prevState) => ({
-      ...prevState,
-      city: cityError,
-    }));
-    if (cityError) valid = false;
-
-    const stateError = formValidationService.validateState(state);
-    setErrors((prevState) => ({
-      ...prevState,
-      state: stateError,
-    }));
-    if (stateError) valid = false;
-
-    const zipError = formValidationService.validateZip(zip);
-    setErrors((prevState) => ({
-      ...prevState,
-      zip: zipError,
-    }));
-    if (zipError) valid = false;
-
-    const emailError = formValidationService.validateEmail(email);
-    setErrors((prevState) => ({
-      ...prevState,
-      email: emailError,
-    }));
-    if (emailError) valid = false;
+    Object.keys(currentUser).map((key) => {
+      const value = currentUser[key];
+      const error = formValidationService.validateField(key, value);
+      setErrors((prevState) => ({
+        ...prevState,
+        [key]: error,
+      }));
+      if (error) valid = false;
+      return error;
+    });
 
     setFormValid(valid);
     return valid;
@@ -262,6 +196,7 @@ const Checkout = () => {
       taxAmount: tax,
       shippingAmount: shipping,
       totalAmount: total,
+      paymentMethod: payment.method,
     };
     console.log("Creating Order:");
     console.log(order);
@@ -269,25 +204,10 @@ const Checkout = () => {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      setCurrentUser(loggedInUser);
-    } else {
-      setPayment(paymentInitialState);
-      setSameAsShippingChecked(false);
-    }
-
     window.scrollTo(0, 0);
 
     // eslint-disable-next-line
-  }, [isAuthenticated, loggedInUser, step]);
-
-  // useEffect(() => {
-  //   const timeoutId = setTimeout(
-  //     () => validateForm(),
-  //     1000
-  //   );
-  //   return () => clearTimeout(timeoutId);
-  // }, [currentUser]);
+  }, [step]);
 
   const renderCheckout = () => {
     switch (step) {
@@ -622,7 +542,16 @@ const Checkout = () => {
           <h4>Payment</h4>
           <Accordion defaultActiveKey="1">
             <Card>
-              <Accordion.Toggle as={Card.Header} eventKey="0">
+              <Accordion.Toggle
+                as={Card.Header}
+                eventKey="0"
+                onClick={() =>
+                  setPayment((prevState) => ({
+                    ...prevState,
+                    method: "Credit Card",
+                  }))
+                }
+              >
                 <i className="fab fa-paypal"></i>&nbsp; PayPal
               </Accordion.Toggle>
               <Accordion.Collapse eventKey="0">
@@ -641,7 +570,16 @@ const Checkout = () => {
               </Accordion.Collapse>
             </Card>
             <Card>
-              <Accordion.Toggle as={Card.Header} eventKey="1">
+              <Accordion.Toggle
+                as={Card.Header}
+                eventKey="1"
+                onClick={() =>
+                  setPayment((prevState) => ({
+                    ...prevState,
+                    method: "Credit Card",
+                  }))
+                }
+              >
                 <i className="fas fa-credit-card"></i>&nbsp; Credit Card
               </Accordion.Toggle>
               <Accordion.Collapse eventKey="1">
