@@ -612,18 +612,9 @@ const Checkout = () => {
                         />
                       </Form.Group>
                       <Form.Group as={Col}>
-                        <Form.Label>
+                        <Form.Label title={securityCodeTooltipMessage}>
                           Security code&nbsp;&nbsp;
-                          <OverlayTrigger
-                            key="1"
-                            placement="right"
-                            delay={{ hide: 300 }}
-                            overlay={
-                              <Tooltip id="tooltip">Awesome Tooltip</Tooltip>
-                            }
-                          >
-                            <i className="fas fa-info-circle"></i>
-                          </OverlayTrigger>
+                          <i className="fas fa-info-circle"></i>
                         </Form.Label>
                         <Form.Control
                           name="securityCode"
