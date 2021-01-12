@@ -10,6 +10,8 @@ import SignIn from "../pages/SignIn";
 import TermsOfUse from "../pages/TermsOfUse";
 import Product from "../pages/Product";
 import { PrivateRoute } from "./PrivateRoute";
+import Dashboard from "../pages/Dashboard";
+import WishList from "../pages/WishList";
 
 export const Routes = () => {
   return (
@@ -23,7 +25,9 @@ export const Routes = () => {
         <Route exact path="/privacy" component={PrivacyPolicy} />
         <Route exact path="/product/:id" component={Product} />
         <Route path="/terms" component={TermsOfUse} />
+        <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/profile" component={Profile} />
+        <PrivateRoute exact path="/wishlist" component={WishList} />
       </Switch>
     </Container>
   );

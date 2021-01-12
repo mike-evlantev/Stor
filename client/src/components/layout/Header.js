@@ -15,8 +15,8 @@ const Header = () => {
     dispatch(logout());
   };
 
-  const handleProfile = () => {
-    history.push("/profile");
+  const handleRoute = (route) => {
+    history.push(route);
   };
 
   return (
@@ -33,11 +33,15 @@ const Header = () => {
             <Nav className="ml-auto">
               {isAuthenticated ? (
                 <NavDropdown title="My Account" id="nav-my-account-dropdown">
-                  <NavDropdown.Item>Dashboard</NavDropdown.Item>
-                  <NavDropdown.Item onClick={handleProfile}>
+                  <NavDropdown.Item onClick={() => handleRoute("/dashboard")}>
+                    Dashboard
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => handleRoute("/profile")}>
                     Profile
                   </NavDropdown.Item>
-                  <NavDropdown.Item>Wish List</NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => handleRoute("/wishlist")}>
+                    Wish List
+                  </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={handleLogout}>
                     Sign out
