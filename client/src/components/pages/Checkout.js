@@ -9,14 +9,12 @@ import {
   Form,
   Image,
   ListGroup,
-  OverlayTrigger,
   Row,
   ToggleButton,
-  Tooltip,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/userActions";
-import { updateShipping } from "../../actions/bagActions";
+import { updateShipping, clearBag } from "../../actions/bagActions";
 import { createOrder } from "../../actions/orderActions";
 import StateSelect from "../StateSelect";
 import { Fragment } from "react";
@@ -24,6 +22,15 @@ import Loader from "../Loader";
 import { formValidationService } from "../../services/formValidationService";
 
 const Checkout = () => {
+  const placeholderUser = {
+    firstName: "John",
+    lastName: "Doe",
+    address1: "123 Columbia St",
+    city: "Carson City",
+    state: "NV",
+    zip: "89154",
+    email: "mikeev21@gmail.com",
+  };
   const errorsInitialState = {
     firstName: "",
     lastName: "",
@@ -50,6 +57,20 @@ const Checkout = () => {
     zip: "",
   };
 
+  const placeholderPayment = {
+    method: "credit card",
+    type: "Visa",
+    creditCardNumber: "4242424242424242",
+    expirationDate: "08/21",
+    securityCode: "424",
+    nameOnCard: "John Doe",
+    address1: "123 Columbia St",
+    address2: "",
+    city: "Carson City",
+    state: "NV",
+    zip: "89154",
+  };
+
   const securityCodeTooltipMessage =
     "Typically a three-digit number on the back of the card. American Express cards have a four-digit number on the front of the card to the right.";
 
@@ -60,12 +81,14 @@ const Checkout = () => {
   );
 
   const [bagItemsVisible, setBagItemsVisible] = useState(true);
-  const [currentUser, setCurrentUser] = useState(loggedInUser || {});
+  const [currentUser, setCurrentUser] = useState(
+    loggedInUser || placeholderUser
+  );
   const [errors, setErrors] = useState(errorsInitialState);
   const [formValid, setFormValid] = useState(true);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [payment, setPayment] = useState(paymentInitialState);
+  const [payment, setPayment] = useState(placeholderPayment); // replace with paymentInitialState
   const [sameAsShippingChecked, setSameAsShippingChecked] = useState(false);
   const [shippingOption, setShippingOption] = useState(0);
   const [signInVisible, setSignInVisible] = useState(false);
@@ -74,8 +97,9 @@ const Checkout = () => {
   const { bagItems, subtotal, shipping, tax, total } = useSelector(
     (state) => state.bag
   );
-  const submitOrder = useSelector((state) => state.submitOrder);
-  const { loading: orderSubmitLoading } = submitOrder;
+  const { loading: orderSubmitLoading } = useSelector(
+    (state) => state.submitOrder
+  );
 
   const shippingOptions = [
     {
@@ -178,7 +202,6 @@ const Checkout = () => {
   };
 
   const handleSubmitOrder = () => {
-    // clear state
     // create order
     const shippingAddress = {
       address1: currentUser.address1,
@@ -201,6 +224,9 @@ const Checkout = () => {
     console.log("Creating Order:");
     console.log(order);
     dispatch(createOrder(order));
+
+    // clear state
+    dispatch(clearBag());
   };
 
   useEffect(() => {
@@ -641,7 +667,7 @@ const Checkout = () => {
                       checked={sameAsShippingChecked}
                       onChange={() => handleSameAsShipping()}
                     />
-                    <Form.Row>
+                    {/*<Form.Row>
                       <Form.Group as={Col}>
                         <Form.Label>First Name</Form.Label>
                         <Form.Control
@@ -658,7 +684,7 @@ const Checkout = () => {
                           onChange={handlePaymentChange}
                         />
                       </Form.Group>
-                    </Form.Row>
+                    </Form.Row>*/}
                     <Form.Row>
                       <Form.Group as={Col}>
                         <Form.Label>Address</Form.Label>
@@ -744,7 +770,12 @@ const Checkout = () => {
       <ListGroup variant="flush" className="py-1">
         <ListGroup.Item className="d-flex justify-content-between align-items-center">
           <h4 className="py-3">Payment:</h4>
-          <strong>{currentUser.email}</strong>
+          <strong>
+            {payment.type} ending in{" "}
+            {payment.creditCardNumber.slice(
+              payment.creditCardNumber.length - 4
+            )}
+          </strong>
           <u onClick={() => setStep(2)}>Edit</u>
         </ListGroup.Item>
       </ListGroup>
