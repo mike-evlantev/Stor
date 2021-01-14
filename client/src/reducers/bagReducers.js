@@ -3,6 +3,7 @@ import {
   BAG_REMOVE_ITEM,
   UPDATE_SHIPPING,
   BAG_ERROR,
+  CLEAR_BAG,
 } from "../constants/bagConstants.js";
 
 const initialState = {
@@ -72,6 +73,15 @@ export const bagReducer = (state = initialState, action) => {
         ...state,
         shipping: action.payload,
         total: state.subtotal + action.payload + state.tax,
+      };
+    case CLEAR_BAG:
+      return {
+        ...state,
+        bagItems: [],
+        subtotal: 0,
+        shipping: 0,
+        tax: 0,
+        total: 0,
       };
     case BAG_ERROR:
       return { ...state, loading: false, error: action.payload };

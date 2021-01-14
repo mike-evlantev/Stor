@@ -4,6 +4,7 @@ import {
   BAG_REMOVE_ITEM,
   UPDATE_SHIPPING,
   BAG_ERROR,
+  CLEAR_BAG,
 } from "../constants/bagConstants.js";
 import { setMessage } from "./messageActions.js";
 
@@ -50,4 +51,9 @@ export const updateShipping = (shippingCost) => async (dispatch, getState) => {
     type: UPDATE_SHIPPING,
     payload: shippingCost,
   });
+};
+
+export const clearBag = () => async (dispatch) => {
+  localStorage.removeItem("bagItems");
+  dispatch({ type: CLEAR_BAG });
 };
