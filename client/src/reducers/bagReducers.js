@@ -25,7 +25,6 @@ export const bagReducer = (state = initialState, action) => {
       const existingItem = state.bagItems.find(
         (i) => i.product === bagItem.product
       ); // i.product refers to productId
-      console.log(existingItem);
       if (existingItem) {
         const updatedBagItems = state.bagItems.map((i) =>
           i.product === existingItem.product ? bagItem : i
