@@ -29,11 +29,11 @@ const addressSchema = mongoose.Schema(
   }
 );
 
-const shippingSchema = mongoose.Schema(
+const shippingOptionSchema = mongoose.Schema(
   {
     name: { type: String, required: true },
     timeframe: { type: String, required: true },
-    price: { type: Number, required: true },
+    cost: { type: Number, required: true },
   },
   {
     timestamps: true,
@@ -77,7 +77,7 @@ const orderSchema = mongoose.Schema(
       default: 0.0,
       required: true,
     },
-    shipping: shippingSchema,
+    shippingOption: shippingOptionSchema,
     totalAmount: {
       type: Number,
       default: 0.0,
