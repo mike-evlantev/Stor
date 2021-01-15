@@ -44,6 +44,7 @@ const Checkout = () => {
     password: "",
   };
 
+  // eslint-disable-next-line
   const paymentInitialState = {
     method: "",
     creditCardNumber: "",
@@ -90,7 +91,7 @@ const Checkout = () => {
   const [loginPassword, setLoginPassword] = useState("");
   const [payment, setPayment] = useState(placeholderPayment); // replace with paymentInitialState
   const [sameAsShippingChecked, setSameAsShippingChecked] = useState(false);
-  const [shippingOption, setShippingOption] = useState(0);
+  const [shippingOptionId, setShippingOptionId] = useState(1);
   const [signInVisible, setSignInVisible] = useState(false);
   const [step, setStep] = useState(1);
 
@@ -103,21 +104,21 @@ const Checkout = () => {
 
   const shippingOptions = [
     {
-      id: "1",
+      id: 1,
       icon: "fas fa-truck fa-3x",
       name: "Standard Shipping",
       timeframe: "4-5 business days",
       cost: 0,
     },
     {
-      id: "2",
+      id: 2,
       icon: "fas fa-shipping-fast fa-3x",
       name: "Express Shipping",
       timeframe: "2-4 business days",
       cost: 20,
     },
     {
-      id: "3",
+      id: 3,
       icon: "fas fa-plane fa-3x",
       name: "Priority Shipping",
       timeframe: "2-3 business days",
@@ -152,7 +153,9 @@ const Checkout = () => {
   const handleShippingOptionChange = (e) => {
     e.preventDefault();
     const selectedOption = parseInt(e.currentTarget.value);
-    setShippingOption(selectedOption);
+    console.log(selectedOption);
+    console.log(shippingOptions.find((o) => o.id === selectedOption));
+    setShippingOptionId(selectedOption);
     dispatch(updateShipping(selectedOption));
   };
 
@@ -197,10 +200,6 @@ const Checkout = () => {
     if (isValid) setStep(selectedStep);
   };
 
-  const generateSkuCode = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
-
   const handleSubmitOrder = () => {
     // create order
     const shippingAddress = {
@@ -210,6 +209,12 @@ const Checkout = () => {
       state: currentUser.state,
       zip: currentUser.zip,
     };
+
+    const shippingOption = shippingOptions.find(
+      (o) => o.id === shippingOptionId
+    );
+    console.log(shippingOption);
+
     const order = {
       firstName: currentUser.firstName,
       middleName: currentUser.middleName,
@@ -220,6 +225,7 @@ const Checkout = () => {
       shippingAmount: shipping,
       totalAmount: total,
       paymentMethod: payment.method,
+      shippingOption,
     };
     console.log("Creating Order:");
     console.log(order);
@@ -227,6 +233,8 @@ const Checkout = () => {
 
     // clear state
     dispatch(clearBag());
+
+    // TODO: redirect to confirmation
   };
 
   useEffect(() => {
@@ -462,8 +470,8 @@ const Checkout = () => {
                 type="radio"
                 variant="outline-dark"
                 name="shipping"
-                value={option.cost}
-                checked={shippingOption === option.cost}
+                value={option.id}
+                checked={option.id === shippingOptionId}
                 onChange={(e) => handleShippingOptionChange(e)}
               >
                 <Card.Body>
@@ -553,7 +561,9 @@ const Checkout = () => {
         </ListGroup.Item>
         <ListGroup.Item className="d-flex justify-content-between align-items-center">
           <h4 className="py-3">Estimated delivery:</h4>
-          <strong>{shippingOption}</strong>
+          <strong>
+            {shippingOptions.find((o) => o.id === shippingOptionId).name}
+          </strong>
           <u onClick={() => setStep(1)}>Edit</u>
         </ListGroup.Item>
       </ListGroup>
@@ -818,10 +828,7 @@ const Checkout = () => {
                   </Col>
                   <Col md={9} className="d-flex flex-column p-0">
                     <strong>{item.name}</strong>
-                    <span className="text-muted">
-                      SKU# {generateSkuCode(1000000000, 9999999999)}
-                    </span>
-                    <div>
+                    <div className="mt-auto">
                       <span>Qty:{item.qty}</span>
                       <span className="float-right pr-3">${item.price}</span>
                     </div>
