@@ -11,7 +11,7 @@ const initialState = {
   error: null,
   bagItems: [],
   subtotal: 0,
-  shipping: 0,
+  shipping: {},
   tax: 0,
   total: 0,
 };
@@ -40,7 +40,7 @@ export const bagReducer = (state = initialState, action) => {
           bagItems: updatedBagItems,
           subtotal: updatedSubtotal,
           tax: updatedTax,
-          total: updatedSubtotal + state.shipping + updatedTax,
+          total: updatedSubtotal + state.shipping.cost + updatedTax,
         };
       } else {
         const updatedBagItems = [...state.bagItems, bagItem];
@@ -51,7 +51,7 @@ export const bagReducer = (state = initialState, action) => {
           bagItems: updatedBagItems,
           subtotal: updatedSubtotal,
           tax: updatedTax,
-          total: updatedSubtotal + state.shipping + updatedTax,
+          total: updatedSubtotal + state.shipping.cost + updatedTax,
         };
       }
     case BAG_REMOVE_ITEM:
@@ -65,20 +65,20 @@ export const bagReducer = (state = initialState, action) => {
         ),
         subtotal: updatedSubtotal,
         tax: updatedTax,
-        total: updatedSubtotal + state.shipping + updatedTax,
+        total: updatedSubtotal + state.shipping.cost + updatedTax,
       };
     case UPDATE_SHIPPING:
       return {
         ...state,
         shipping: action.payload,
-        total: state.subtotal + action.payload + state.tax,
+        total: state.subtotal + action.payload.cost + state.tax,
       };
     case CLEAR_BAG:
       return {
         ...state,
         bagItems: [],
         subtotal: 0,
-        shipping: 0,
+        shipping: { cost: 0 }, // shipping.cost is referenced in Checkout.js
         tax: 0,
         total: 0,
       };

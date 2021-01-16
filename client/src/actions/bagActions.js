@@ -46,10 +46,10 @@ export const removeFromBag = (id) => async (dispatch, getState) => {
   localStorage.setItem("bagItems", JSON.stringify(getState().bag.bagItems));
 };
 
-export const updateShipping = (shippingCost) => async (dispatch, getState) => {
+export const updateShipping = (shippingOption) => async (dispatch) => {
   dispatch({
     type: UPDATE_SHIPPING,
-    payload: shippingCost,
+    payload: shippingOption,
   });
 };
 

@@ -9,6 +9,7 @@ import { authReducer } from "./reducers/userReducers.js";
 import { bagReducer } from "./reducers/bagReducers.js";
 import { messageReducer } from "./reducers/messageReducers.js";
 import { submitOrderReducer } from "./reducers/orderReducers.js";
+//import { shippingOptionsReducer } from "./reducers/shippingOptionsReducers.js";
 
 const reducer = combineReducers({
   auth: authReducer,
@@ -16,8 +17,33 @@ const reducer = combineReducers({
   messages: messageReducer,
   productList: productListReducer,
   productDetails: productDetailsReducer,
+  shippingOptions: (state = {}) => state,
   submitOrder: submitOrderReducer,
 });
+
+const shippingOptions = [
+  {
+    id: 1,
+    icon: "fas fa-truck fa-3x",
+    name: "Standard Shipping",
+    timeframe: "4-5 business days",
+    cost: 0,
+  },
+  {
+    id: 2,
+    icon: "fas fa-shipping-fast fa-3x",
+    name: "Express Shipping",
+    timeframe: "2-4 business days",
+    cost: 20,
+  },
+  {
+    id: 3,
+    icon: "fas fa-plane fa-3x",
+    name: "Priority Shipping",
+    timeframe: "2-3 business days",
+    cost: 30,
+  },
+];
 
 const loggedInUserFromStorage = localStorage.getItem("loggedInUser")
   ? JSON.parse(localStorage.getItem("loggedInUser"))
@@ -33,7 +59,7 @@ const subtotal = bagItemsFromLocalStorage.reduce(
 
 const calcTax = (subtotal) => subtotal * 0.0775; // CA tax rate
 
-const shipping = 0;
+const shipping = shippingOptions[0].cost;
 const tax = calcTax(subtotal);
 const total = subtotal + shipping + tax;
 
@@ -50,10 +76,11 @@ const initialState = {
   bag: {
     bagItems: bagItemsFromLocalStorage,
     subtotal: subtotal,
-    shipping: shipping,
+    shipping: shippingOptions[0],
     tax: tax,
     total: total,
   },
+  shippingOptions,
 };
 const middleware = [thunk];
 const store = createStore(
