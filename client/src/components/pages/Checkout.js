@@ -220,8 +220,7 @@ const Checkout = ({ history }) => {
     // clear payment
     setPayment({});
 
-    // TODO: redirect to confirmation
-    //history.push("/confirmation");
+    history.push("/confirmation");
   };
 
   useEffect(() => {

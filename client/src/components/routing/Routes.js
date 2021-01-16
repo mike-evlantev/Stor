@@ -12,6 +12,7 @@ import Product from "../pages/Product";
 import { PrivateRoute } from "./PrivateRoute";
 import Dashboard from "../pages/Dashboard";
 import WishList from "../pages/WishList";
+import Confirmation from "../pages/Confirmation";
 
 export const Routes = () => {
   return (
@@ -21,6 +22,7 @@ export const Routes = () => {
         <Route exact path="/" component={Home} />
         <Route exact path="/bag" component={Bag} />
         <Route exact path="/checkout" component={Checkout} />
+        <Route exact path="/confirmation" component={Confirmation} />
         <Route exact path="/login" component={SignIn} />
         <Route exact path="/privacy" component={PrivacyPolicy} />
         <Route exact path="/product/:id" component={Product} />
