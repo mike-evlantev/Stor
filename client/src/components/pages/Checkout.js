@@ -20,8 +20,9 @@ import StateSelect from "../StateSelect";
 import { Fragment } from "react";
 import Loader from "../Loader";
 import { formValidationService } from "../../services/formValidationService";
+import EmptyBag from "../EmptyBag";
 
-const Checkout = () => {
+const Checkout = ({ history }) => {
   const placeholderUser = {
     firstName: "John",
     lastName: "Doe",
@@ -98,33 +99,10 @@ const Checkout = () => {
   const { bagItems, subtotal, shipping, tax, total } = useSelector(
     (state) => state.bag
   );
+  const shippingOptions = useSelector((state) => state.shippingOptions);
   const { loading: orderSubmitLoading } = useSelector(
     (state) => state.submitOrder
   );
-
-  const shippingOptions = [
-    {
-      id: 1,
-      icon: "fas fa-truck fa-3x",
-      name: "Standard Shipping",
-      timeframe: "4-5 business days",
-      cost: 0,
-    },
-    {
-      id: 2,
-      icon: "fas fa-shipping-fast fa-3x",
-      name: "Express Shipping",
-      timeframe: "2-4 business days",
-      cost: 20,
-    },
-    {
-      id: 3,
-      icon: "fas fa-plane fa-3x",
-      name: "Priority Shipping",
-      timeframe: "2-3 business days",
-      cost: 30,
-    },
-  ];
 
   const handleLogin = (e) => {
     e.preventDefault(); // prevent refresh
@@ -157,7 +135,7 @@ const Checkout = () => {
       (o) => o.id === selectedId
     );
     setShippingOptionId(selectedId);
-    dispatch(updateShipping(selectedShippingOption.cost));
+    dispatch(updateShipping(selectedShippingOption));
   };
 
   const handleSameAsShipping = () => {
@@ -226,14 +204,24 @@ const Checkout = () => {
       paymentMethod: payment.method,
       shippingOption,
     };
-    console.log("Creating Order:");
-    console.log(order);
+
+    // create order
     dispatch(createOrder(order));
 
-    // clear state
+    // clear bag redux state
     dispatch(clearBag());
 
+    // reset shipping option
+    setShippingOptionId(1);
+
+    // clear current user
+    setCurrentUser({});
+
+    // clear payment
+    setPayment({});
+
     // TODO: redirect to confirmation
+    //history.push("/confirmation");
   };
 
   useEffect(() => {
@@ -842,7 +830,7 @@ const Checkout = () => {
           </ListGroup.Item>
           <ListGroup.Item className="d-flex">
             <div>Shipping</div>
-            <div className="ml-auto">${shipping.toFixed(2)}</div>
+            <div className="ml-auto">${shipping.cost.toFixed(2)}</div>
           </ListGroup.Item>
           <ListGroup.Item className="d-flex">
             <div>Tax</div>
@@ -863,7 +851,9 @@ const Checkout = () => {
 
   return (
     <Container className="d-flex flex-column py-5">
-      {authLoading || orderSubmitLoading ? (
+      {bagItems.length === 0 ? (
+        <EmptyBag history={history} />
+      ) : authLoading || orderSubmitLoading ? (
         <Loader />
       ) : (
         <Fragment>

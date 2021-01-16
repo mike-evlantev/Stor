@@ -12,16 +12,13 @@ import {
 } from "react-bootstrap";
 import QtySelect from "../QtySelect.js";
 import { addToBag, removeFromBag } from "../../actions/bagActions.js";
+import EmptyBag from "../EmptyBag.js";
 
 const Bag = ({ history }) => {
   const bag = useSelector((state) => state.bag);
   const { bagItems, subtotal, shipping, tax, total } = bag;
 
   const dispatch = useDispatch();
-
-  const handleShopNow = () => {
-    history.push("/");
-  };
 
   const handleQtyChange = (productId, e) => {
     dispatch(addToBag(productId, Number(e.target.value)));
@@ -42,15 +39,7 @@ const Bag = ({ history }) => {
   return (
     <Container className="d-flex py-5">
       {bagItems.length === 0 ? (
-        <div className="mx-auto text-center">
-          <Row className="py-5">
-            <h1>You haven't added anything to your bag yet!</h1>
-          </Row>
-          <Button type="button" variant="primary" onClick={handleShopNow}>
-            <i className="fas fa-burn text-inverse"></i>
-            &nbsp;&nbsp; SHOP NOW
-          </Button>
-        </div>
+        <EmptyBag history={history} />
       ) : (
         <Row className="py-3">
           <Col md={8}>
@@ -118,7 +107,7 @@ const Bag = ({ history }) => {
               </ListGroup.Item>
               <ListGroup.Item className="d-flex">
                 <div>Shipping</div>
-                <div className="ml-auto">${shipping.toFixed(2)}</div>
+                <div className="ml-auto">${shipping.cost.toFixed(2)}</div>
               </ListGroup.Item>
               <ListGroup.Item className="d-flex">
                 <div>Tax</div>
