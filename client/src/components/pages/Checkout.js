@@ -152,11 +152,12 @@ const Checkout = () => {
 
   const handleShippingOptionChange = (e) => {
     e.preventDefault();
-    const selectedOption = parseInt(e.currentTarget.value);
-    console.log(selectedOption);
-    console.log(shippingOptions.find((o) => o.id === selectedOption));
-    setShippingOptionId(selectedOption);
-    dispatch(updateShipping(selectedOption));
+    const selectedId = parseInt(e.currentTarget.value);
+    const selectedShippingOption = shippingOptions.find(
+      (o) => o.id === selectedId
+    );
+    setShippingOptionId(selectedId);
+    dispatch(updateShipping(selectedShippingOption.cost));
   };
 
   const handleSameAsShipping = () => {
@@ -210,10 +211,9 @@ const Checkout = () => {
       zip: currentUser.zip,
     };
 
-    const shippingOption = shippingOptions.find(
+    const { id, icon, ...shippingOption } = shippingOptions.find(
       (o) => o.id === shippingOptionId
     );
-    console.log(shippingOption);
 
     const order = {
       firstName: currentUser.firstName,
@@ -222,7 +222,6 @@ const Checkout = () => {
       orderItems: bagItems,
       shippingAddress,
       taxAmount: tax,
-      shippingAmount: shipping,
       totalAmount: total,
       paymentMethod: payment.method,
       shippingOption,
@@ -767,6 +766,7 @@ const Checkout = () => {
           variant="primary"
           className="my-2 float-right"
           onClick={() => handleSubmitOrder()}
+          disabled={!bagItems || bagItems.length === 0}
         >
           Submit Order
         </Button>
