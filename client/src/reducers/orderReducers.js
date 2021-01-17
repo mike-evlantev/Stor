@@ -4,13 +4,14 @@ import {
   ORDER_SUBMIT_FAIL,
 } from "../constants/orderConstants.js";
 
-const initialOrderSubmitState = {
+const initialState = {
   loading: false,
   success: false,
   error: null,
+  order: null,
 };
 
-export const submitOrderReducer = (state = initialOrderSubmitState, action) => {
+export const submitOrderReducer = (state = initialState, action) => {
   switch (action.type) {
     case ORDER_SUBMIT_REQUEST:
       return { ...state, loading: true };
@@ -20,6 +21,7 @@ export const submitOrderReducer = (state = initialOrderSubmitState, action) => {
         loading: false,
         success: true,
         error: null,
+        order: action.payload,
       };
     case ORDER_SUBMIT_FAIL:
       return {
