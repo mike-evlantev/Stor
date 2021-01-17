@@ -95,7 +95,7 @@ export const formValidationService = {
   },
   validateField(key, value) {
     let error = "";
-    console.log(`FVS Validating ${key}:${value}`);
+    //console.log(`FVS Validating ${key}:${value}`);
     switch (key) {
       case "firstName":
         if (!value) {
@@ -166,7 +166,7 @@ export const formValidationService = {
       default:
         break;
     }
-    console.log(`FVS Validation result: ${error}`);
+    //console.log(`FVS Validation result: ${error}`);
     return error;
   },
 };
