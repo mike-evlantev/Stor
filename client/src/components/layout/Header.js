@@ -4,11 +4,12 @@ import { Navbar, Nav, NavDropdown, Container, Form } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { logout } from "../../actions/userActions";
 import { useHistory } from "react-router-dom";
+import { Fragment } from "react";
 
 const Header = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, loggedInUser } = useSelector((state) => state.auth);
   const { bagItems } = useSelector((state) => state.bag);
 
   const handleLogout = () => {
@@ -32,21 +33,28 @@ const Header = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
               {isAuthenticated ? (
-                <NavDropdown title="My Account" id="nav-my-account-dropdown">
-                  <NavDropdown.Item onClick={() => handleRoute("/dashboard")}>
-                    Dashboard
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => handleRoute("/profile")}>
-                    Profile
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => handleRoute("/wishlist")}>
-                    Wish List
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={handleLogout}>
-                    Sign out
-                  </NavDropdown.Item>
-                </NavDropdown>
+                <Fragment>
+                  {loggedInUser.isAdmin && (
+                    <LinkContainer to="/login">
+                      <Nav.Link className="my-auto mr-2">Admin</Nav.Link>
+                    </LinkContainer>
+                  )}
+                  <NavDropdown title="My Account" id="nav-my-account-dropdown">
+                    <NavDropdown.Item onClick={() => handleRoute("/dashboard")}>
+                      Dashboard
+                    </NavDropdown.Item>
+                    <NavDropdown.Item onClick={() => handleRoute("/profile")}>
+                      Profile
+                    </NavDropdown.Item>
+                    <NavDropdown.Item onClick={() => handleRoute("/wishlist")}>
+                      Wish List
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item onClick={handleLogout}>
+                      Sign out
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </Fragment>
               ) : (
                 <LinkContainer to="/login">
                   <Nav.Link className="my-auto mr-2">Sign In</Nav.Link>
