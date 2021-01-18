@@ -1,7 +1,9 @@
 import React from "react";
 import { Button, Row } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 
-const EmptyBag = ({ history }) => {
+const EmptyBag = () => {
+  const history = useHistory();
   const handleShopNow = () => {
     history.push("/");
   };
