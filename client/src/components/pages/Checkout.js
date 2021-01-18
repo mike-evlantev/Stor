@@ -21,8 +21,9 @@ import { Fragment } from "react";
 import Loader from "../Loader";
 import { formValidationService } from "../../services/formValidationService";
 import EmptyBag from "../EmptyBag";
+import { useHistory } from "react-router-dom";
 
-const Checkout = ({ history }) => {
+const Checkout = () => {
   const placeholderUser = {
     firstName: "John",
     lastName: "Doe",
@@ -77,6 +78,7 @@ const Checkout = ({ history }) => {
     "Typically a three-digit number on the back of the card. American Express cards have a four-digit number on the front of the card to the right.";
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const { isAuthenticated, loggedInUser, loading: authLoading } = useSelector(
     (state) => state.auth
@@ -204,6 +206,8 @@ const Checkout = ({ history }) => {
       paymentMethod: payment.method,
       shippingOption,
     };
+
+    console.log(order);
 
     // create order
     dispatch(createOrder(order));
@@ -851,7 +855,7 @@ const Checkout = ({ history }) => {
   return (
     <Container className="d-flex flex-column py-5">
       {bagItems.length === 0 ? (
-        <EmptyBag history={history} />
+        <EmptyBag />
       ) : authLoading || orderSubmitLoading ? (
         <Loader />
       ) : (
