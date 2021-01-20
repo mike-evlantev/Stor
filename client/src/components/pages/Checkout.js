@@ -24,6 +24,9 @@ import EmptyBag from "../EmptyBag";
 import { useHistory } from "react-router-dom";
 
 const Checkout = () => {
+  const CREDIT_CARD = "credit card";
+  const PAYPAL = "paypal";
+
   const placeholderUser = {
     firstName: "John",
     lastName: "Doe",
@@ -61,8 +64,7 @@ const Checkout = () => {
   };
 
   const placeholderPayment = {
-    method: "credit card",
-    type: "Visa",
+    network: "Visa",
     creditCardNumber: "4242424242424242",
     expirationDate: "08/21",
     securityCode: "424",
@@ -93,6 +95,8 @@ const Checkout = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [payment, setPayment] = useState(placeholderPayment); // replace with paymentInitialState
+  const [paymentMethod, setPaymentMethod] = useState(CREDIT_CARD); // replace with paymentInitialState
+
   const [sameAsShippingChecked, setSameAsShippingChecked] = useState(false);
   const [shippingOptionId, setShippingOptionId] = useState(1);
   const [signInVisible, setSignInVisible] = useState(false);
@@ -102,9 +106,11 @@ const Checkout = () => {
     (state) => state.bag
   );
   const shippingOptions = useSelector((state) => state.shippingOptions);
-  const { loading: orderSubmitLoading } = useSelector(
-    (state) => state.submitOrder
-  );
+  const {
+    loading: orderSubmitLoading,
+    success,
+    order: submittedOrder,
+  } = useSelector((state) => state.submitOrder);
 
   const handleLogin = (e) => {
     e.preventDefault(); // prevent refresh
@@ -182,6 +188,30 @@ const Checkout = () => {
   };
 
   const handleSubmitOrder = () => {
+    // process payment
+    let paymentResult = {};
+    switch (paymentMethod) {
+      case "credit card":
+        // Process Credit Card Payment
+        console.log("Processing Credit Card Payment");
+        paymentResult.network = payment.network;
+        paymentResult.last4 = payment.creditCardNumber.slice(
+          payment.creditCardNumber.length - 4
+        );
+        paymentResult.status = "success";
+        break;
+      case "paypal":
+        // Process Paypal Payment
+        console.log("Processing Paypal Payment");
+        paymentResult.id = "";
+        paymentResult.status = "";
+        paymentResult.update_time = "";
+        paymentResult.email_address = "";
+        break;
+      default:
+        break;
+    }
+
     // create order
     const shippingAddress = {
       address1: currentUser.address1,
@@ -200,10 +230,15 @@ const Checkout = () => {
       middleName: currentUser.middleName,
       lastName: currentUser.lastName,
       orderItems: bagItems,
-      shippingAddress,
       taxAmount: tax,
       totalAmount: total,
-      paymentMethod: payment.method,
+      paymentMethod: paymentMethod,
+      ...(paymentMethod === "credit card" && {
+        creditCardPaymentResult: paymentResult,
+      }),
+      ...(paymentMethod === "paypal" && { payPalPaymentResult: paymentResult }),
+      isPaid: true,
+      shippingAddress,
       shippingOption,
     };
 
@@ -224,6 +259,8 @@ const Checkout = () => {
     // clear payment
     setPayment({});
 
+    console.log(success);
+    console.log(submittedOrder);
     history.push("/confirmation");
   };
 
@@ -571,12 +608,7 @@ const Checkout = () => {
               <Accordion.Toggle
                 as={Card.Header}
                 eventKey="0"
-                onClick={() =>
-                  setPayment((prevState) => ({
-                    ...prevState,
-                    method: "Credit Card",
-                  }))
-                }
+                onClick={() => setPaymentMethod(PAYPAL)}
               >
                 <i className="fab fa-paypal"></i>&nbsp; PayPal
               </Accordion.Toggle>
@@ -599,12 +631,7 @@ const Checkout = () => {
               <Accordion.Toggle
                 as={Card.Header}
                 eventKey="1"
-                onClick={() =>
-                  setPayment((prevState) => ({
-                    ...prevState,
-                    method: "Credit Card",
-                  }))
-                }
+                onClick={() => setPaymentMethod(CREDIT_CARD)}
               >
                 <i className="fas fa-credit-card"></i>&nbsp; Credit Card
               </Accordion.Toggle>
@@ -624,7 +651,7 @@ const Checkout = () => {
                           <i className="fab fa-cc-mastercard fa-3x pr-2"></i>
                           <i className="fab fa-cc-amex fa-3x pr-2"></i>
                           <i className="fab fa-cc-discover fa-3x pr-2"></i>
-                          <i className="fab fa-cc-jcb fa-3x pr-2"></i>
+                          {/*<i className="fab fa-cc-jcb fa-3x pr-2"></i>*/}
                         </Form.Label>
                       </Form.Group>
                     </Form.Row>
