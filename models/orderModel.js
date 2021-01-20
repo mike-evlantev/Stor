@@ -17,6 +17,25 @@ const orderItemSchema = mongoose.Schema(
   }
 );
 
+const creditCardPaymentResult = mongoose.Schema(
+  {
+    network: {
+      type: String,
+      enum: ["visa", "mastercard", "amex", "discover"],
+      required: true,
+    },
+    last4: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ["success", "failed", "warning"],
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const addressSchema = mongoose.Schema(
   {
     address1: { type: String, required: true },
@@ -62,36 +81,35 @@ const orderSchema = mongoose.Schema(
     //   ref: "User", // reference specific model
     // },
     orderItems: [orderItemSchema],
-    shippingAddress: addressSchema,
-    paymentMethod: {
-      type: String,
+    taxAmount: {
+      type: Number,
+      default: 0.0,
       required: true,
     },
+    totalAmount: {
+      type: Number,
+      default: 0.0,
+      required: true,
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["credit card", "paypal"],
+      required: true,
+    },
+    creditCardPaymentResult: creditCardPaymentResult,
     payPalPaymentResult: {
       id: { type: String },
       status: { type: String },
       update_time: { type: String },
       email_address: { type: String },
     },
-    taxAmount: {
-      type: Number,
-      default: 0.0,
-      required: true,
-    },
-    shippingOption: shippingOptionSchema,
-    totalAmount: {
-      type: Number,
-      default: 0.0,
-      required: true,
-    },
     isPaid: {
       type: Boolean,
       default: false,
       required: true,
     },
-    paymentDate: {
-      type: Date,
-    },
+    shippingAddress: addressSchema,
+    shippingOption: shippingOptionSchema,
     isDelivered: {
       type: Boolean,
       default: false,
