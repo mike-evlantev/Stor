@@ -6,7 +6,7 @@ import {
   ORDER_SUBMIT_FAIL,
 } from "../constants/orderConstants.js";
 
-export const createOrder = (order) => async (dispatch, getState) => {
+export const submitOrder = (history, order) => async (dispatch, getState) => {
   try {
     dispatch({ type: ORDER_SUBMIT_REQUEST });
     const config = {
@@ -21,6 +21,10 @@ export const createOrder = (order) => async (dispatch, getState) => {
       type: ORDER_SUBMIT_SUCCESS,
       payload: data,
     });
+
+    // this is done here because the order response needs to be awaited
+    // before redirecting to 'Confirmation'
+    history.push("/confirmation");
   } catch (error) {
     const message =
       error.response && error.response.data.message
