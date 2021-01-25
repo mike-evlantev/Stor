@@ -1,5 +1,4 @@
-import React from "react";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { Card, Col, Container, Image, ListGroup, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
@@ -7,14 +6,15 @@ import Loader from "../Loader";
 
 const Confirmation = () => {
   const history = useHistory();
-  const { order, success, loading } = useSelector((state) => state.submitOrder);
-  console.log(success);
-  // if (!success || !order) {
-  //   console.log(success);
-  //   history.push("/");
-  // }
+  const { success, loading, error, ...order } = useSelector(
+    (state) => state.order
+  );
 
-  const orderDate = new Date(order.createdAt);
+  if (!success || !order) {
+    history.push("/");
+    return null;
+  }
+
   const options = {
     weekday: "long",
     year: "numeric",
@@ -35,7 +35,7 @@ const Confirmation = () => {
             <Col md={6}>
               <strong>Order Number</strong> {order._id}
               <strong>Order Date</strong>{" "}
-              {orderDate.toLocaleDateString(undefined, options)}
+              {new Date(order.createdAt).toLocaleDateString(undefined, options)}
               <strong>Shipping</strong> {order.shippingOption.name}
               <strong>Delivery</strong> {order.shippingOption.timeframe}
             </Col>
