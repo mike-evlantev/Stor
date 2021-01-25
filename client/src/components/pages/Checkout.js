@@ -15,7 +15,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/userActions";
 import { updateShipping, clearBag } from "../../actions/bagActions";
-import { createOrder } from "../../actions/orderActions";
+import { submitOrder } from "../../actions/orderActions";
 import StateSelect from "../StateSelect";
 import { Fragment } from "react";
 import Loader from "../Loader";
@@ -96,6 +96,7 @@ const Checkout = () => {
   const [loginPassword, setLoginPassword] = useState("");
   const [payment, setPayment] = useState(placeholderPayment); // replace with paymentInitialState
   const [paymentMethod, setPaymentMethod] = useState(CREDIT_CARD); // replace with paymentInitialState
+  const [paymentResult, setPaymentResult] = useState({ status: "" });
 
   const [sameAsShippingChecked, setSameAsShippingChecked] = useState(false);
   const [shippingOptionId, setShippingOptionId] = useState(1);
@@ -106,11 +107,7 @@ const Checkout = () => {
     (state) => state.bag
   );
   const shippingOptions = useSelector((state) => state.shippingOptions);
-  const {
-    loading: orderSubmitLoading,
-    success,
-    order: submittedOrder,
-  } = useSelector((state) => state.submitOrder);
+  const { loading: orderSubmitLoading } = useSelector((state) => state.order);
 
   const handleLogin = (e) => {
     e.preventDefault(); // prevent refresh
@@ -187,32 +184,35 @@ const Checkout = () => {
     if (isValid) setStep(selectedStep);
   };
 
-  const handleSubmitOrder = () => {
-    // process payment
-    let paymentResult = {};
+  const processPayment = () => {
+    let result = {};
     switch (paymentMethod) {
-      case "credit card":
+      case CREDIT_CARD:
         // Process Credit Card Payment
         console.log("Processing Credit Card Payment");
-        paymentResult.network = payment.network;
-        paymentResult.last4 = payment.creditCardNumber.slice(
+        result.network = payment.network;
+        result.last4 = payment.creditCardNumber.slice(
           payment.creditCardNumber.length - 4
         );
-        paymentResult.status = "success";
+        result.status = "success";
         break;
-      case "paypal":
+      case PAYPAL:
         // Process Paypal Payment
         console.log("Processing Paypal Payment");
-        paymentResult.id = "";
-        paymentResult.status = "";
-        paymentResult.update_time = "";
-        paymentResult.email_address = "";
+        result.id = "";
+        result.status = "";
+        result.update_time = "";
+        result.email_address = "";
         break;
       default:
         break;
     }
+    console.log(result);
+    setPaymentResult(result);
+    console.log(paymentResult);
+  };
 
-    // create order
+  const processOrder = () => {
     const shippingAddress = {
       address1: currentUser.address1,
       address2: currentUser.address2,
@@ -233,20 +233,23 @@ const Checkout = () => {
       taxAmount: tax,
       totalAmount: total,
       paymentMethod: paymentMethod,
-      ...(paymentMethod === "credit card" && {
+      ...(paymentMethod === CREDIT_CARD && {
         creditCardPaymentResult: paymentResult,
       }),
-      ...(paymentMethod === "paypal" && { payPalPaymentResult: paymentResult }),
+      ...(paymentMethod === PAYPAL && { payPalPaymentResult: paymentResult }),
       isPaid: true,
       shippingAddress,
       shippingOption,
     };
 
     console.log(order);
+    // submit order
+    dispatch(submitOrder(history, order));
+    // clean up
+    cleanUpOnSubmit();
+  };
 
-    // create order
-    dispatch(createOrder(order));
-
+  const cleanUpOnSubmit = () => {
     // clear bag redux state
     dispatch(clearBag());
 
@@ -258,10 +261,14 @@ const Checkout = () => {
 
     // clear payment
     setPayment({});
+  };
 
-    console.log(success);
-    console.log(submittedOrder);
-    history.push("/confirmation");
+  const handleSubmitOrder = () => {
+    // process payment
+    processPayment();
+    // submit order
+    processOrder();
+    //if (paymentResult.status === "success") processOrder();
   };
 
   useEffect(() => {
