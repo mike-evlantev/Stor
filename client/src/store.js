@@ -8,7 +8,7 @@ import {
 import { authReducer } from "./reducers/userReducers.js";
 import { bagReducer } from "./reducers/bagReducers.js";
 import { messageReducer } from "./reducers/messageReducers.js";
-import { submitOrderReducer } from "./reducers/orderReducers.js";
+import { orderReducer } from "./reducers/orderReducers.js";
 //import { shippingOptionsReducer } from "./reducers/shippingOptionsReducers.js";
 
 const reducer = combineReducers({
@@ -18,7 +18,7 @@ const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
   shippingOptions: (state = {}) => state,
-  submitOrder: submitOrderReducer,
+  order: orderReducer,
 });
 
 const shippingOptions = [
