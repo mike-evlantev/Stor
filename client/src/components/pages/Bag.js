@@ -32,14 +32,10 @@ const Bag = ({ history }) => {
     history.push("/checkout");
   };
 
-  const generateSkuCode = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
-
   return (
     <Container className="d-flex py-5">
       {bagItems.length === 0 ? (
-        <EmptyBag history={history} />
+        <EmptyBag />
       ) : (
         <Row className="py-3">
           <Col md={8}>
@@ -54,42 +50,35 @@ const Bag = ({ history }) => {
                         <Image src={item.image} alt={item.name} fluid />
                       </Col>
                       <Col md={8}>
-                        <Card.Body>
-                          <Card.Title>
-                            <Link to={`/product/${item.product}`}>
-                              {item.name}
-                            </Link>
-                          </Card.Title>
-                          <Card.Text className="text-muted">
-                            SKU# {generateSkuCode(1000000000, 9999999999)}
-                          </Card.Text>
-                          <Container>
-                            <Row>
-                              <Col lg={4}>
-                                <div>Item Price:</div>
-                                <div>${item.price}</div>
-                              </Col>
-                              <Col lg={4}>
-                                Qty:{" "}
-                                <QtySelect
-                                  product={item}
-                                  qty={item.qty}
-                                  onChange={handleQtyChange}
-                                />
-                              </Col>
-                              <Col lg={4} className="d-flex">
-                                <Button
-                                  variant="link"
-                                  size="sm"
-                                  className="my-auto"
-                                  onClick={() => handleRemoveItemFromBag(item)}
-                                >
-                                  Remove
-                                </Button>
-                              </Col>
-                            </Row>
-                          </Container>
-                        </Card.Body>
+                        <Card.Title>
+                          <Link to={`/product/${item.product}`}>
+                            {item.name}
+                          </Link>
+                        </Card.Title>
+                        <Row className="mt-5">
+                          <Col lg={4}>
+                            <div>Item Price:</div>
+                            <div>${item.price}</div>
+                          </Col>
+                          <Col lg={4}>
+                            Qty:{" "}
+                            <QtySelect
+                              product={item}
+                              qty={item.qty}
+                              onChange={handleQtyChange}
+                            />
+                          </Col>
+                          <Col lg={4} className="d-flex">
+                            <Button
+                              variant="link"
+                              size="sm"
+                              className="my-auto"
+                              onClick={() => handleRemoveItemFromBag(item)}
+                            >
+                              Remove
+                            </Button>
+                          </Col>
+                        </Row>
                       </Col>
                     </Row>
                   </Card>
