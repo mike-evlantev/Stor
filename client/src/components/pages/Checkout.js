@@ -7,7 +7,6 @@ import {
   Col,
   Container,
   Form,
-  Image,
   ListGroup,
   Row,
   ToggleButton,
@@ -22,6 +21,8 @@ import Loader from "../Loader";
 import { formValidationService } from "../../services/formValidationService";
 import EmptyBag from "../EmptyBag";
 import { useHistory } from "react-router-dom";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import OrderItems from "./OrderItems";
 
 const Checkout = () => {
   const CREDIT_CARD = "credit card";
@@ -81,12 +82,12 @@ const Checkout = () => {
 
   const dispatch = useDispatch();
   const history = useHistory();
+  const stripe = useStripe();
+  const elements = useElements();
 
   const { isAuthenticated, loggedInUser, loading: authLoading } = useSelector(
     (state) => state.auth
   );
-
-  const [bagItemsVisible, setBagItemsVisible] = useState(true);
   const [currentUser, setCurrentUser] = useState(
     loggedInUser || placeholderUser
   );
@@ -95,7 +96,7 @@ const Checkout = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [payment, setPayment] = useState(placeholderPayment); // replace with paymentInitialState
-  const [paymentMethod, setPaymentMethod] = useState(CREDIT_CARD); // replace with paymentInitialState
+  const [paymentMethodType, setPaymentMethodType] = useState(CREDIT_CARD); // replace with paymentInitialState
   const [paymentResult, setPaymentResult] = useState({ status: "" });
 
   const [sameAsShippingChecked, setSameAsShippingChecked] = useState(false);
@@ -103,7 +104,7 @@ const Checkout = () => {
   const [signInVisible, setSignInVisible] = useState(false);
   const [step, setStep] = useState(1);
 
-  const { bagItems, subtotal, shipping, tax, total } = useSelector(
+  const { bagItems, shipping, subtotal, tax, total } = useSelector(
     (state) => state.bag
   );
   const shippingOptions = useSelector((state) => state.shippingOptions);
@@ -184,12 +185,31 @@ const Checkout = () => {
     if (isValid) setStep(selectedStep);
   };
 
-  const processPayment = () => {
+  const processPaymentAsync = async () => {
     let result = {};
-    switch (paymentMethod) {
+    switch (paymentMethodType) {
       case CREDIT_CARD:
         // Process Credit Card Payment
         console.log("Processing Credit Card Payment");
+
+        // Get a reference to a mounted CardElement. Elements knows how
+        // to find your CardElement because there can only ever be one of
+        // each type of element.
+        const cardElement = elements.getElement(CardElement);
+        console.log(elements);
+        console.log(cardElement);
+        const token = await stripe.createToken(cardElement);
+        console.log(token);
+        const { error, paymentMethod } = await stripe.createPaymentMethod({
+          type: "card",
+          card: elements.getElement(CardElement),
+        });
+        if (error) {
+          console.error(error);
+        }
+
+        console.log(paymentMethod);
+
         result.network = payment.network;
         result.last4 = payment.creditCardNumber.slice(
           payment.creditCardNumber.length - 4
@@ -232,11 +252,13 @@ const Checkout = () => {
       orderItems: bagItems,
       taxAmount: tax,
       totalAmount: total,
-      paymentMethod: paymentMethod,
-      ...(paymentMethod === CREDIT_CARD && {
+      paymentMethod: paymentMethodType,
+      ...(paymentMethodType === CREDIT_CARD && {
         creditCardPaymentResult: paymentResult,
       }),
-      ...(paymentMethod === PAYPAL && { payPalPaymentResult: paymentResult }),
+      ...(paymentMethodType === PAYPAL && {
+        payPalPaymentResult: paymentResult,
+      }),
       isPaid: true,
       shippingAddress,
       shippingOption,
@@ -264,8 +286,13 @@ const Checkout = () => {
   };
 
   const handleSubmitOrder = () => {
+    if (!stripe || !elements) {
+      // Stripe.js has not loaded yet. Make sure to disable
+      // form submission until Stripe.js has loaded.
+      return;
+    }
     // process payment
-    processPayment();
+    processPaymentAsync();
     // submit order
     processOrder();
     //if (paymentResult.status === "success") processOrder();
@@ -561,7 +588,8 @@ const Checkout = () => {
     <Fragment>
       {renderStepOneSummary()}
       {renderPaymentForm()}
-      {renderGoToStepButton(3)}
+      {renderSubmitOrder()}
+      {/*renderGoToStepButton(3)*/}
     </Fragment>
   );
 
@@ -606,16 +634,44 @@ const Checkout = () => {
 
   // Step 2 (Payment)
   const renderPaymentForm = () => {
+    const iframeStyles = {
+      base: {
+        color: "#444",
+        fontWeight: 500,
+        fontSize: "13px",
+        iconColor: "#444",
+        "::placeholder": {
+          color: "#bbb",
+        },
+      },
+      invalid: {
+        iconColor: "#9b479f",
+        color: "#9b479f",
+      },
+      complete: {
+        iconColor: "#469408",
+      },
+    };
+
+    const cardElementOpts = {
+      iconStyle: "solid",
+      style: iframeStyles,
+    };
+
+    //const cardElmnt = elements.getElement(CardElement);
+    //console.log(cardElmnt);
+    //setCardElement(cardElmnt);
+
     return (
       <ListGroup variant="flush" className="py-1">
         <ListGroup.Item>
           <h4>Payment</h4>
-          <Accordion defaultActiveKey="1">
+          <Accordion defaultActiveKey="2">
             <Card>
               <Accordion.Toggle
                 as={Card.Header}
                 eventKey="0"
-                onClick={() => setPaymentMethod(PAYPAL)}
+                onClick={() => setPaymentMethodType(PAYPAL)}
               >
                 <i className="fab fa-paypal"></i>&nbsp; PayPal
               </Accordion.Toggle>
@@ -638,7 +694,7 @@ const Checkout = () => {
               <Accordion.Toggle
                 as={Card.Header}
                 eventKey="1"
-                onClick={() => setPaymentMethod(CREDIT_CARD)}
+                onClick={() => setPaymentMethodType(CREDIT_CARD)}
               >
                 <i className="fas fa-credit-card"></i>&nbsp; Credit Card
               </Accordion.Toggle>
@@ -768,6 +824,24 @@ const Checkout = () => {
                 </Card.Body>
               </Accordion.Collapse>
             </Card>
+            <Card>
+              <Accordion.Toggle
+                as={Card.Header}
+                eventKey="2"
+                onClick={() => setPaymentMethodType(CREDIT_CARD)}
+              >
+                <i className="fas fa-credit-card"></i>&nbsp; Stripe
+              </Accordion.Toggle>
+              <Accordion.Collapse eventKey="2">
+                <Card.Body>
+                  <Form onSubmit={handleSubmitOrder}>
+                    <Form.Row className="flex-column">
+                      <CardElement options={cardElementOpts} />
+                    </Form.Row>
+                  </Form>
+                </Card.Body>
+              </Accordion.Collapse>
+            </Card>
           </Accordion>
         </ListGroup.Item>
       </ListGroup>
@@ -776,22 +850,26 @@ const Checkout = () => {
 
   // Step 3:
   const renderSubmitOrder = () => {
+    const cardElement = elements.getElement(CardElement);
+    console.log(cardElement);
     return (
       <Fragment>
-        {renderStepOneSummary()}
-        {renderStepTwoSummary()}
-        <Button
+        {/*renderStepOneSummary()*/}
+        {/*renderStepTwoSummary()*/}
+        {/*<Button
           variant="light"
           className="my-2"
           onClick={() => setStep(step - 1)}
         >
           Go Back
-        </Button>
+        </Button>*/}
         <Button
           variant="primary"
           className="my-2 float-right"
           onClick={() => handleSubmitOrder()}
-          disabled={!bagItems || bagItems.length === 0}
+          disabled={
+            orderSubmitLoading || !stripe || !bagItems || bagItems.length === 0
+          }
         >
           Submit Order
         </Button>
@@ -817,75 +895,6 @@ const Checkout = () => {
     );
   };
 
-  const renderOrderSummary = () => {
-    return (
-      <Fragment>
-        <h2 className="py-1 px-3">Order Summary</h2>
-        {/* key is necessary on parent element to be able to re-render child element: 
-        in this case, the chevron (up/down) icon next to item qty
-        https://reactjs.org/docs/reconciliation.html */}
-        <div
-          className="py-2 px-3"
-          key={bagItemsVisible}
-          onClick={() => setBagItemsVisible(!bagItemsVisible)}
-        >
-          <i className="fas fa-shopping-bag fa-lg"></i>&nbsp;&nbsp;
-          {bagItems.length} {bagItems.length > 1 ? "items" : "item"}
-          &nbsp;&nbsp;
-          <i
-            className={
-              bagItemsVisible
-                ? "fas fa-chevron-up fa-lg"
-                : "fas fa-chevron-down fa-lg"
-            }
-          ></i>
-          <strong className="float-right pr-1">${total.toFixed(2)}</strong>
-        </div>
-        <ListGroup variant="flush">
-          {bagItemsVisible &&
-            bagItems &&
-            bagItems.length > 0 &&
-            bagItems.map((item) => (
-              <ListGroup.Item key={item.product}>
-                <Row>
-                  <Col md={3}>
-                    <Image src={item.image} alt={item.name} fluid />
-                  </Col>
-                  <Col md={9} className="d-flex flex-column p-0">
-                    <strong>{item.name}</strong>
-                    <div className="mt-auto">
-                      <span>Qty:{item.qty}</span>
-                      <span className="float-right pr-3">${item.price}</span>
-                    </div>
-                  </Col>
-                </Row>
-              </ListGroup.Item>
-            ))}
-          <ListGroup.Item className="d-flex">
-            <div>Subtotal</div>
-            <div className="ml-auto">${subtotal.toFixed(2)}</div>
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex">
-            <div>Shipping</div>
-            <div className="ml-auto">${shipping.cost.toFixed(2)}</div>
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex">
-            <div>Tax</div>
-            <div className="ml-auto">${tax.toFixed(2)}</div>
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex">
-            <div>
-              <strong>Order Total</strong>
-            </div>
-            <div className="ml-auto">
-              <strong>${total.toFixed(2)}</strong>
-            </div>
-          </ListGroup.Item>
-        </ListGroup>
-      </Fragment>
-    );
-  };
-
   return (
     <Container className="d-flex flex-column py-5">
       {bagItems.length === 0 ? (
@@ -900,7 +909,15 @@ const Checkout = () => {
           <Row className="py-3">
             <Col md={7}>{renderCheckout()}</Col>
             <Col md={5}>
-              <div className="sticky-top">{renderOrderSummary()}</div>
+              <div className="sticky-top">
+                <OrderItems
+                  items={bagItems}
+                  shipping={shipping}
+                  subtotal={subtotal}
+                  tax={tax}
+                  total={total}
+                />
+              </div>
             </Col>
           </Row>
         </Fragment>
