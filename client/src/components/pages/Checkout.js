@@ -32,6 +32,7 @@ const Checkout = () => {
     firstName: "John",
     lastName: "Doe",
     address1: "123 Columbia St",
+    address2: "APT 1A",
     city: "Carson City",
     state: "NV",
     zip: "89154",
@@ -71,7 +72,7 @@ const Checkout = () => {
     securityCode: "424",
     nameOnCard: "John Doe",
     address1: "123 Columbia St",
-    address2: "",
+    address2: "APT 1A",
     city: "Carson City",
     state: "NV",
     zip: "89154",
@@ -273,7 +274,7 @@ const Checkout = () => {
 
   const cleanUpOnSubmit = () => {
     // clear bag redux state
-    dispatch(clearBag());
+    //dispatch(clearBag());
 
     // reset shipping option
     setShippingOptionId(1);
@@ -895,35 +896,37 @@ const Checkout = () => {
     );
   };
 
-  return (
-    <Container className="d-flex flex-column py-5">
-      {bagItems.length === 0 ? (
-        <EmptyBag />
-      ) : authLoading || orderSubmitLoading ? (
-        <Loader />
-      ) : (
-        <Fragment>
-          <Row className="py-1 mx-auto text-center">
-            <h1>Checkout</h1>
-          </Row>
-          <Row className="py-3">
-            <Col md={7}>{renderCheckout()}</Col>
-            <Col md={5}>
-              <div className="sticky-top">
-                <OrderItems
-                  items={bagItems}
-                  shipping={shipping}
-                  subtotal={subtotal}
-                  tax={tax}
-                  total={total}
-                />
-              </div>
-            </Col>
-          </Row>
-        </Fragment>
-      )}
-    </Container>
-  );
+  return renderCheckout();
+
+  // return (
+  //   <Container className="d-flex flex-column py-5">
+  //     {bagItems.length === 0 ? (
+  //       <EmptyBag />
+  //     ) : authLoading || orderSubmitLoading ? (
+  //       <Loader />
+  //     ) : (
+  //       <Fragment>
+  //         <Row className="py-1 px-3">
+  //           <h1>Checkout</h1>
+  //         </Row>
+  //         <Row className="py-3">
+  //           <Col md={7}>{renderCheckout()}</Col>
+  //           <Col md={5}>
+  //             <div className="sticky-top">
+  //               <OrderItems
+  //                 items={bagItems}
+  //                 shipping={shipping}
+  //                 subtotal={subtotal}
+  //                 tax={tax}
+  //                 total={total}
+  //               />
+  //             </div>
+  //           </Col>
+  //         </Row>
+  //       </Fragment>
+  //     )}
+  //   </Container>
+  // );
 };
 
 export default Checkout;

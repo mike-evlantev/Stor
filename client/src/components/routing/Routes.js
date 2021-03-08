@@ -13,6 +13,7 @@ import { PrivateRoute } from "./PrivateRoute";
 import Dashboard from "../pages/Dashboard";
 import WishList from "../pages/WishList";
 import Confirmation from "../pages/Confirmation";
+import Order from "../Order";
 
 export const Routes = () => {
   return (
@@ -21,8 +22,16 @@ export const Routes = () => {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/bag" component={Bag} />
-        <Route exact path="/checkout" component={Checkout} />
-        <Route exact path="/confirmation" component={Confirmation} />
+        <Route
+          exact
+          path="/checkout"
+          render={(props) => <Order {...props} orderStage={"checkout"} />}
+        />
+        <Route
+          exact
+          path="/confirmation"
+          render={(props) => <Order {...props} orderStage={"confirmation"} />}
+        />
         <Route exact path="/login" component={SignIn} />
         <Route exact path="/privacy" component={PrivacyPolicy} />
         <Route exact path="/product/:id" component={Product} />
