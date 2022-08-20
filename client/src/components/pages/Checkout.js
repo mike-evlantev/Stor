@@ -14,6 +14,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/userActions";
 import { updateShipping, clearBag } from "../../actions/bagActions";
+import { processPayment } from "../../actions/paymentActions";
 import { submitOrder } from "../../actions/orderActions";
 import StateSelect from "../StateSelect";
 import { Fragment } from "react";
@@ -86,9 +87,14 @@ const Checkout = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  const { isAuthenticated, loggedInUser, loading: authLoading } = useSelector(
-    (state) => state.auth
-  );
+  console.log(stripe);
+  console.log(elements);
+
+  const {
+    isAuthenticated,
+    loggedInUser,
+    loading: authLoading,
+  } = useSelector((state) => state.auth);
   const [currentUser, setCurrentUser] = useState(
     loggedInUser || placeholderUser
   );

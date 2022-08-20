@@ -6,6 +6,7 @@ import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import productsRouter from "./routes/productRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import paymentRouter from "./routes/paymentRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.json({ extended: false })); // Allows to accept data within a bo
 app.use("/api/products", productsRouter);
 app.use("/api/users", userRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/payment", paymentRouter);
 
 app.use(notFound);
 app.use(errorHandler);
