@@ -87,8 +87,8 @@ const Checkout = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  console.log(stripe);
-  console.log(elements);
+  // console.log(stripe);
+  // console.log(elements);
 
   const {
     isAuthenticated,
@@ -196,32 +196,51 @@ const Checkout = () => {
     let result = {};
     switch (paymentMethodType) {
       case CREDIT_CARD:
-        // Process Credit Card Payment
-        console.log("Processing Credit Card Payment");
+        // // Process Credit Card Payment
+        // console.log("Processing Credit Card Payment");
 
-        // Get a reference to a mounted CardElement. Elements knows how
-        // to find your CardElement because there can only ever be one of
-        // each type of element.
-        const cardElement = elements.getElement(CardElement);
-        console.log(elements);
-        console.log(cardElement);
-        const token = await stripe.createToken(cardElement);
-        console.log(token);
+        // // Get a reference to a mounted CardElement. Elements knows how
+        // // to find your CardElement because there can only ever be one of
+        // // each type of element.
+        // const cardElement = elements.getElement(CardElement);
+        // console.log(elements);
+        // console.log(cardElement);
+        // const token = await stripe.createToken(cardElement);
+        // console.log(token);
+        // const { error, paymentMethod } = await stripe.createPaymentMethod({
+        //   type: "card",
+        //   card: elements.getElement(CardElement),
+        // });
+        // if (error) {
+        //   console.error(error);
+        // }
+
+        // console.log(paymentMethod);
+
+        // result.network = payment.network;
+        // result.last4 = payment.creditCardNumber.slice(
+        //   payment.creditCardNumber.length - 4
+        // );
+        // result.status = "success";
+
         const { error, paymentMethod } = await stripe.createPaymentMethod({
           type: "card",
           card: elements.getElement(CardElement),
         });
-        if (error) {
-          console.error(error);
+
+        if (!error) {
+          try {
+            console.log(paymentMethod);
+            const {id} = paymentMethod;
+            const response = dispatch(processPayment({amount: 1099, id}));
+            console.log(response);
+          } catch (error) {
+            console.log("Error:", error);
+          }
+        } else {
+          console.log(error.message);
         }
 
-        console.log(paymentMethod);
-
-        result.network = payment.network;
-        result.last4 = payment.creditCardNumber.slice(
-          payment.creditCardNumber.length - 4
-        );
-        result.status = "success";
         break;
       case PAYPAL:
         // Process Paypal Payment
@@ -275,7 +294,7 @@ const Checkout = () => {
     // submit order
     dispatch(submitOrder(history, order));
     // clean up
-    cleanUpOnSubmit();
+    //cleanUpOnSubmit();
   };
 
   const cleanUpOnSubmit = () => {

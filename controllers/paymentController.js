@@ -5,18 +5,21 @@ import Stripe from "stripe";
 // @desc        Process a payment
 // @access      Public
 export const processPayment = asyncHandler(async (req, res) => {
-  const { id, qty } = req.body;
+  //const { order } = req.body;
+  //const {amount, id} = req.body;
+  console.log(req.body);
+  const {amount} = req.body;
   console.log("Processing payment...", process.env.STRIPE_SECRET_KEY);
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-  const payment = await stripe.paymentIntents.create({
-    amount: 1099, // in cents
+  
+  const response = await stripe.paymentIntents.create({
+    amount, // in cents
     currency: "usd",
     description: "Stor Test Charge",
     payment_method_types: ["card"],
   });
 
-  console.log("Payment processed successfully", payment);
+  console.log("Payment processed successfully", response);
 
   // const order = new Order({
   //   firstName,
@@ -32,5 +35,5 @@ export const processPayment = asyncHandler(async (req, res) => {
   // });
 
   //const createdOrder = await order.save();
-  res.status(201).json(payment);
+  res.status(201).json(response.data);
 });

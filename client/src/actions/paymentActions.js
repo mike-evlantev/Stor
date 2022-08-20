@@ -6,7 +6,7 @@ import {
   PROCESS_PAYMENT_FAIL,
 } from "../constants/paymentConstants.js";
 
-export const processPayment = (orderItems) => async (dispatch) => {
+export const processPayment = (payload) => async (dispatch) => {
   try {
     dispatch({ type: PROCESS_PAYMENT_REQUEST });
     const config = {
@@ -15,7 +15,7 @@ export const processPayment = (orderItems) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.post("/api/payment", orderItems, config);
+    const { data } = await axios.post("/api/payment", payload, config);
 
     dispatch({
       type: PROCESS_PAYMENT_SUCCESS,

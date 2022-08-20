@@ -35,11 +35,8 @@ const Order = ({ orderStage }) => {
   const renderLeft = () => {
     switch (orderStage) {
       case "checkout":
-        console.log(stageDisplayTitle);
         return <Checkout />;
       case "confirmation":
-        console.log(stageDisplayTitle);
-        console.log(stageDisplaySubtitle);
         return <Confirmation />;
       default:
         return <span>Unknown order stage</span>;
