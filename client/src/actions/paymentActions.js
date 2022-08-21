@@ -14,8 +14,10 @@ export const processPayment = (payload) => async (dispatch) => {
         "Content-Type": "application/json",
       },
     };
-
-    const { data } = await axios.post("/api/payment", payload, config);
+    const data = {};
+    console.log(payload);
+    const response = await axios.post("/api/payment", payload, config);
+    console.log(response);
 
     dispatch({
       type: PROCESS_PAYMENT_SUCCESS,

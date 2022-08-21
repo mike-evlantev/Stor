@@ -222,17 +222,20 @@ const Checkout = () => {
         //   payment.creditCardNumber.length - 4
         // );
         // result.status = "success";
-
+        console.log(paymentMethodType);
         const { error, paymentMethod } = await stripe.createPaymentMethod({
           type: "card",
           card: elements.getElement(CardElement),
         });
 
+        console.log(paymentMethod);
+
         if (!error) {
           try {
             console.log(paymentMethod);
             const {id} = paymentMethod;
-            const response = dispatch(processPayment({amount: 1099, id}));
+            const responseRaw = dispatch(processPayment({amount: 1099, id}));
+            const response = Promise.resolve(responseRaw).then(res => console.log(res));
             console.log(response);
           } catch (error) {
             console.log("Error:", error);
@@ -253,9 +256,8 @@ const Checkout = () => {
       default:
         break;
     }
-    console.log(result);
+    
     setPaymentResult(result);
-    console.log(paymentResult);
   };
 
   const processOrder = () => {
@@ -311,14 +313,16 @@ const Checkout = () => {
     setPayment({});
   };
 
-  const handleSubmitOrder = () => {
-    if (!stripe || !elements) {
-      // Stripe.js has not loaded yet. Make sure to disable
-      // form submission until Stripe.js has loaded.
-      return;
-    }
+  const handleSubmitOrder = async () => {
+    // if (!stripe || !elements) {
+    //   // Stripe.js has not loaded yet. Make sure to disable
+    //   // form submission until Stripe.js has loaded.
+
+    //   return;
+    // }
     // process payment
-    processPaymentAsync();
+    const paymentResult = await processPaymentAsync();
+    console.log(paymentResult);
     // submit order
     processOrder();
     //if (paymentResult.status === "success") processOrder();
@@ -333,7 +337,7 @@ const Checkout = () => {
   const renderCheckout = () => {
     switch (step) {
       case 1:
-        return <Fragment>{renderShippingInfoForm()}</Fragment>;
+        return <>{renderShippingInfoForm()}</>;
       case 2:
         return <Fragment>{renderPaymentInfoForm()}</Fragment>;
       case 3:
@@ -876,8 +880,9 @@ const Checkout = () => {
 
   // Step 3:
   const renderSubmitOrder = () => {
-    const cardElement = elements.getElement(CardElement);
-    console.log(cardElement);
+    // console.log(elements);
+    // const cardElement = elements.getElement(CardElement);
+    // console.log(cardElement);
     return (
       <Fragment>
         {/*renderStepOneSummary()*/}

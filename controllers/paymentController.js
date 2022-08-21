@@ -35,5 +35,5 @@ export const processPayment = asyncHandler(async (req, res) => {
   // });
 
   //const createdOrder = await order.save();
-  res.status(201).json(response.data);
+  res.status(201).json(response);
 });
