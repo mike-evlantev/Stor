@@ -5,35 +5,20 @@ import Stripe from "stripe";
 // @desc        Process a payment
 // @access      Public
 export const processPayment = asyncHandler(async (req, res) => {
-  //const { order } = req.body;
-  //const {amount, id} = req.body;
-  console.log(req.body);
-  const {amount} = req.body;
-  console.log("Processing payment...", process.env.STRIPE_SECRET_KEY);
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  
+  const {amount, paymentMethodId} = req.body;
+  console.log("req.body", req.body);  
   const response = await stripe.paymentIntents.create({
     amount, // in cents
     currency: "usd",
-    description: "Stor Test Charge",
+    description: "Stor Test Order",
     payment_method_types: ["card"],
   });
 
-  console.log("Payment processed successfully", response);
+  console.log(response.data);
 
-  // const order = new Order({
-  //   firstName,
-  //   middleName,
-  //   lastName,
-  //   orderItems,
-  //   //user: req.user._id,
-  //   shippingAddress,
-  //   paymentMethod,
-  //   taxAmount,
-  //   shippingOption,
-  //   totalAmount,
-  // });
+  const confirmedCardPayment = await stripe.confirmCardPayment(data.client_secret, { payment_method: paymentMethodId });
+  console.log(confirmedCardPayment);
 
-  //const createdOrder = await order.save();
-  res.status(201).json(response);
+  res.status(200).json(confirmedCardPayment);
 });

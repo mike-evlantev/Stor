@@ -7,7 +7,6 @@ import Loader from "../Loader";
 
 const Confirmation = () => {
   const history = useHistory();
-  const dispatch = useHistory();
   const { success, loading, error, ...order } = useSelector(
     (state) => state.order
   );

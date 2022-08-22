@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Accordion,
   Button,
@@ -14,7 +15,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions/userActions";
 import { updateShipping, clearBag } from "../../actions/bagActions";
-import { processPayment } from "../../actions/paymentActions";
 import { submitOrder } from "../../actions/orderActions";
 import StateSelect from "../StateSelect";
 import { Fragment } from "react";
@@ -79,16 +79,12 @@ const Checkout = () => {
     zip: "89154",
   };
 
-  const securityCodeTooltipMessage =
-    "Typically a three-digit number on the back of the card. American Express cards have a four-digit number on the front of the card to the right.";
+  const securityCodeTooltipMessage = "Typically a three-digit number on the back of the card. American Express cards have a four-digit number on the front of the card to the right.";
 
   const dispatch = useDispatch();
   const history = useHistory();
   const stripe = useStripe();
   const elements = useElements();
-
-  // console.log(stripe);
-  // console.log(elements);
 
   const {
     isAuthenticated,
@@ -192,51 +188,45 @@ const Checkout = () => {
     if (isValid) setStep(selectedStep);
   };
 
+
+  const processCardPayment = async (payload) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const data = await axios.post("/api/payment", payload, config);
+    return data;
+  }
+
   const processPaymentAsync = async () => {
     let result = {};
+
+    const {firstName, lastName, address1, city, state, zip, phone, email} = currentUser;
+    const billingDetails = {
+      name: firstName + " " + lastName,
+      email,
+      phone,
+      address: {
+        city,
+        line1: address1,
+        state,
+        postal_code: zip
+      }
+    };
+
     switch (paymentMethodType) {
       case CREDIT_CARD:
-        // // Process Credit Card Payment
-        // console.log("Processing Credit Card Payment");
-
-        // // Get a reference to a mounted CardElement. Elements knows how
-        // // to find your CardElement because there can only ever be one of
-        // // each type of element.
-        // const cardElement = elements.getElement(CardElement);
-        // console.log(elements);
-        // console.log(cardElement);
-        // const token = await stripe.createToken(cardElement);
-        // console.log(token);
-        // const { error, paymentMethod } = await stripe.createPaymentMethod({
-        //   type: "card",
-        //   card: elements.getElement(CardElement),
-        // });
-        // if (error) {
-        //   console.error(error);
-        // }
-
-        // console.log(paymentMethod);
-
-        // result.network = payment.network;
-        // result.last4 = payment.creditCardNumber.slice(
-        //   payment.creditCardNumber.length - 4
-        // );
-        // result.status = "success";
-        console.log(paymentMethodType);
         const { error, paymentMethod } = await stripe.createPaymentMethod({
           type: "card",
           card: elements.getElement(CardElement),
+          billing_details: billingDetails
         });
-
-        console.log(paymentMethod);
 
         if (!error) {
           try {
-            console.log(paymentMethod);
-            const {id} = paymentMethod;
-            const responseRaw = dispatch(processPayment({amount: 1099, id}));
-            const response = Promise.resolve(responseRaw).then(res => console.log(res));
-            console.log(response);
+            const paymentIntent = await processCardPayment({amount: (subtotal + tax) * 100, paymentMethodId: paymentMethod.id});
+            console.log(paymentIntent);
           } catch (error) {
             console.log("Error:", error);
           }
@@ -323,6 +313,7 @@ const Checkout = () => {
     // process payment
     const paymentResult = await processPaymentAsync();
     console.log(paymentResult);
+
     // submit order
     processOrder();
     //if (paymentResult.status === "success") processOrder();
@@ -337,18 +328,18 @@ const Checkout = () => {
   const renderCheckout = () => {
     switch (step) {
       case 1:
-        return <>{renderShippingInfoForm()}</>;
+        return <ShippingInfoForm />;
       case 2:
-        return <Fragment>{renderPaymentInfoForm()}</Fragment>;
+        return <>{renderPaymentInfoForm()}</>;
       case 3:
-        return <Fragment>{renderSubmitOrder()}</Fragment>;
+        return <>{renderSubmitOrder()}</>;
       default:
         return;
     }
   };
 
-  const renderCheckoutSignIn = () => (
-    <ListGroup variant="flush" className="py-1">
+  const CheckoutSignIn = () => {
+    return (<ListGroup variant="flush" className="py-1">
       <ListGroup.Item>
         <h2 className="py-3">Already have an account?</h2>
         <p key={signInVisible} onClick={() => setSignInVisible(!signInVisible)}>
@@ -398,22 +389,22 @@ const Checkout = () => {
           </div>
         )}
       </ListGroup.Item>
-    </ListGroup>
-  );
+    </ListGroup>)
+  }
 
   // Step 1:
-  const renderShippingInfoForm = () => (
-    <Fragment>
-      {!isAuthenticated && renderCheckoutSignIn()}
-      {renderdContactInfoForm()}
-      {renderdShippingAddressForm()}
-      {renderdShippingMethodForm()}
-      {renderGoToStepButton(2)}
-    </Fragment>
-  );
+  const ShippingInfoForm = () => {
+    return (<>
+      {!isAuthenticated && <CheckoutSignIn />}
+      <ContactInfoForm />
+      <ShippingAddressForm />
+      <ShippingMethodForm />
+      <GoToStepButton selectedStep={2} />
+    </>);
+  };
 
   // Step 1 (Contact Info)
-  const renderdContactInfoForm = () => {
+  const ContactInfoForm = () => {
     return (
       <ListGroup variant="flush" className="py-1">
         <ListGroup.Item>
@@ -440,7 +431,7 @@ const Checkout = () => {
   };
 
   // Step 1 (Shipping Address)
-  const renderdShippingAddressForm = () => {
+  const ShippingAddressForm = () => {
     return (
       <ListGroup variant="flush" className="py-1">
         <ListGroup.Item>
@@ -548,7 +539,7 @@ const Checkout = () => {
   };
 
   // Step 1 (Shipping Method)
-  const renderdShippingMethodForm = () => {
+  const ShippingMethodForm = () => {
     return (
       <ListGroup variant="flush" className="py-1">
         <ListGroup.Item>
@@ -586,7 +577,7 @@ const Checkout = () => {
   };
 
   // "Go To Step" Button
-  const renderGoToStepButton = (selectedStep) => {
+  const GoToStepButton = ({selectedStep}) => {
     return (
       <div>
         {step === 2 && (
