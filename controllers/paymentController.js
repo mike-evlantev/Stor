@@ -6,19 +6,21 @@ import Stripe from "stripe";
 // @access      Public
 export const processPayment = asyncHandler(async (req, res) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const {amount, paymentMethodId} = req.body;
-  console.log("req.body", req.body);  
-  const response = await stripe.paymentIntents.create({
-    amount, // in cents
+  const { amount } = req.body;
+  const cents = toCents(amount);
+  const result = await stripe.paymentIntents.create({
+    amount: cents, // in cents
     currency: "usd",
     description: "Stor Test Order",
     payment_method_types: ["card"],
   });
 
-  console.log(response.data);
+  console.log("client_secret", result.client_secret);
 
-  const confirmedCardPayment = await stripe.confirmCardPayment(data.client_secret, { payment_method: paymentMethodId });
-  console.log(confirmedCardPayment);
-
-  res.status(200).json(confirmedCardPayment);
+  res.status(200).json(result.client_secret);
 });
+
+const toCents = (amount) => {
+  const cents = amount * 100;
+  return Math.floor(cents);
+};

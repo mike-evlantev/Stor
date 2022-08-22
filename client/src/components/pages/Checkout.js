@@ -79,7 +79,8 @@ const Checkout = () => {
     zip: "89154",
   };
 
-  const securityCodeTooltipMessage = "Typically a three-digit number on the back of the card. American Express cards have a four-digit number on the front of the card to the right.";
+  const securityCodeTooltipMessage =
+    "Typically a three-digit number on the back of the card. American Express cards have a four-digit number on the front of the card to the right.";
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -188,7 +189,6 @@ const Checkout = () => {
     if (isValid) setStep(selectedStep);
   };
 
-
   const processCardPayment = async (payload) => {
     const config = {
       headers: {
@@ -197,12 +197,13 @@ const Checkout = () => {
     };
     const data = await axios.post("/api/payment", payload, config);
     return data;
-  }
+  };
 
   const processPaymentAsync = async () => {
     let result = {};
 
-    const {firstName, lastName, address1, city, state, zip, phone, email} = currentUser;
+    const { firstName, lastName, address1, city, state, zip, phone, email } =
+      currentUser;
     const billingDetails = {
       name: firstName + " " + lastName,
       email,
@@ -211,22 +212,29 @@ const Checkout = () => {
         city,
         line1: address1,
         state,
-        postal_code: zip
-      }
+        postal_code: zip,
+      },
     };
 
     switch (paymentMethodType) {
       case CREDIT_CARD:
+        // 1. create payment method
         const { error, paymentMethod } = await stripe.createPaymentMethod({
           type: "card",
           card: elements.getElement(CardElement),
-          billing_details: billingDetails
+          billing_details: billingDetails,
         });
 
         if (!error) {
           try {
-            const paymentIntent = await processCardPayment({amount: (subtotal + tax) * 100, paymentMethodId: paymentMethod.id});
-            console.log(paymentIntent);
+            // 2. create payment intent (must be executed server-side)
+            const { data: client_secret } = await processCardPayment({ amount: total });
+
+            // 3. confirm payment intent (must be executed client-side)
+            const { id, status } = await stripe.confirmCardPayment(client_secret, { payment_method: paymentMethod.id });
+            result.id = id;
+            result.status = status;
+            
           } catch (error) {
             console.log("Error:", error);
           }
@@ -246,7 +254,7 @@ const Checkout = () => {
       default:
         break;
     }
-    
+
     setPaymentResult(result);
   };
 
@@ -339,68 +347,75 @@ const Checkout = () => {
   };
 
   const CheckoutSignIn = () => {
-    return (<ListGroup variant="flush" className="py-1">
-      <ListGroup.Item>
-        <h2 className="py-3">Already have an account?</h2>
-        <p key={signInVisible} onClick={() => setSignInVisible(!signInVisible)}>
-          <u>Sign in</u> for quick and easy checkout&nbsp;&nbsp;
-          <i
-            className={
-              signInVisible
-                ? "fas fa-chevron-up fa-lg"
-                : "fas fa-chevron-down fa-lg"
-            }
-          ></i>
-        </p>
-        {signInVisible && (
-          <div>
-            <hr />
-            <Form onSubmit={handleLogin}>
-              <Form.Group>
-                <Form.Row>
-                  <Col>
-                    <Form.Control
-                      type="email"
-                      placeholder="Email Address"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                    />
-                  </Col>
-                  <Col>
-                    <Form.Control
-                      type="password"
-                      placeholder="Password"
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                    />
-                  </Col>
-                </Form.Row>
-              </Form.Group>
+    return (
+      <ListGroup variant="flush" className="py-1">
+        <ListGroup.Item>
+          <h2 className="py-3">Already have an account?</h2>
+          <p
+            key={signInVisible}
+            onClick={() => setSignInVisible(!signInVisible)}
+          >
+            <u>Sign in</u> for quick and easy checkout&nbsp;&nbsp;
+            <i
+              className={
+                signInVisible
+                  ? "fas fa-chevron-up fa-lg"
+                  : "fas fa-chevron-down fa-lg"
+              }
+            ></i>
+          </p>
+          {signInVisible && (
+            <div>
+              <hr />
+              <Form onSubmit={handleLogin}>
+                <Form.Group>
+                  <Form.Row>
+                    <Col>
+                      <Form.Control
+                        type="email"
+                        placeholder="Email Address"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                      />
+                    </Col>
+                    <Col>
+                      <Form.Control
+                        type="password"
+                        placeholder="Password"
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                      />
+                    </Col>
+                  </Form.Row>
+                </Form.Group>
 
-              <Button
-                variant="dark"
-                type="submit"
-                className="btn btn-block"
-                disabled={authLoading}
-              >
-                Sign In
-              </Button>
-            </Form>
-          </div>
-        )}
-      </ListGroup.Item>
-    </ListGroup>)
-  }
+                <Button
+                  variant="dark"
+                  type="submit"
+                  className="btn btn-block"
+                  disabled={authLoading}
+                >
+                  Sign In
+                </Button>
+              </Form>
+            </div>
+          )}
+        </ListGroup.Item>
+      </ListGroup>
+    );
+  };
 
   // Step 1:
   const ShippingInfoForm = () => {
-    return (<>
-      {!isAuthenticated && <CheckoutSignIn />}
-      <ContactInfoForm />
-      <ShippingAddressForm />
-      <ShippingMethodForm />
-      <GoToStepButton selectedStep={2} />
-    </>);
+    return (
+      <>
+        {!isAuthenticated && <CheckoutSignIn />}
+        <ContactInfoForm />
+        <ShippingAddressForm />
+        <ShippingMethodForm />
+        <GoToStepButton selectedStep={2} />
+      </>
+    );
   };
 
   // Step 1 (Contact Info)
@@ -577,7 +592,7 @@ const Checkout = () => {
   };
 
   // "Go To Step" Button
-  const GoToStepButton = ({selectedStep}) => {
+  const GoToStepButton = ({ selectedStep }) => {
     return (
       <div>
         {step === 2 && (
