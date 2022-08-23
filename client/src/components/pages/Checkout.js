@@ -114,6 +114,12 @@ const Checkout = () => {
   const shippingOptions = useSelector((state) => state.shippingOptions);
   const { loading: orderSubmitLoading } = useSelector((state) => state.order);
 
+  // mount stripe card element to bootstrap input
+  useEffect(() => {
+    const card = elements?.create("card");
+    card?.mount("#card-element");
+  }, []);
+
   const handleLogin = (e) => {
     e.preventDefault(); // prevent refresh
     dispatch(login(loginEmail, loginPassword));
@@ -694,9 +700,7 @@ const Checkout = () => {
       style: iframeStyles,
     };
 
-    //const cardElmnt = elements.getElement(CardElement);
-    //console.log(cardElmnt);
-    //setCardElement(cardElmnt);
+    
 
     return (
       <ListGroup variant="flush" className="py-1">
@@ -741,17 +745,18 @@ const Checkout = () => {
                       <Form.Group as={Col}>
                         <Form.Label>Credit card number</Form.Label>
                         <Form.Control
+                          id="card-element"
                           name="creditCardNumber"
                           placeholder={payment.creditCardNumber}
                           onChange={handlePaymentChange}
                         />
-                        <Form.Label className="pt-2">
+                        {/* <Form.Label className="pt-2">
                           <i className="fab fa-cc-visa fa-3x pr-2"></i>
                           <i className="fab fa-cc-mastercard fa-3x pr-2"></i>
                           <i className="fab fa-cc-amex fa-3x pr-2"></i>
                           <i className="fab fa-cc-discover fa-3x pr-2"></i>
-                          {/*<i className="fab fa-cc-jcb fa-3x pr-2"></i>*/}
-                        </Form.Label>
+                          <i className="fab fa-cc-jcb fa-3x pr-2"></i>
+                        </Form.Label> */}
                       </Form.Group>
                     </Form.Row>
                     <Form.Row>
@@ -846,7 +851,6 @@ const Checkout = () => {
                           updateProfileState={handlePaymentChange}
                         />
                       </Form.Group>
-
                       <Form.Group as={Col} lg={3}>
                         <Form.Label>Zip</Form.Label>
                         <Form.Control
@@ -860,7 +864,7 @@ const Checkout = () => {
                 </Card.Body>
               </Accordion.Collapse>
             </Card>
-            <Card>
+            {/* <Card>
               <Accordion.Toggle
                 as={Card.Header}
                 eventKey="2"
@@ -877,7 +881,7 @@ const Checkout = () => {
                   </Form>
                 </Card.Body>
               </Accordion.Collapse>
-            </Card>
+            </Card> */}
           </Accordion>
         </ListGroup.Item>
       </ListGroup>
