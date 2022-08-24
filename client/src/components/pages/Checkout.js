@@ -114,12 +114,6 @@ const Checkout = () => {
   const shippingOptions = useSelector((state) => state.shippingOptions);
   const { loading: orderSubmitLoading } = useSelector((state) => state.order);
 
-  // mount stripe card element to bootstrap input
-  useEffect(() => {
-    const card = elements?.create("card");
-    card?.mount("#card-element");
-  }, []);
-
   const handleLogin = (e) => {
     e.preventDefault(); // prevent refresh
     dispatch(login(loginEmail, loginPassword));
@@ -694,13 +688,11 @@ const Checkout = () => {
         iconColor: "#469408",
       },
     };
-
+     
     const cardElementOpts = {
       iconStyle: "solid",
       style: iframeStyles,
     };
-
-    
 
     return (
       <ListGroup variant="flush" className="py-1">
@@ -741,56 +733,6 @@ const Checkout = () => {
               <Accordion.Collapse eventKey="1">
                 <Card.Body>
                   <Form>
-                    <Form.Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>Credit card number</Form.Label>
-                        <Form.Control
-                          id="card-element"
-                          name="creditCardNumber"
-                          placeholder={payment.creditCardNumber}
-                          onChange={handlePaymentChange}
-                        />
-                        {/* <Form.Label className="pt-2">
-                          <i className="fab fa-cc-visa fa-3x pr-2"></i>
-                          <i className="fab fa-cc-mastercard fa-3x pr-2"></i>
-                          <i className="fab fa-cc-amex fa-3x pr-2"></i>
-                          <i className="fab fa-cc-discover fa-3x pr-2"></i>
-                          <i className="fab fa-cc-jcb fa-3x pr-2"></i>
-                        </Form.Label> */}
-                      </Form.Group>
-                    </Form.Row>
-                    <Form.Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>Exiration date (MM/YY)</Form.Label>
-                        <Form.Control
-                          name="expirationDate"
-                          placeholder={payment.expirationDate}
-                          onChange={handlePaymentChange}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col}>
-                        <Form.Label title={securityCodeTooltipMessage}>
-                          Security code&nbsp;&nbsp;
-                          <i className="fas fa-info-circle"></i>
-                        </Form.Label>
-                        <Form.Control
-                          name="securityCode"
-                          placeholder={payment.securityCode}
-                          onChange={handlePaymentChange}
-                        />
-                      </Form.Group>
-                    </Form.Row>
-                    <Form.Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>Name on card</Form.Label>
-                        <Form.Control
-                          name="nameOnCard"
-                          placeholder={payment.nameOnCard}
-                          onChange={handlePaymentChange}
-                        />
-                      </Form.Group>
-                    </Form.Row>
-                    <h4 className="pt-3">Billing address</h4>
                     <Form.Check
                       type="checkbox"
                       label="Same as shipping"
@@ -859,6 +801,12 @@ const Checkout = () => {
                           onChange={handlePaymentChange}
                         />
                       </Form.Group>
+                    </Form.Row>
+                    <Form.Row className="flex-column">
+                      <Form.Label>Card</Form.Label>
+                      <div>
+                        <CardElement options={cardElementOpts} />
+                      </div>
                     </Form.Row>
                   </Form>
                 </Card.Body>
