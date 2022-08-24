@@ -15,8 +15,6 @@ export const processPayment = asyncHandler(async (req, res) => {
     payment_method_types: ["card"],
   });
 
-  console.log("client_secret", result.client_secret);
-
   res.status(200).json(result.client_secret);
 });
 

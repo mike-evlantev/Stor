@@ -22,7 +22,7 @@ import Loader from "../Loader";
 import { formValidationService } from "../../services/formValidationService";
 import EmptyBag from "../EmptyBag";
 import { useHistory } from "react-router-dom";
-import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { CardElement, useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from "@stripe/react-stripe-js";
 import OrderItems from "./OrderItems";
 
 const Checkout = () => {
@@ -79,8 +79,8 @@ const Checkout = () => {
     zip: "89154",
   };
 
-  const securityCodeTooltipMessage =
-    "Typically a three-digit number on the back of the card. American Express cards have a four-digit number on the front of the card to the right.";
+  // const securityCodeTooltipMessage =
+  //   "Typically a three-digit number on the back of the card. American Express cards have a four-digit number on the front of the card to the right.";
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -102,7 +102,6 @@ const Checkout = () => {
   const [payment, setPayment] = useState(placeholderPayment); // replace with paymentInitialState
   const [paymentMethodType, setPaymentMethodType] = useState(CREDIT_CARD); // replace with paymentInitialState
   const [paymentResult, setPaymentResult] = useState({ status: "" });
-
   const [sameAsShippingChecked, setSameAsShippingChecked] = useState(false);
   const [shippingOptionId, setShippingOptionId] = useState(1);
   const [signInVisible, setSignInVisible] = useState(false);
@@ -131,6 +130,7 @@ const Checkout = () => {
   const handlePaymentChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
+    console.log(e.target);
 
     setPayment((prevState) => ({
       ...prevState,
@@ -312,19 +312,10 @@ const Checkout = () => {
   };
 
   const handleSubmitOrder = async () => {
-    // if (!stripe || !elements) {
-    //   // Stripe.js has not loaded yet. Make sure to disable
-    //   // form submission until Stripe.js has loaded.
 
-    //   return;
-    // }
-    // process payment
     const paymentResult = await processPaymentAsync();
     console.log(paymentResult);
-
-    // submit order
     processOrder();
-    //if (paymentResult.status === "success") processOrder();
   };
 
   useEffect(() => {
@@ -338,9 +329,9 @@ const Checkout = () => {
       case 1:
         return <ShippingInfoForm />;
       case 2:
-        return <>{renderPaymentInfoForm()}</>;
+        return <PaymentInfoForm />;
       case 3:
-        return <>{renderSubmitOrder()}</>;
+        return <SubmitOrderButton />;
       default:
         return;
     }
@@ -620,17 +611,18 @@ const Checkout = () => {
   };
 
   // Step 2:
-  const renderPaymentInfoForm = () => (
-    <Fragment>
-      {renderStepOneSummary()}
-      {renderPaymentForm()}
-      {renderSubmitOrder()}
-      {/*renderGoToStepButton(3)*/}
-    </Fragment>
-  );
+  const PaymentInfoForm = () => {
+    return (
+      <>
+        <StepOneSummary />
+        <PaymentForm />
+        <SubmitOrderButton />
+      </>
+    );
+  };
 
   // Step 2 (Step 1 Summary)
-  const renderStepOneSummary = () => {
+  const StepOneSummary = () => {
     return (
       <ListGroup variant="flush" className="py-1">
         <ListGroup.Item className="d-flex justify-content-between align-items-center">
@@ -669,15 +661,17 @@ const Checkout = () => {
   };
 
   // Step 2 (Payment)
-  const renderPaymentForm = () => {
+  const PaymentForm = () => {
     const iframeStyles = {
       base: {
-        color: "#444",
-        fontWeight: 500,
-        fontSize: "13px",
-        iconColor: "#444",
+        //color: "#444",
+        // fontWeight: 500,
+        // fontSize: "13px",
+        fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+        ///=iconColor: "#444",
         "::placeholder": {
-          color: "#bbb",
+          fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+          //color: "#bbb",
         },
       },
       invalid: {
@@ -689,8 +683,21 @@ const Checkout = () => {
       },
     };
      
-    const cardElementOpts = {
+    // const cardElementOpts = {
+    //   iconStyle: "solid",
+    //   style: iframeStyles,
+    // };
+
+    const cardNumberElementOpts = {
       iconStyle: "solid",
+      style: iframeStyles
+    };
+
+    const cardExpiryElementOpts = {
+      style: iframeStyles,
+    };
+
+    const cardCvcElementOpts = {
       style: iframeStyles,
     };
 
@@ -802,11 +809,23 @@ const Checkout = () => {
                         />
                       </Form.Group>
                     </Form.Row>
-                    <Form.Row className="flex-column">
+                    {/* <Form.Row className="flex-column">
                       <Form.Label>Card</Form.Label>
-                      <div>
-                        <CardElement options={cardElementOpts} />
-                      </div>
+                      <CardElement options={cardElementOpts} />
+                    </Form.Row> */}
+                    <Form.Row>
+                      <Form.Group as={Col}>
+                          <Form.Label>Card Number</Form.Label>
+                          <CardNumberElement options={cardNumberElementOpts} />
+                        </Form.Group>
+                        <Form.Group as={Col} lg={3}>
+                          <Form.Label>Expiration</Form.Label>
+                          <CardExpiryElement options={cardExpiryElementOpts} />
+                        </Form.Group>
+                        <Form.Group as={Col} lg={2}>
+                          <Form.Label>CVC</Form.Label>
+                          <CardCvcElement options={cardCvcElementOpts} />
+                        </Form.Group>
                     </Form.Row>
                   </Form>
                 </Card.Body>
@@ -837,52 +856,38 @@ const Checkout = () => {
   };
 
   // Step 3:
-  const renderSubmitOrder = () => {
-    // console.log(elements);
-    // const cardElement = elements.getElement(CardElement);
-    // console.log(cardElement);
+  const SubmitOrderButton = () => {
     return (
-      <Fragment>
-        {/*renderStepOneSummary()*/}
-        {/*renderStepTwoSummary()*/}
-        {/*<Button
-          variant="light"
-          className="my-2"
-          onClick={() => setStep(step - 1)}
-        >
-          Go Back
-        </Button>*/}
-        <Button
-          variant="primary"
-          className="my-2 float-right"
-          onClick={() => handleSubmitOrder()}
-          disabled={
-            orderSubmitLoading || !stripe || !bagItems || bagItems.length === 0
-          }
-        >
-          Submit Order
-        </Button>
-      </Fragment>
+      <Button
+        variant="primary"
+        className="my-2 float-right"
+        onClick={() => handleSubmitOrder()}
+        disabled={
+          orderSubmitLoading || !stripe || !bagItems || bagItems.length === 0
+        }
+      >
+        Submit Order
+      </Button>
     );
   };
 
   // Step 3 (Step 2 Summary)
-  const renderStepTwoSummary = () => {
-    return (
-      <ListGroup variant="flush" className="py-1">
-        <ListGroup.Item className="d-flex justify-content-between align-items-center">
-          <h4 className="py-3">Payment:</h4>
-          <strong>
-            {payment.type} ending in{" "}
-            {payment.creditCardNumber.slice(
-              payment.creditCardNumber.length - 4
-            )}
-          </strong>
-          <u onClick={() => setStep(2)}>Edit</u>
-        </ListGroup.Item>
-      </ListGroup>
-    );
-  };
+  // const renderStepTwoSummary = () => {
+  //   return (
+  //     <ListGroup variant="flush" className="py-1">
+  //       <ListGroup.Item className="d-flex justify-content-between align-items-center">
+  //         <h4 className="py-3">Payment:</h4>
+  //         <strong>
+  //           {payment.type} ending in{" "}
+  //           {payment.creditCardNumber.slice(
+  //             payment.creditCardNumber.length - 4
+  //           )}
+  //         </strong>
+  //         <u onClick={() => setStep(2)}>Edit</u>
+  //       </ListGroup.Item>
+  //     </ListGroup>
+  //   );
+  // };
 
   return renderCheckout();
 
