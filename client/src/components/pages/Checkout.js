@@ -218,7 +218,6 @@ const Checkout = () => {
 
   const processPaymentAsync = async () => {
     let result = {};
-
     const { firstName, lastName, address1, city, state, zip, phone, email } =
       currentUser;
     const billingDetails = {
@@ -238,7 +237,7 @@ const Checkout = () => {
         // 1. create payment method
         const { error, paymentMethod } = await stripe.createPaymentMethod({
           type: "card",
-          card: elements.getElement(CardElement),
+          card: elements.getElement("cardNumber"),
           billing_details: billingDetails,
         });
 
@@ -337,7 +336,6 @@ const Checkout = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
     // eslint-disable-next-line
   }, [step]);
 
@@ -684,17 +682,6 @@ const Checkout = () => {
       // Effect hook to run once on component mount
       useEffect(() => {
         console.log("useEffect mounting card elements");
-
-        // if(elements?.getElement("cardNumber")) {
-        //   console.log("Unmounting cardNUmber: ", elements?.getElement("cardNumber"));
-        //   elements?.unmount("cardNumber");
-        // }
-
-        // if(elements?.getElement("cardNumber")) {
-        //   console.log("Unmounting cardNUmber: ", elements?.getElement("cardNumber"));
-        //   elements?.unmount("cardNumber");
-        // }
-
         const iframeStyles = {
           base: {
             //color: "#444",
@@ -729,77 +716,31 @@ const Checkout = () => {
           style: iframeStyles,
         };
 
-
-        // const cardNumberElement = elements?.create("cardNumber", {
-        //   ...cardNumberElementOpts
-        // });
-        // const cardExpiryElement = elements?.create("cardExpiry", {
-        //   ...cardExpiryElementOpts
-        // });
-        // const cardCvvElement = elements?.create("cardCvc", {
-        //   ...cardCvcElementOpts
-        // });
-
         const carNumberEl = elements?.getElement("cardNumber");
-        console.log(carNumberEl);
         if (!carNumberEl) {
-          console.log("Mounting #card-number-element");
           const cardNumberElement = elements?.create("cardNumber", {
             ...cardNumberElementOpts
           });
           cardNumberElement?.mount("#card-number-element");
-        } else {
-          carNumberEl?.mount("#card-number-element");
         }
-        
 
         const cardExpEl = elements?.getElement("cardExpiry");
-        console.log(cardExpEl);
         if (!cardExpEl) {
-          console.log("Mounting #card-expiry-element");
           const cardExpiryElement = elements?.create("cardExpiry", {
             ...cardExpiryElementOpts
           });
           cardExpiryElement?.mount("#card-expiry-element");
-        } else {
-          cardExpEl?.mount("#card-expiry-element");
         }
         
         const cardCvcEl = elements?.getElement("cardCvc");
-        console.log(cardCvcEl);
         if (!cardCvcEl) {
-          console.log("Mounting #card-cvc-element");
           const cardCvvElement = elements?.create("cardCvc", {
             ...cardCvcElementOpts
           });
           cardCvvElement?.mount("#card-cvc-element");
-        } else {
-          cardCvcEl?.mount("#card-cvc-element");
-        }
-        
+        }       
         
       }, []); // <-- empty dependency array
-
-      
-       
-      // const cardElementOpts = {
-      //   iconStyle: "solid",
-      //   style: iframeStyles,
-      // };
-  
-      
-  
-      // const CardNumberElement = React.memo(() => {
-      //   return <CardNumberElement options={cardNumberElementOpts} />;
-      // });
-  
-      // const CardExpiryElement = React.memo(() => {
-      //   return <CardExpiryElement options={cardExpiryElementOpts} />;
-      // });
-  
-      // const CardCvcElement = React.memo(() => {
-      //   return <CardCvcElement options={cardCvcElementOpts} />;
-      // });
 
       return(
         <Form.Row>
@@ -818,12 +759,9 @@ const Checkout = () => {
             {/* <CardCvcElement /> */}
             <div id="card-cvc-element"></div>
           </Form.Group>
-        </Form.Row>
-        
+        </Form.Row>        
       );
-    }
-
-    
+    }    
 
     return (
       <ListGroup variant="flush" className="py-1">
