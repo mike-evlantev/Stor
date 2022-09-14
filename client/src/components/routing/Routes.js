@@ -2,7 +2,6 @@ import { Container } from "react-bootstrap";
 import { Route, Switch } from "react-router-dom";
 import Message from "../layout/Message";
 import Bag from "../pages/Bag";
-import Checkout from "../pages/Checkout";
 import Home from "../pages/Home";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import Profile from "../pages/Profile";
@@ -12,12 +11,11 @@ import Product from "../pages/Product";
 import { PrivateRoute } from "./PrivateRoute";
 import Dashboard from "../pages/Dashboard";
 import WishList from "../pages/WishList";
-import Confirmation from "../pages/Confirmation";
 import Order from "../Order";
 
 export const Routes = () => {
   return (
-    <Container>
+    <Container>      
       <Message />
       <Switch>
         <Route exact path="/" component={Home} />
