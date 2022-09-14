@@ -6,6 +6,8 @@ import Loader from "./Loader";
 import Checkout from "./pages/Checkout";
 import Confirmation from "./pages/Confirmation";
 import OrderItems from "./pages/OrderItems";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 
 const Order = ({ orderStage }) => {
   const [stageDisplayTitle, setStageDisplayTitle] = useState("");
@@ -18,6 +20,7 @@ const Order = ({ orderStage }) => {
     (state) => state.bag
   );
   const { loading: orderSubmitLoading } = useSelector((state) => state.order);
+  const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
   useEffect(() => {
     if (orderStage === "checkout") {
@@ -35,7 +38,7 @@ const Order = ({ orderStage }) => {
   const renderLeft = () => {
     switch (orderStage) {
       case "checkout":
-        return <Checkout />;
+        return <Elements stripe={stripePromise}><Checkout /></Elements>;
       case "confirmation":
         return <Confirmation />;
       default:
