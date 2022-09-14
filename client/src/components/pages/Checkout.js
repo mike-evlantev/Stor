@@ -675,93 +675,94 @@ const Checkout = () => {
     );
   };
 
+  const CreditCardForm = () => {
+    useEffect(() => {
+      console.log("useEffect mounting card elements");
+      const iframeStyles = {
+        base: {
+          //color: "#444",
+          // fontWeight: 500,
+          // fontSize: "13px",
+          fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+          ///=iconColor: "#444",
+          "::placeholder": {
+            fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+            //color: "#bbb",
+          },
+        },
+        invalid: {
+          iconColor: "#d9230f",
+          color: "#d9230f",
+        },
+        complete: {
+          iconColor: "#469408",
+        },
+      };
+
+      const cardNumberElementOpts = {
+        iconStyle: "solid",
+        style: iframeStyles
+      };
+
+      const cardExpiryElementOpts = {
+        style: iframeStyles,
+      };
+  
+      const cardCvcElementOpts = {
+        style: iframeStyles,
+      };
+
+      let cardNumberElement = elements?.getElement("cardNumber");
+      if (!cardNumberElement) {
+        cardNumberElement = elements?.create("cardNumber", {
+          ...cardNumberElementOpts
+        });
+      }
+
+      let cardExpiryElement = elements?.getElement("cardExpiry");
+      if (!cardExpiryElement) {
+        cardExpiryElement = elements?.create("cardExpiry", {
+          ...cardExpiryElementOpts
+        });
+      }
+      
+      let cardCvvElement = elements?.getElement("cardCvc");
+      if (!cardCvvElement) {
+        cardCvvElement = elements?.create("cardCvc", {
+          ...cardCvcElementOpts
+        });
+      }
+
+      cardNumberElement?.mount("#card-number-element");
+      cardExpiryElement?.mount("#card-expiry-element");
+      cardCvvElement?.mount("#card-cvc-element");
+      
+    }, []);
+
+    return (
+      <Form.Row>
+        <Form.Group as={Col}>
+          <Form.Label>Card Number</Form.Label>
+          {/* <CardNumberElement /> */}
+          <div key="card-number-element" id="card-number-element">{/* iframe with Stripe element */}</div>
+        </Form.Group>
+        <Form.Group as={Col} lg={3}>
+          <Form.Label>Expiration</Form.Label>
+          {/* <CardExpiryElement /> */}
+          <div key="card-expiry-element" id="card-expiry-element">{/* iframe with Stripe element */}</div>
+        </Form.Group>
+        <Form.Group as={Col} lg={2}>
+          <Form.Label>CVC</Form.Label>
+          {/* <CardCvcElement /> */}
+          <div key="card-cvc-element" id="card-cvc-element">{/* iframe with Stripe element */}</div>
+        </Form.Group>
+      </Form.Row>    
+    );
+  };
+
   // Step 2 (Payment)
   const PaymentForm = () => {
-
-    const CreditCardForm = () => {
-      // Effect hook to run once on component mount
-      useEffect(() => {
-        console.log("useEffect mounting card elements");
-        const iframeStyles = {
-          base: {
-            //color: "#444",
-            // fontWeight: 500,
-            // fontSize: "13px",
-            fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-            ///=iconColor: "#444",
-            "::placeholder": {
-              fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-              //color: "#bbb",
-            },
-          },
-          invalid: {
-            iconColor: "#9b479f",
-            color: "#9b479f",
-          },
-          complete: {
-            iconColor: "#469408",
-          },
-        };
-
-        const cardNumberElementOpts = {
-          iconStyle: "solid",
-          style: iframeStyles
-        };
-
-        const cardExpiryElementOpts = {
-          style: iframeStyles,
-        };
     
-        const cardCvcElementOpts = {
-          style: iframeStyles,
-        };
-
-        const carNumberEl = elements?.getElement("cardNumber");
-        if (!carNumberEl) {
-          const cardNumberElement = elements?.create("cardNumber", {
-            ...cardNumberElementOpts
-          });
-          cardNumberElement?.mount("#card-number-element");
-        }
-
-        const cardExpEl = elements?.getElement("cardExpiry");
-        if (!cardExpEl) {
-          const cardExpiryElement = elements?.create("cardExpiry", {
-            ...cardExpiryElementOpts
-          });
-          cardExpiryElement?.mount("#card-expiry-element");
-        }
-        
-        const cardCvcEl = elements?.getElement("cardCvc");
-        if (!cardCvcEl) {
-          const cardCvvElement = elements?.create("cardCvc", {
-            ...cardCvcElementOpts
-          });
-          cardCvvElement?.mount("#card-cvc-element");
-        }       
-        
-      }, []); // <-- empty dependency array
-
-      return(
-        <Form.Row>
-          <Form.Group as={Col}>
-            <Form.Label>Card Number</Form.Label>
-            {/* <CardNumberElement /> */}
-            <div id="card-number-element"></div>
-          </Form.Group>
-          <Form.Group as={Col} lg={3}>
-            <Form.Label>Expiration</Form.Label>
-            {/* <CardExpiryElement /> */}
-            <div id="card-expiry-element"></div>
-          </Form.Group>
-          <Form.Group as={Col} lg={2}>
-            <Form.Label>CVC</Form.Label>
-            {/* <CardCvcElement /> */}
-            <div id="card-cvc-element"></div>
-          </Form.Group>
-        </Form.Row>        
-      );
-    }    
 
     return (
       <ListGroup variant="flush" className="py-1">
@@ -876,7 +877,6 @@ const Checkout = () => {
                       <CardElement options={cardElementOpts} />
                     </Form.Row> */}
                     <CreditCardForm />
-                    
                   </Form>
                 </Card.Body>
               </Accordion.Collapse>
