@@ -100,35 +100,13 @@ const Checkout = () => {
   const [shippingOptionId, setShippingOptionId] = useState(1);
   const [signInVisible, setSignInVisible] = useState(false);
   const [step, setStep] = useState(1);
+  const [nameOnCard, setNameOnCard] = useState("");
 
   const { bagItems, shipping, subtotal, tax, total } = useSelector(
     (state) => state.bag
   );
   const shippingOptions = useSelector((state) => state.shippingOptions);
   const { loading: orderSubmitLoading } = useSelector((state) => state.order);
-
-  // Effect hook to run once on component mount
-  // useEffect(() => {
-  //   console.log("useEffect mounting card elements");
-
-  //   if(elements?.getElement("cardNumber")) {
-  //     console.log("clearing: ", elements?.getElement("cardNumber"));
-  //     elements?.clear("cardNumber");
-  //   }
-  //   const cardNumberElement = elements?.create("cardNumber", {
-  //     ...cardNumberElementOpts
-  //   });
-  //   const cardExpiryElement = elements?.create("cardExpiry", {
-  //     ...cardExpiryElementOpts
-  //   });
-  //   const cardCvvElement = elements?.create("cardCvc", {
-  //     ...cardCvcElementOpts
-  //   });
-
-  //   cardNumberElement?.mount("#card-number-element");
-  //   cardExpiryElement?.mount("#card-expiry-element");
-  //   cardCvvElement?.mount("#card-cvv-element");
-  // }, [elements]); // <-- empty dependency array
 
   const handleLogin = (e) => {
     e.preventDefault(); // prevent refresh
@@ -218,10 +196,10 @@ const Checkout = () => {
 
   const processPaymentAsync = async () => {
     let result = {};
-    const { firstName, lastName, address1, city, state, zip, phone, email } =
+    const { address1, city, state, zip, phone, email } =
       currentUser;
     const billingDetails = {
-      name: firstName + " " + lastName,
+      name: nameOnCard,
       email,
       phone,
       address: {
@@ -252,10 +230,10 @@ const Checkout = () => {
             result.status = status;
             
           } catch (error) {
-            console.log("Error:", error);
+            console.error("Error:", error);
           }
         } else {
-          console.log(error.message);
+          console.error("Create Payment Method Failed: ", error.message);
         }
 
         break;
@@ -676,93 +654,125 @@ const Checkout = () => {
   };
 
   const CreditCardForm = () => {
+    const [cardNumberValidation, setCardNumberValidation] = useState({});
+    const [cardExpiryValidation, setCardExpiryValidation] = useState({});
+    const [cardCvvValidation, setCardCvvValidation] = useState({});
+    
+
+    const iframeStyles = {
+      base: {
+        fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+        "::placeholder": {
+          color: "transparent",
+        },
+        ":focus": {
+          color: "#444",
+        }
+      },
+      invalid: {
+        iconColor: "#d9230f",
+        color: "#d9230f",
+      },
+      complete: {
+        iconColor: "#469408",
+      },
+    };
+
+    const cardNumberElementOpts = {
+      iconStyle: "solid",
+      style: iframeStyles
+    };
+
+    const cardExpiryElementOpts = {
+      style: iframeStyles,
+    };
+
+    const cardCvcElementOpts = {
+      style: iframeStyles,
+    };
+
     useEffect(() => {
       console.log("useEffect mounting card elements");
-      const iframeStyles = {
-        base: {
-          //color: "#444",
-          // fontWeight: 500,
-          // fontSize: "13px",
-          fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-          ///=iconColor: "#444",
-          "::placeholder": {
-            fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-            //color: "#bbb",
-          },
-        },
-        invalid: {
-          iconColor: "#d9230f",
-          color: "#d9230f",
-        },
-        complete: {
-          iconColor: "#469408",
-        },
-      };
-
-      const cardNumberElementOpts = {
-        iconStyle: "solid",
-        style: iframeStyles
-      };
-
-      const cardExpiryElementOpts = {
-        style: iframeStyles,
-      };
-  
-      const cardCvcElementOpts = {
-        style: iframeStyles,
-      };
-
       let cardNumberElement = elements?.getElement("cardNumber");
       if (!cardNumberElement) {
-        cardNumberElement = elements?.create("cardNumber", {
-          ...cardNumberElementOpts
-        });
+        cardNumberElement = elements?.create("cardNumber", cardNumberElementOpts);
       }
 
       let cardExpiryElement = elements?.getElement("cardExpiry");
       if (!cardExpiryElement) {
-        cardExpiryElement = elements?.create("cardExpiry", {
-          ...cardExpiryElementOpts
-        });
+        cardExpiryElement = elements?.create("cardExpiry", cardExpiryElementOpts);
       }
       
       let cardCvvElement = elements?.getElement("cardCvc");
       if (!cardCvvElement) {
-        cardCvvElement = elements?.create("cardCvc", {
-          ...cardCvcElementOpts
-        });
+        cardCvvElement = elements?.create("cardCvc", cardCvcElementOpts);
       }
 
       cardNumberElement?.mount("#card-number-element");
       cardExpiryElement?.mount("#card-expiry-element");
-      cardCvvElement?.mount("#card-cvc-element");
-      
+      cardCvvElement?.mount("#card-cvc-element");      
     }, []);
 
+    useEffect(() => {
+      console.log("useEffect validating card elements");
+
+      let cardNumberElement = elements?.getElement("cardNumber");
+      let cardExpiryElement = elements?.getElement("cardExpiry");
+      let cardCvvElement = elements?.getElement("cardCvc");
+
+      if (cardNumberElement) {
+        cardNumberElement.on("change", (e) => {
+          setCardNumberValidation(e);
+        });
+      }
+
+      if (cardExpiryElement) {
+        cardExpiryElement.on("change", (e) => {
+          setCardExpiryValidation(e);
+        });
+      }
+
+      if (cardCvvElement) {
+        cardCvvElement.on("change", (e) => {
+          setCardCvvValidation(e);
+        });
+      }
+    }, []);
+
+    const handleNameOnCardChange = (e) => {
+      e.preventDefault();
+      setNameOnCard(e.target.value);
+    }
+
     return (
-      <Form.Row>
-        <Form.Group as={Col}>
+      <div>
+        <Form.Group>
           <Form.Label>Card Number</Form.Label>
-          {/* <CardNumberElement /> */}
-          <div key="card-number-element" id="card-number-element">{/* iframe with Stripe element */}</div>
+          <div id="card-number-element">{/* iframe with Stripe element */}</div>
+          {cardNumberValidation?.error?.message && <span className="text-primary">{cardNumberValidation.error.message}</span>}
         </Form.Group>
-        <Form.Group as={Col} lg={3}>
-          <Form.Label>Expiration</Form.Label>
-          {/* <CardExpiryElement /> */}
-          <div key="card-expiry-element" id="card-expiry-element">{/* iframe with Stripe element */}</div>
-        </Form.Group>
-        <Form.Group as={Col} lg={2}>
-          <Form.Label>CVC</Form.Label>
-          {/* <CardCvcElement /> */}
-          <div key="card-cvc-element" id="card-cvc-element">{/* iframe with Stripe element */}</div>
-        </Form.Group>
-      </Form.Row>    
+        <Row>
+          <Col className="mb-3" lg={6}>
+            <Form.Label>Expiration</Form.Label>
+            <div id="card-expiry-element">{/* iframe with Stripe element */}</div>
+            {cardExpiryValidation?.error?.message && <span className="text-primary">{cardExpiryValidation.error.message}</span>}
+          </Col>
+          <Col className="mb-3" lg={6}>
+            <Form.Label>CVC</Form.Label>
+            <div id="card-cvc-element">{/* iframe with Stripe element */}</div>
+            {cardCvvValidation?.error?.message && <span className="text-primary">{cardCvvValidation.error.message}</span>}
+          </Col>
+        </Row>
+        <Form.Group>
+          <Form.Label>Name on Card</Form.Label>
+          <Form.Control type="text" onChange={handleNameOnCardChange}/>
+        </Form.Group>      
+      </div>
     );
   };
 
   // Step 2 (Payment)
-  const PaymentForm = () => {
-    
+  const PaymentForm = () => {   
 
     return (
       <ListGroup variant="flush" className="py-1">
@@ -810,24 +820,6 @@ const Checkout = () => {
                       checked={sameAsShippingChecked}
                       onChange={() => handleSameAsShipping()}
                     />
-                    {/*<Form.Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>First Name</Form.Label>
-                        <Form.Control
-                          name="firstName"
-                          placeholder={payment.firstName}
-                          onChange={handlePaymentChange}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col}>
-                        <Form.Label>Last Name</Form.Label>
-                        <Form.Control
-                          name="lastName"
-                          placeholder={payment.lastName}
-                          onChange={handlePaymentChange}
-                        />
-                      </Form.Group>
-                    </Form.Row>*/}
                     <Form.Row>
                       <Form.Group as={Col}>
                         <Form.Label>Address</Form.Label>
