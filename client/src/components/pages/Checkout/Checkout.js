@@ -1,29 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Accordion,
-  Button,
-  ButtonGroup,
-  Card,
-  Col,
-  Container,
-  Form,
-  ListGroup,
-  Row,
-  ToggleButton,
-} from "react-bootstrap";
+import { Accordion, Button, ButtonGroup, Card, Col, Form, ToggleButton, ListGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../actions/userActions";
-import { updateShipping, clearBag } from "../../actions/bagActions";
-import { submitOrder } from "../../actions/orderActions";
-import StateSelect from "../StateSelect";
-import { Fragment } from "react";
-import Loader from "../Loader";
-import { formValidationService } from "../../services/formValidationService";
-import EmptyBag from "../EmptyBag";
+import { login } from "../../../actions/userActions";
+import { updateShipping, clearBag } from "../../../actions/bagActions";
+import { submitOrder } from "../../../actions/orderActions";
+import StateSelect from "../../StateSelect";
+import Loader from "../../Loader";
+import { formValidationService } from "../../../services/formValidationService";
+import { useStripe, useElements } from "@stripe/react-stripe-js";
 import { useHistory } from "react-router-dom";
-import { CardElement, useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from "@stripe/react-stripe-js";
-import OrderItems from "./OrderItems";
+import { CreditCardForm } from "./CreditCardForm.tsx";
+import { SubmitOrderButton } from "./SubmitOrderButton.tsx";
 
 const Checkout = () => {
   const CREDIT_CARD = "credit card";
@@ -87,6 +75,7 @@ const Checkout = () => {
   const stripe = useStripe();
   const elements = useElements();
 
+
   const { isAuthenticated, loggedInUser, loading: authLoading } = useSelector((state) => state.auth);
   const [currentUser, setCurrentUser] = useState(loggedInUser || placeholderUser);
   const [errors, setErrors] = useState(errorsInitialState);
@@ -100,6 +89,7 @@ const Checkout = () => {
   const [shippingOptionId, setShippingOptionId] = useState(1);
   const [signInVisible, setSignInVisible] = useState(false);
   const [step, setStep] = useState(1);
+  const [ccFormValidation, setCcFormValidation] = useState({carNumberValid: false, cardExpiryValid: false, cardCvvValid: false});
   const [nameOnCard, setNameOnCard] = useState("");
 
   const { bagItems, shipping, subtotal, tax, total } = useSelector(
@@ -305,8 +295,13 @@ const Checkout = () => {
     setPayment({});
   };
 
-  const handleSubmitOrder = async () => {
+  const onNameOnCardChange = (e) => {
+    e.preventDefault();
+    console.log(e.currentTarget.value);
+    setNameOnCard(e.currentTarget.value);
+  }
 
+  const handleSubmitOrder = async () => {
     const paymentResult = await processPaymentAsync();
     console.log(paymentResult);
     processOrder();
@@ -609,7 +604,7 @@ const Checkout = () => {
       <>
         <StepOneSummary />
         <PaymentForm />
-        <SubmitOrderButton />
+        <SubmitOrderButton orderSubmitLoading={orderSubmitLoading} bagItems={bagItems} handleSubmitOrder={handleSubmitOrder} />
       </>
     );
   };
@@ -652,125 +647,7 @@ const Checkout = () => {
       </ListGroup>
     );
   };
-
-  const CreditCardForm = () => {
-    const [cardNumberValidation, setCardNumberValidation] = useState({});
-    const [cardExpiryValidation, setCardExpiryValidation] = useState({});
-    const [cardCvvValidation, setCardCvvValidation] = useState({});
-    
-
-    const iframeStyles = {
-      base: {
-        fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
-        "::placeholder": {
-          color: "transparent",
-        },
-        ":focus": {
-          color: "#444",
-        }
-      },
-      invalid: {
-        iconColor: "#d9230f",
-        color: "#d9230f",
-      },
-      complete: {
-        iconColor: "#469408",
-      },
-    };
-
-    const cardNumberElementOpts = {
-      iconStyle: "solid",
-      style: iframeStyles
-    };
-
-    const cardExpiryElementOpts = {
-      style: iframeStyles,
-    };
-
-    const cardCvcElementOpts = {
-      style: iframeStyles,
-    };
-
-    useEffect(() => {
-      console.log("useEffect mounting card elements");
-      let cardNumberElement = elements?.getElement("cardNumber");
-      if (!cardNumberElement) {
-        cardNumberElement = elements?.create("cardNumber", cardNumberElementOpts);
-      }
-
-      let cardExpiryElement = elements?.getElement("cardExpiry");
-      if (!cardExpiryElement) {
-        cardExpiryElement = elements?.create("cardExpiry", cardExpiryElementOpts);
-      }
-      
-      let cardCvvElement = elements?.getElement("cardCvc");
-      if (!cardCvvElement) {
-        cardCvvElement = elements?.create("cardCvc", cardCvcElementOpts);
-      }
-
-      cardNumberElement?.mount("#card-number-element");
-      cardExpiryElement?.mount("#card-expiry-element");
-      cardCvvElement?.mount("#card-cvc-element");      
-    }, []);
-
-    useEffect(() => {
-      console.log("useEffect validating card elements");
-
-      let cardNumberElement = elements?.getElement("cardNumber");
-      let cardExpiryElement = elements?.getElement("cardExpiry");
-      let cardCvvElement = elements?.getElement("cardCvc");
-
-      if (cardNumberElement) {
-        cardNumberElement.on("change", (e) => {
-          setCardNumberValidation(e);
-        });
-      }
-
-      if (cardExpiryElement) {
-        cardExpiryElement.on("change", (e) => {
-          setCardExpiryValidation(e);
-        });
-      }
-
-      if (cardCvvElement) {
-        cardCvvElement.on("change", (e) => {
-          setCardCvvValidation(e);
-        });
-      }
-    }, []);
-
-    const handleNameOnCardChange = (e) => {
-      e.preventDefault();
-      setNameOnCard(e.target.value);
-    }
-
-    return (
-      <div>
-        <Form.Group>
-          <Form.Label>Card Number</Form.Label>
-          <div id="card-number-element">{/* iframe with Stripe element */}</div>
-          {cardNumberValidation?.error?.message && <span className="text-primary">{cardNumberValidation.error.message}</span>}
-        </Form.Group>
-        <Row>
-          <Col className="mb-3" lg={6}>
-            <Form.Label>Expiration</Form.Label>
-            <div id="card-expiry-element">{/* iframe with Stripe element */}</div>
-            {cardExpiryValidation?.error?.message && <span className="text-primary">{cardExpiryValidation.error.message}</span>}
-          </Col>
-          <Col className="mb-3" lg={6}>
-            <Form.Label>CVC</Form.Label>
-            <div id="card-cvc-element">{/* iframe with Stripe element */}</div>
-            {cardCvvValidation?.error?.message && <span className="text-primary">{cardCvvValidation.error.message}</span>}
-          </Col>
-        </Row>
-        <Form.Group>
-          <Form.Label>Name on Card</Form.Label>
-          <Form.Control type="text" onChange={handleNameOnCardChange}/>
-        </Form.Group>      
-      </div>
-    );
-  };
-
+  
   // Step 2 (Payment)
   const PaymentForm = () => {   
 
@@ -812,64 +689,62 @@ const Checkout = () => {
               </Accordion.Toggle>
               <Accordion.Collapse eventKey="1">
                 <Card.Body>
-                  <Form>
-                    <Form.Check
-                      type="checkbox"
-                      label="Same as shipping"
-                      className="pb-3"
-                      checked={sameAsShippingChecked}
-                      onChange={() => handleSameAsShipping()}
-                    />
-                    <Form.Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>Address</Form.Label>
-                        <Form.Control
-                          name="address1"
-                          placeholder={payment.address1}
-                          onChange={handlePaymentChange}
-                        />
-                      </Form.Group>
+                  <Form.Check
+                    type="checkbox"
+                    label="Same as shipping"
+                    className="pb-3"
+                    checked={sameAsShippingChecked}
+                    onChange={() => handleSameAsShipping()}
+                  />
+                  <Form.Row>
+                    <Form.Group as={Col}>
+                      <Form.Label>Address</Form.Label>
+                      <Form.Control
+                        name="address1"
+                        placeholder={payment.address1}
+                        onChange={handlePaymentChange}
+                      />
+                    </Form.Group>
 
-                      <Form.Group as={Col} lg={4}>
-                        <Form.Label>Address 2</Form.Label>
-                        <Form.Control
-                          name="address2"
-                          placeholder={payment.address2}
-                          onChange={handlePaymentChange}
-                        />
-                      </Form.Group>
-                    </Form.Row>
-                    <Form.Row>
-                      <Form.Group as={Col}>
-                        <Form.Label>City</Form.Label>
-                        <Form.Control
-                          name="city"
-                          placeholder={payment.city}
-                          onChange={handlePaymentChange}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col} lg={2}>
-                        <Form.Label>State</Form.Label>
-                        <StateSelect
-                          selectedState={payment.state}
-                          updateProfileState={handlePaymentChange}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col} lg={3}>
-                        <Form.Label>Zip</Form.Label>
-                        <Form.Control
-                          name="zip"
-                          placeholder={payment.zip}
-                          onChange={handlePaymentChange}
-                        />
-                      </Form.Group>
-                    </Form.Row>
-                    {/* <Form.Row className="flex-column">
-                      <Form.Label>Card</Form.Label>
-                      <CardElement options={cardElementOpts} />
-                    </Form.Row> */}
-                    <CreditCardForm />
-                  </Form>
+                    <Form.Group as={Col} lg={4}>
+                      <Form.Label>Address 2</Form.Label>
+                      <Form.Control
+                        name="address2"
+                        placeholder={payment.address2}
+                        onChange={handlePaymentChange}
+                      />
+                    </Form.Group>
+                  </Form.Row>
+                  <Form.Row>
+                    <Form.Group as={Col}>
+                      <Form.Label>City</Form.Label>
+                      <Form.Control
+                        name="city"
+                        placeholder={payment.city}
+                        onChange={handlePaymentChange}
+                      />
+                    </Form.Group>
+                    <Form.Group as={Col} lg={2}>
+                      <Form.Label>State</Form.Label>
+                      <StateSelect
+                        selectedState={payment.state}
+                        updateProfileState={handlePaymentChange}
+                      />
+                    </Form.Group>
+                    <Form.Group as={Col} lg={3}>
+                      <Form.Label>Zip</Form.Label>
+                      <Form.Control
+                        name="zip"
+                        placeholder={payment.zip}
+                        onChange={handlePaymentChange}
+                      />
+                    </Form.Group>
+                  </Form.Row>
+                  <CreditCardForm />
+                  <Form.Group>
+                    <Form.Label>Name on Card</Form.Label>
+                    <Form.Control type="text" onChange={onNameOnCardChange} value={nameOnCard}/>
+                  </Form.Group>  
                 </Card.Body>
               </Accordion.Collapse>
             </Card>
@@ -898,20 +773,7 @@ const Checkout = () => {
   };
 
   // Step 3:
-  const SubmitOrderButton = () => {
-    return (
-      <Button
-        variant="primary"
-        className="my-2 float-right"
-        onClick={() => handleSubmitOrder()}
-        disabled={
-          orderSubmitLoading || !stripe || !bagItems || bagItems.length === 0
-        }
-      >
-        Submit Order
-      </Button>
-    );
-  };
+  
 
   // Step 3 (Step 2 Summary)
   // const renderStepTwoSummary = () => {
