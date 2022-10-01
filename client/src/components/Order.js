@@ -3,12 +3,13 @@ import { Col, Container, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import EmptyBag from "./EmptyBag";
 import Loader from "./Loader";
-import Checkout from "./pages/Checkout";
+import Checkout from "./pages/Checkout/Checkout";
 import Confirmation from "./pages/Confirmation";
 import OrderItems from "./pages/OrderItems";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 const Order = ({ orderStage }) => {
   const [stageDisplayTitle, setStageDisplayTitle] = useState("");
   const [stageDisplaySubtitle, setStageDisplaySubtitle] = useState("");
@@ -20,7 +21,7 @@ const Order = ({ orderStage }) => {
     (state) => state.bag
   );
   const { loading: orderSubmitLoading } = useSelector((state) => state.order);
-  const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+  
   const appearance = {
     theme: 'none',
 
