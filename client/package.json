@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@stripe/react-stripe-js": "^1.2.1",
-    "@stripe/stripe-js": "^1.11.0",
+    "@stripe/stripe-js": "^1.38.1",
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -46,5 +46,12 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:5000",
+  "devDependencies": {
+    "@types/jest": "^29.0.3",
+    "@types/node": "^18.7.20",
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
+    "typescript": "^3.9.10"
+  }
 }
