@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Container, Form, Col, Button, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import StateSelect from "../StateSelect.js";
+import StateSelect from "../shared/StateSelect";
 import { updateUser } from "../../actions/userActions";
 import Loader from "../Loader.js";
-import { formValidationService } from "../../services/formValidationService.js";
+import { validateField } from "../../services/formValidator";
 
 const Profile = () => {
   const errorsInitialState = {
-    firstName: "",
-    lastName: "",
+    first: "",
+    last: "",
     address1: "",
     address2: "",
     city: "",
@@ -32,7 +32,7 @@ const Profile = () => {
 
     Object.keys(userData).map((key) => {
       const value = userData[key];
-      const error = formValidationService.validateField(key, value);
+      const error = validateField(key, value);
       setErrors((prevState) => ({
         ...prevState,
         [key]: error,
@@ -69,7 +69,7 @@ const Profile = () => {
           <Col md={8}>
             <Form onSubmit={handleUpdateUser}>
               <Form.Row>
-                <Form.Group as={Col} lg={5} controlId="formGridEmail">
+                <Form.Group as={Col} lg={5}>
                   <Form.Label>Email</Form.Label>
                   <Form.Control
                     type="email"
@@ -80,45 +80,45 @@ const Profile = () => {
                 </Form.Group>
               </Form.Row>
               <Form.Row>
-                <Form.Group as={Col} controlId="formGridFirstName">
+                <Form.Group as={Col}>
                   <Form.Label>First Name</Form.Label>
                   <Form.Control
                     onBlur={validateForm}
-                    isInvalid={errors.firstName}
-                    name="firstName"
-                    placeholder={userData.firstName}
+                    isInvalid={errors.first}
+                    name="first"
+                    placeholder={userData.first}
                     onChange={handleUserChange}
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errors.firstName}
+                    {errors.first}
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group as={Col} lg={3} controlId="formGridMiddleName">
+                <Form.Group as={Col} lg={3}>
                   <Form.Label>Middle Name</Form.Label>
                   <Form.Control
-                    name="middleName"
-                    placeholder={userData.middleName}
+                    name="middle"
+                    placeholder={userData.middle}
                     onChange={handleUserChange}
                   />
                 </Form.Group>
 
-                <Form.Group as={Col} controlId="formGridLastName">
+                <Form.Group as={Col}>
                   <Form.Label>Last Name</Form.Label>
                   <Form.Control
                     onBlur={validateForm}
-                    isInvalid={errors.lastName}
-                    name="lastName"
-                    placeholder={userData.lastName}
+                    isInvalid={errors.last}
+                    name="last"
+                    placeholder={userData.last}
                     onChange={handleUserChange}
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errors.lastName}
+                    {errors.last}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Form.Row>
               <Form.Row>
-                <Form.Group as={Col} controlId="formGridAddress1">
+                <Form.Group as={Col}>
                   <Form.Label>Address</Form.Label>
                   <Form.Control
                     onBlur={validateForm}
@@ -132,7 +132,7 @@ const Profile = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group as={Col} lg={4} controlId="formGridAddress2">
+                <Form.Group as={Col} lg={4}>
                   <Form.Label>Address 2</Form.Label>
                   <Form.Control
                     name="address2"
@@ -147,7 +147,7 @@ const Profile = () => {
                 </Form.Group>
               </Form.Row>
               <Form.Row>
-                <Form.Group as={Col} controlId="formGridCity">
+                <Form.Group as={Col}>
                   <Form.Label>City</Form.Label>
                   <Form.Control
                     onBlur={validateForm}
@@ -161,7 +161,7 @@ const Profile = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group as={Col} lg={2} controlId="formGridState">
+                <Form.Group as={Col} lg={2}>
                   <Form.Label>State</Form.Label>
                   <StateSelect
                     validateForm={validateForm}
@@ -171,7 +171,7 @@ const Profile = () => {
                   />
                 </Form.Group>
 
-                <Form.Group as={Col} lg={3} controlId="formGridZip">
+                <Form.Group as={Col} lg={3}>
                   <Form.Label>Zip</Form.Label>
                   <Form.Control
                     onBlur={validateForm}
@@ -187,7 +187,7 @@ const Profile = () => {
               </Form.Row>
 
               <Form.Row>
-                <Form.Group as={Col} lg={5} controlId="formGridPhone">
+                <Form.Group as={Col} lg={5}>
                   <Form.Label>Phone</Form.Label>
                   <Form.Control
                     onBlur={validateForm}

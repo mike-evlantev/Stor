@@ -62,15 +62,15 @@ const shippingOptionSchema = mongoose.Schema(
 
 const orderSchema = mongoose.Schema(
   {
-    firstName: {
+    first: {
       type: String,
       required: true,
     },
-    middleName: {
+    middle: {
       type: String,
       required: false,
     },
-    lastName: {
+    last: {
       type: String,
       required: true,
     },

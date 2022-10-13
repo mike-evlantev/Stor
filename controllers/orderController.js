@@ -6,9 +6,9 @@ import Order from "../models/orderModel.js";
 // @access      Public
 export const createOrder = asyncHandler(async (req, res) => {
   const {
-    firstName,
-    middleName,
-    lastName,
+    first,
+    middle,
+    last,
     orderItems,
     shippingAddress,
     paymentMethod,
@@ -18,9 +18,9 @@ export const createOrder = asyncHandler(async (req, res) => {
   } = req.body;
 
   const order = new Order({
-    firstName,
-    middleName,
-    lastName,
+    first,
+    middle,
+    last,
     orderItems,
     //user: req.user._id,
     shippingAddress,

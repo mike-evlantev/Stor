@@ -3,15 +3,15 @@ import bcrypt from "bcryptjs";
 
 const userSchema = mongoose.Schema(
   {
-    firstName: {
+    first: {
       type: String,
       required: false,
     },
-    middleName: {
+    middle: {
       type: String,
       required: false,
     },
-    lastName: {
+    last: {
       type: String,
       required: false,
     },
