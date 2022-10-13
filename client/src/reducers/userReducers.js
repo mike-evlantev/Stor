@@ -9,6 +9,9 @@ import {
   UPDATE_USER_REQUEST,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_FAIL,
+  UPDATE_CUSTOMER_REQUEST,
+  UPDATE_CUSTOMER_SUCCESS,
+  UPDATE_CUSTOMER_FAIL,
 } from "../constants/userConstants.js";
 
 const initialState = {
@@ -55,6 +58,48 @@ export const authReducer = (state = initialState, action) => {
         loggedInUser: null,
         isAuthenticated: false,
         error: null,
+      };
+    default:
+      return state;
+  }
+};
+
+const customerInitialState = {
+  loading: false,
+  success: false,
+  errors: {
+    first: "", 
+    last: "", 
+    shippingAddress: {address1: "", address2: "", city: "", state: "", zip: ""}, 
+    billingAddress: {address1: "", address2: "", city: "", state: "", zip: ""},
+    email: "", 
+    phone: ""},
+  first: "",
+  last: "",
+  shippingAddress: {address1: "", address2: "", city: "", state: "", zip: ""},
+  billingAddress: {address1: "", address2: "", city: "", state: "", zip: ""},
+  phone: "",
+  email: "",
+  nameOnCard: ""
+}
+
+export const customerReducer = (state = customerInitialState, action) => {
+  switch (action.type) {
+    case UPDATE_CUSTOMER_REQUEST:
+      return { ...state, loading: true };
+    case UPDATE_CUSTOMER_SUCCESS:
+      return {
+        ...state,
+        ...action.payload,
+        loading: false,
+        success: true,
+      };
+    case UPDATE_CUSTOMER_FAIL:
+      return {
+        ...state,
+        loading: false,
+        errors: action.payload,
+        success: false
       };
     default:
       return state;

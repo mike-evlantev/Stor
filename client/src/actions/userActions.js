@@ -11,6 +11,9 @@ import {
   UPDATE_USER_REQUEST,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_FAIL,
+  UPDATE_CUSTOMER_REQUEST,
+  UPDATE_CUSTOMER_SUCCESS,
+  UPDATE_CUSTOMER_FAIL
 } from "../constants/userConstants.js";
 
 export const register = (email, password) => async (dispatch) => {
@@ -127,4 +130,43 @@ export const updateUser = (userData) => async (dispatch, getState) => {
     // TODO: There should be a better way to handle this
     dispatch(logout());
   }
+};
+
+export const updateCustomer = (customerData) => (dispatch) => {
+  try {
+    dispatch({ type: UPDATE_CUSTOMER_REQUEST });
+    dispatch({
+      type: UPDATE_CUSTOMER_SUCCESS,
+      payload: customerData,
+    });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch(setMessage(message, "danger"));
+    dispatch({
+      type: UPDATE_CUSTOMER_FAIL,
+      payload: message,
+    });
+  }  
+};
+
+export const updateCustomerError = (customerError) => (dispatch) => {
+  try {
+    dispatch({
+      type: UPDATE_CUSTOMER_FAIL,
+      payload: customerError,
+    });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch(setMessage(message, "danger"));
+    dispatch({
+      type: UPDATE_CUSTOMER_FAIL,
+      payload: message,
+    });
+  }  
 };
