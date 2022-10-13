@@ -4,7 +4,7 @@ import { Form, Button, Row, Col, Container, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader.js";
 import { login, register } from "../../actions/userActions";
-import { formValidationService } from "../../services/formValidationService.js";
+import { validateEmail, validatePassword } from "../../services/formValidator";
 
 const SignIn = ({ history, location }) => {
   const errorsInitialState = {
@@ -35,7 +35,7 @@ const SignIn = ({ history, location }) => {
   const validateLoginForm = () => {
     let valid = true;
 
-    const loginEmailError = formValidationService.validateEmail(loginEmail);
+    const loginEmailError = validateEmail(loginEmail);
     setErrors((prevState) => ({
       ...prevState,
       loginEmail: loginEmailError,
@@ -48,7 +48,7 @@ const SignIn = ({ history, location }) => {
   const validateRegisterForm = () => {
     let valid = true;
 
-    const registerEmailError = formValidationService.validateEmail(
+    const registerEmailError = validateEmail(
       registerEmail
     );
     setErrors((prevState) => ({
@@ -57,7 +57,7 @@ const SignIn = ({ history, location }) => {
     }));
     if (registerEmailError) valid = false;
 
-    const registerPasswordError = formValidationService.validatePassword(
+    const registerPasswordError = validatePassword(
       registerPassword
     );
     setErrors((prevState) => ({
