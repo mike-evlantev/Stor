@@ -2,24 +2,25 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, ToggleButton, ListGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../../actions/userActions";
+import { login, updateCustomerError } from "../../../actions/userActions";
 import { updateShipping, clearBag } from "../../../actions/bagActions";
 import { submitOrder } from "../../../actions/orderActions";
-import StateSelect from "../../StateSelect";
 import Loader from "../../Loader";
-import { formValidationService } from "../../../services/formValidationService";
+import { validateField } from "../../../services/formValidator";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 import { useHistory } from "react-router-dom";
 import { CreditCardForm } from "./CreditCardForm.tsx";
 import { SubmitOrderButton } from "./SubmitOrderButton.tsx";
+import { ShippingInfoForm } from "./ShippingInfoForm.tsx";
+import { AddressForm } from "../../shared/AddressForm.tsx";
 
 const Checkout = () => {
   const CREDIT_CARD = "credit card";
   const PAYPAL = "paypal";
 
   const placeholderUser = {
-    firstName: "John",
-    lastName: "Doe",
+    first: "John",
+    last: "Doe",
     address1: "123 Columbia St",
     address2: "APT 1A",
     city: "Carson City",
@@ -28,8 +29,8 @@ const Checkout = () => {
     email: "mikeev21@gmail.com",
   };
   const errorsInitialState = {
-    firstName: "",
-    lastName: "",
+    first: "",
+    last: "",
     address1: "",
     address2: "",
     city: "",
@@ -75,42 +76,34 @@ const Checkout = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-
-  const { isAuthenticated, loggedInUser, loading: authLoading } = useSelector((state) => state.auth);
+  const { isAuthenticated, loggedInUser } = useSelector((state) => state.auth);
+  const shippingOptions = useSelector((state) => state.shippingOptions);
   const [currentUser, setCurrentUser] = useState(loggedInUser || placeholderUser);
   const [errors, setErrors] = useState(errorsInitialState);
   const [formValid, setFormValid] = useState(true);
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
+
   const [payment, setPayment] = useState(placeholderPayment); // replace with paymentInitialState
   const [paymentMethodType, setPaymentMethodType] = useState(CREDIT_CARD); // replace with paymentInitialState
   const [paymentResult, setPaymentResult] = useState({ status: "" });
-  const [sameAsShippingChecked, setSameAsShippingChecked] = useState(false);
+  const [sameAsShippingChecked, setSameAsShippingChecked] = useState(true);
+  const [billingAddress, setBillingAddress] = useState({address1: "", address2: "", city: "", state: "", zip: ""});
+  //
   const [shippingOptionId, setShippingOptionId] = useState(1);
-  const [signInVisible, setSignInVisible] = useState(false);
+  
   const [step, setStep] = useState(1);
-  const [ccFormValidation, setCcFormValidation] = useState({carNumberValid: false, cardExpiryValid: false, cardCvvValid: false});
+  //const [ccFormValidation, setCcFormValidation] = useState({carNumberValid: false, cardExpiryValid: false, cardCvvValid: false});
   const [nameOnCard, setNameOnCard] = useState("");
 
   const { bagItems, shipping, subtotal, tax, total } = useSelector(
     (state) => state.bag
   );
-  const shippingOptions = useSelector((state) => state.shippingOptions);
+  
   const { loading: orderSubmitLoading } = useSelector((state) => state.order);
+  const customer = useSelector((state) => state.customer);
 
-  const handleLogin = (e) => {
-    e.preventDefault(); // prevent refresh
-    dispatch(login(loginEmail, loginPassword));
-  };
-
-  const handleProfileChange = (e) => {
-    e.preventDefault();
-    const { name, value } = e.target;
-    setCurrentUser((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  const handleStepChange = (step) => {
+    setStep(step);
+  }
 
   const handlePaymentChange = (e) => {
     e.preventDefault();
@@ -123,40 +116,27 @@ const Checkout = () => {
     }));
   };
 
-  const handleShippingOptionChange = (e) => {
-    e.preventDefault();
-    const selectedId = parseInt(e.currentTarget.value);
-    const selectedShippingOption = shippingOptions.find(
-      (o) => o.id === selectedId
-    );
-    setShippingOptionId(selectedId);
-    dispatch(updateShipping(selectedShippingOption));
-  };
-
   const handleSameAsShipping = () => {
-    const clearedAddress = {
-      address1: "",
-      address2: "",
-      city: "",
-      state: "",
-      zip: "",
-    };
-
     setSameAsShippingChecked(!sameAsShippingChecked);
-
-    if (sameAsShippingChecked) {
-      setPayment(clearedAddress);
-    } else {
-      setPayment(currentUser);
-    }
   };
+
+  const onBillingAddressChange = (obj) => {
+    console.log("onBillingAddressChange()", obj);
+
+    setBillingAddress((prevState) => ({
+      ...prevState,
+      ...obj,
+    }));
+  };
+
+  
 
   const validateForm = () => {
     let valid = true;
 
     Object.keys(currentUser).map((key) => {
       const value = currentUser[key];
-      const error = formValidationService.validateField(key, value);
+      const error = validateField(key, value);
       setErrors((prevState) => ({
         ...prevState,
         [key]: error,
@@ -167,11 +147,6 @@ const Checkout = () => {
 
     setFormValid(valid);
     return valid;
-  };
-
-  const handleGoToStep = (selectedStep) => {
-    const isValid = validateForm();
-    if (isValid) setStep(selectedStep);
   };
 
   const processCardPayment = async (payload) => {
@@ -256,9 +231,9 @@ const Checkout = () => {
     );
 
     const order = {
-      firstName: currentUser.firstName,
-      middleName: currentUser.middleName,
-      lastName: currentUser.lastName,
+      first: currentUser.first,
+      middle: currentUser.middle,
+      last: currentUser.last,
       orderItems: bagItems,
       taxAmount: tax,
       totalAmount: total,
@@ -309,293 +284,17 @@ const Checkout = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // eslint-disable-next-line
   }, [step]);
 
   const renderCheckout = () => {
     switch (step) {
       case 1:
-        return <ShippingInfoForm />;
+        return <ShippingInfoForm handleStepChange={handleStepChange} />;
       case 2:
         return <PaymentInfoForm />;
-      case 3:
-        return <>step 3</>;
       default:
         return;
     }
-  };
-
-  const CheckoutSignIn = () => {
-    return (
-      <ListGroup variant="flush" className="py-1">
-        <ListGroup.Item>
-          <h2 className="py-3">Already have an account?</h2>
-          <p
-            key={signInVisible}
-            onClick={() => setSignInVisible(!signInVisible)}
-          >
-            <u>Sign in</u> for quick and easy checkout&nbsp;&nbsp;
-            <i
-              className={
-                signInVisible
-                  ? "fas fa-chevron-up fa-lg"
-                  : "fas fa-chevron-down fa-lg"
-              }
-            ></i>
-          </p>
-          {signInVisible && (
-            <div>
-              <hr />
-              <Form onSubmit={handleLogin}>
-                <Form.Group>
-                  <Form.Row>
-                    <Col>
-                      <Form.Control
-                        type="email"
-                        placeholder="Email Address"
-                        value={loginEmail}
-                        onChange={(e) => setLoginEmail(e.target.value)}
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Control
-                        type="password"
-                        placeholder="Password"
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                      />
-                    </Col>
-                  </Form.Row>
-                </Form.Group>
-
-                <Button
-                  variant="dark"
-                  type="submit"
-                  className="btn btn-block"
-                  disabled={authLoading}
-                >
-                  Sign In
-                </Button>
-              </Form>
-            </div>
-          )}
-        </ListGroup.Item>
-      </ListGroup>
-    );
-  };
-
-  // Step 1:
-  const ShippingInfoForm = () => {
-    return (
-      <>
-        {!isAuthenticated && <CheckoutSignIn />}
-        <ContactInfoForm />
-        <ShippingAddressForm />
-        <ShippingMethodForm />
-        <GoToStepButton selectedStep={2} />
-      </>
-    );
-  };
-
-  // Step 1 (Contact Info)
-  const ContactInfoForm = () => {
-    return (
-      <ListGroup variant="flush" className="py-1">
-        <ListGroup.Item>
-          <h2 className="py-3">Contact information</h2>
-          <Form>
-            <Form.Group>
-              <Form.Label>Email address for notifications</Form.Label>
-              <Form.Control
-                onBlur={validateForm}
-                isInvalid={errors.email}
-                type="email"
-                name="email"
-                placeholder={currentUser.email}
-                onChange={handleProfileChange}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.email}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Form>
-        </ListGroup.Item>
-      </ListGroup>
-    );
-  };
-
-  // Step 1 (Shipping Address)
-  const ShippingAddressForm = () => {
-    return (
-      <ListGroup variant="flush" className="py-1">
-        <ListGroup.Item>
-          <h2 className="py-3">Shipping address</h2>
-          <Form>
-            <Form.Row>
-              <Form.Group as={Col}>
-                <Form.Label>First Name</Form.Label>
-                <Form.Control
-                  onBlur={validateForm}
-                  isInvalid={errors.firstName}
-                  name="firstName"
-                  placeholder={currentUser.firstName}
-                  onChange={handleProfileChange}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.firstName}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group as={Col}>
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control
-                  onBlur={validateForm}
-                  isInvalid={errors.lastName}
-                  name="lastName"
-                  placeholder={currentUser.lastName}
-                  onChange={handleProfileChange}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.lastName}
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Form.Row>
-            <Form.Row>
-              <Form.Group as={Col}>
-                <Form.Label>Address</Form.Label>
-                <Form.Control
-                  onBlur={validateForm}
-                  isInvalid={errors.address1}
-                  name="address1"
-                  placeholder={currentUser.address1}
-                  onChange={handleProfileChange}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.address1}
-                </Form.Control.Feedback>
-              </Form.Group>
-
-              <Form.Group as={Col} lg={4}>
-                <Form.Label>Address 2</Form.Label>
-                <Form.Control
-                  onBlur={validateForm}
-                  isInvalid={errors.address2}
-                  name="address2"
-                  placeholder={currentUser.address2}
-                  onChange={handleProfileChange}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.address2}
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Form.Row>
-            <Form.Row>
-              <Form.Group as={Col}>
-                <Form.Label>City</Form.Label>
-                <Form.Control
-                  onBlur={validateForm}
-                  isInvalid={errors.city}
-                  name="city"
-                  placeholder={currentUser.city}
-                  onChange={handleProfileChange}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.city}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group as={Col} lg={2}>
-                <Form.Label>State</Form.Label>
-                <StateSelect
-                  validateForm={validateForm}
-                  error={errors.state}
-                  selectedState={currentUser.state}
-                  updateProfileState={handleProfileChange}
-                />
-              </Form.Group>
-
-              <Form.Group as={Col} lg={3}>
-                <Form.Label>Zip</Form.Label>
-                <Form.Control
-                  onBlur={validateForm}
-                  isInvalid={errors.zip}
-                  name="zip"
-                  placeholder={currentUser.zip}
-                  onChange={handleProfileChange}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.zip}
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Form.Row>
-          </Form>
-        </ListGroup.Item>
-      </ListGroup>
-    );
-  };
-
-  // Step 1 (Shipping Method)
-  const ShippingMethodForm = () => {
-    return (
-      <ListGroup variant="flush" className="py-1">
-        <ListGroup.Item>
-          <h2 className="py-3">Shipping options</h2>
-          <ButtonGroup toggle>
-            {shippingOptions.map((option, idx) => (
-              <Card
-                as={ToggleButton}
-                key={idx}
-                type="radio"
-                variant="outline-dark"
-                name="shipping"
-                value={option.id}
-                checked={option.id === shippingOptionId}
-                onChange={(e) => handleShippingOptionChange(e)}
-              >
-                <Card.Body>
-                  <Card.Title className="mb-4">{option.timeframe}</Card.Title>
-                  <Card.Subtitle className="mb-2 text-muted">
-                    <i className={option.icon}></i>
-                  </Card.Subtitle>
-                  <Card.Text>{option.name}</Card.Text>
-                  <Card.Title>
-                    <strong>
-                      {option.cost === 0 ? "FREE" : `$${option.cost}`}
-                    </strong>
-                  </Card.Title>
-                </Card.Body>
-              </Card>
-            ))}
-          </ButtonGroup>
-        </ListGroup.Item>
-      </ListGroup>
-    );
-  };
-
-  // "Go To Step" Button
-  const GoToStepButton = ({ selectedStep }) => {
-    return (
-      <div>
-        {step === 2 && (
-          <Button
-            variant="light"
-            className="my-2"
-            onClick={() => setStep(step - 1)}
-          >
-            Go Back
-          </Button>
-        )}
-        <div className="my-2 float-right">
-          <Button
-            disabled={!formValid}
-            variant="primary"
-            className="my-2 float-right"
-            onClick={() => handleGoToStep(selectedStep)}
-          >
-            Go to next step
-          </Button>
-          <p className="text-muted">{`Proceed to step ${selectedStep} of 3`}</p>
-        </div>
-      </div>
-    );
   };
 
   // Step 2:
@@ -622,7 +321,7 @@ const Checkout = () => {
           <h4 className="py-3">Shipping address:</h4>
           <strong>
             <div>
-              {currentUser.firstName}&nbsp;{currentUser.lastName}
+              {currentUser.first}&nbsp;{currentUser.last}
             </div>
             <div>
               {currentUser.address1}
@@ -694,52 +393,8 @@ const Checkout = () => {
                     label="Same as shipping"
                     className="pb-3"
                     checked={sameAsShippingChecked}
-                    onChange={() => handleSameAsShipping()}
-                  />
-                  <Form.Row>
-                    <Form.Group as={Col}>
-                      <Form.Label>Address</Form.Label>
-                      <Form.Control
-                        name="address1"
-                        placeholder={payment.address1}
-                        onChange={handlePaymentChange}
-                      />
-                    </Form.Group>
-
-                    <Form.Group as={Col} lg={4}>
-                      <Form.Label>Address 2</Form.Label>
-                      <Form.Control
-                        name="address2"
-                        placeholder={payment.address2}
-                        onChange={handlePaymentChange}
-                      />
-                    </Form.Group>
-                  </Form.Row>
-                  <Form.Row>
-                    <Form.Group as={Col}>
-                      <Form.Label>City</Form.Label>
-                      <Form.Control
-                        name="city"
-                        placeholder={payment.city}
-                        onChange={handlePaymentChange}
-                      />
-                    </Form.Group>
-                    <Form.Group as={Col} lg={2}>
-                      <Form.Label>State</Form.Label>
-                      <StateSelect
-                        selectedState={payment.state}
-                        updateProfileState={handlePaymentChange}
-                      />
-                    </Form.Group>
-                    <Form.Group as={Col} lg={3}>
-                      <Form.Label>Zip</Form.Label>
-                      <Form.Control
-                        name="zip"
-                        placeholder={payment.zip}
-                        onChange={handlePaymentChange}
-                      />
-                    </Form.Group>
-                  </Form.Row>
+                    onChange={() => handleSameAsShipping()} />
+                  <AddressForm address={billingAddress} onChange={onBillingAddressChange} errors={errors}/>
                   <CreditCardForm />
                   <Form.Group>
                     <Form.Label>Name on Card</Form.Label>
@@ -748,82 +403,13 @@ const Checkout = () => {
                 </Card.Body>
               </Accordion.Collapse>
             </Card>
-            {/* <Card>
-              <Accordion.Toggle
-                as={Card.Header}
-                eventKey="2"
-                onClick={() => setPaymentMethodType(CREDIT_CARD)}
-              >
-                <i className="fas fa-credit-card"></i>&nbsp; Stripe
-              </Accordion.Toggle>
-              <Accordion.Collapse eventKey="2">
-                <Card.Body>
-                  <Form onSubmit={handleSubmitOrder}>
-                    <Form.Row className="flex-column">
-                      <CardElement options={cardElementOpts} />
-                    </Form.Row>
-                  </Form>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card> */}
           </Accordion>
         </ListGroup.Item>
       </ListGroup>
     );
   };
 
-  // Step 3:
-  
-
-  // Step 3 (Step 2 Summary)
-  // const renderStepTwoSummary = () => {
-  //   return (
-  //     <ListGroup variant="flush" className="py-1">
-  //       <ListGroup.Item className="d-flex justify-content-between align-items-center">
-  //         <h4 className="py-3">Payment:</h4>
-  //         <strong>
-  //           {payment.type} ending in{" "}
-  //           {payment.creditCardNumber.slice(
-  //             payment.creditCardNumber.length - 4
-  //           )}
-  //         </strong>
-  //         <u onClick={() => setStep(2)}>Edit</u>
-  //       </ListGroup.Item>
-  //     </ListGroup>
-  //   );
-  // };
-
   return renderCheckout();
-
-  // return (
-  //   <Container className="d-flex flex-column py-5">
-  //     {bagItems.length === 0 ? (
-  //       <EmptyBag />
-  //     ) : authLoading || orderSubmitLoading ? (
-  //       <Loader />
-  //     ) : (
-  //       <Fragment>
-  //         <Row className="py-1 px-3">
-  //           <h1>Checkout</h1>
-  //         </Row>
-  //         <Row className="py-3">
-  //           <Col md={7}>{renderCheckout()}</Col>
-  //           <Col md={5}>
-  //             <div className="sticky-top">
-  //               <OrderItems
-  //                 items={bagItems}
-  //                 shipping={shipping}
-  //                 subtotal={subtotal}
-  //                 tax={tax}
-  //                 total={total}
-  //               />
-  //             </div>
-  //           </Col>
-  //         </Row>
-  //       </Fragment>
-  //     )}
-  //   </Container>
-  // );
 };
 
 export default Checkout;

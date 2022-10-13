@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Fragment } from "react";
+import * as React from "react";
 import { Form } from "react-bootstrap";
+import { validateState } from "../../services/formValidator";
 
-const StateSelect = ({
-  selectedState,
-  updateProfileState,
-  validateForm,
-  error,
-}) => {
+interface StateSelectProps {
+    selectedState: string;
+    error?: string;
+    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => boolean;
+}
+
+const StateSelect = ({ selectedState, onChange, error }: StateSelectProps) => {
   // 50 states +
   // American Samoa (AS)      District of Columbia (DC)     Federated States Of Micronesia (FM)
   // Guam (GU)                Marshall Islands (MH)         Northern Mariana Islands (MP)
@@ -74,30 +75,19 @@ const StateSelect = ({
     "WY",
   ];
 
-  const [selection, setSelection] = useState();
-
-  const onChange = (e) => {
-    e.preventDefault();
-    updateProfileState(e);
-    setSelection(e.target.value);
-  };
-
-  useEffect(() => {
-    setSelection(selectedState);
-    // eslint-disable-next-line
-  }, [selectedState]);
+  const defaultSelectValue = "Select..."; // used in services/formValidator
 
   return (
-    <Fragment>
+    <>
       <Form.Control
-        onBlur={validateForm}
-        isInvalid={error}
+        onBlur={onChange}
+        isInvalid={!!error}
         as="select"
-        value={selection}
+        value={selectedState}
         name="state"
-        onChange={(e) => onChange(e)}
+        onChange={onChange}
       >
-        <option>Select...</option>
+        <option>{defaultSelectValue}</option>
         {stateAbbreviations.map((st, i) => (
           <option key={i} value={st}>
             {st}
@@ -105,7 +95,7 @@ const StateSelect = ({
         ))}
       </Form.Control>
       <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-    </Fragment>
+    </>
   );
 };
 
