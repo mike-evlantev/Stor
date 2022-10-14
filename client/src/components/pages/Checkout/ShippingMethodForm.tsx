@@ -2,14 +2,7 @@ import * as React from "react";
 import { ButtonGroup, Card, ListGroup, ToggleButton } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { updateShipping } from "../../../actions/bagActions";
-
-interface ShippingOption {
-    id: number,
-    icon: string,
-    name: string,
-    timeframe: string,
-    cost: number,
-  }
+import { ShippingOption } from "../../../types/ShippingOption";
 
 export const ShippingMethodForm = () => {
     const dispatch = useDispatch();
