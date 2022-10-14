@@ -12,6 +12,7 @@ import { useHistory } from "react-router-dom";
 import { CreditCardForm } from "./CreditCardForm.tsx";
 import { SubmitOrderButton } from "./SubmitOrderButton.tsx";
 import { ShippingInfoForm } from "./ShippingInfoForm.tsx";
+import { ShippingInfoSummary } from "./ShippingInfoSummary.tsx";
 import { AddressForm } from "../../shared/AddressForm.tsx";
 
 const Checkout = () => {
@@ -301,49 +302,10 @@ const Checkout = () => {
   const PaymentInfoForm = () => {
     return (
       <>
-        <StepOneSummary />
+        <ShippingInfoSummary shippingOptionId={shippingOptionId} handleStepChange={handleStepChange} />
         <PaymentForm />
         <SubmitOrderButton orderSubmitLoading={orderSubmitLoading} bagItems={bagItems} handleSubmitOrder={handleSubmitOrder} />
       </>
-    );
-  };
-
-  // Step 2 (Step 1 Summary)
-  const StepOneSummary = () => {
-    return (
-      <ListGroup variant="flush" className="py-1">
-        <ListGroup.Item className="d-flex justify-content-between align-items-center">
-          <h4 className="py-3">Notification email:</h4>
-          <strong>{currentUser.email}</strong>
-          <u onClick={() => setStep(1)}>Edit</u>
-        </ListGroup.Item>
-        <ListGroup.Item className="d-flex justify-content-between align-items-center">
-          <h4 className="py-3">Shipping address:</h4>
-          <strong>
-            <div>
-              {currentUser.first}&nbsp;{currentUser.last}
-            </div>
-            <div>
-              {currentUser.address1}
-              {", "}
-              {currentUser.address2}
-            </div>
-            <div>
-              {currentUser.city}
-              {", "}
-              {currentUser.state} {currentUser.zip}
-            </div>
-          </strong>
-          <u onClick={() => setStep(1)}>Edit</u>
-        </ListGroup.Item>
-        <ListGroup.Item className="d-flex justify-content-between align-items-center">
-          <h4 className="py-3">Estimated delivery:</h4>
-          <strong>
-            {shippingOptions.find((o) => o.id === shippingOptionId).name}
-          </strong>
-          <u onClick={() => setStep(1)}>Edit</u>
-        </ListGroup.Item>
-      </ListGroup>
     );
   };
   
