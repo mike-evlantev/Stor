@@ -16,3 +16,12 @@ main {
   border: 1px solid #bbb;
   border-radius: 0.25rem;
 }
+
+.dev {
+  opacity: 0.5;
+  background-color: whitesmoke;
+}
+
+.dev:hover {
+  opacity: unset;
+}
