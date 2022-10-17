@@ -57,7 +57,7 @@ const Confirmation = () => {
               <h4 className="py-3">Shipping address</h4>
               <strong>
                 <div>
-                  {order.firstName}&nbsp;{order.lastName}
+                  {order.first}&nbsp;{order.last}
                 </div>
                 <div>
                   {order.shippingAddress.address1}

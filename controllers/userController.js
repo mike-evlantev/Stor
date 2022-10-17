@@ -6,16 +6,16 @@ import User from "../models/userModel.js";
 // @desc        Register user and get token
 // @access      Public
 export const registerUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { first, last, email, password } = req.body;
   let user = await User.findOne({ email });
   if (user) return res.status(400).json({ msg: "User already exists" });
-  user = await User.create({ firstName, lastName, email, password }); // Password is encrypted as part of the User model middleware
+  user = await User.create({ first, last, email, password }); // Password is encrypted as part of the User model middleware
   if (user) {
     res.json({
       _id: user._id,
-      firstName: user.firstName,
-      middleName: user.middleName,
-      lastName: user.lastName,
+      first: user.first,
+      middle: user.middle,
+      last: user.last,
       address1: user.address1,
       address2: user.address2,
       city: user.city,
@@ -42,9 +42,9 @@ export const loginUser = asyncHandler(async (req, res) => {
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
-      firstName: user.firstName,
-      middleName: user.middleName,
-      lastName: user.lastName,
+      first: user.first,
+      middle: user.middle,
+      last: user.last,
       address1: user.address1,
       address2: user.address2,
       city: user.city,
@@ -70,9 +70,9 @@ export const updateUser = asyncHandler(async (req, res) => {
   if (user) {
     if (req.body._id == req.user._id) {
       const {
-        firstName,
-        middleName,
-        lastName,
+        first,
+        middle,
+        last,
         address1,
         address2,
         city,
@@ -85,9 +85,9 @@ export const updateUser = asyncHandler(async (req, res) => {
 
       // TODO: validate fields
 
-      user.firstName = firstName || user.firstName;
-      user.middleName = middleName || user.middleName;
-      user.lastName = lastName || user.lastName;
+      user.first = first || user.first;
+      user.middle = middle || user.middle;
+      user.last = last || user.last;
       user.address1 = address1 || user.address1;
       user.address2 = address2 || user.address2;
       user.city = city || user.city;
@@ -99,9 +99,9 @@ export const updateUser = asyncHandler(async (req, res) => {
       const updatedUser = await user.save();
       res.json({
         _id: updatedUser._id,
-        firstName: updatedUser.firstName,
-        middleName: updatedUser.middleName,
-        lastName: updatedUser.lastName,
+        first: updatedUser.first,
+        middle: updatedUser.middle,
+        last: updatedUser.last,
         address1: updatedUser.address1,
         address2: updatedUser.address2,
         city: updatedUser.city,

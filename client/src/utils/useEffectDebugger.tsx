@@ -1,6 +1,6 @@
 import React from "react";
 
-const usePrevious = (value, initialValue) => {
+const usePrevious = (value: any, initialValue: any) => {
   const ref = React.useRef(initialValue);
   React.useEffect(() => {
     ref.current = value;
@@ -8,7 +8,7 @@ const usePrevious = (value, initialValue) => {
   return ref.current;
 };
 
-export const useEffectDebugger = (effectHook, dependencies, dependencyNames = []) => {
+export const useEffectDebugger = (effectHook: any, dependencies: any[], dependencyNames = []) => {
     const previousDeps = usePrevious(dependencies, []);
   
     const changedDeps = dependencies.reduce((accum, dependency, index) => {

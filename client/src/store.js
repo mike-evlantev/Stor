@@ -1,11 +1,8 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
-import {
-  productListReducer,
-  productDetailsReducer,
-} from "./reducers/productReducers.js";
-import { authReducer } from "./reducers/userReducers.js";
+import { productListReducer, productDetailsReducer } from "./reducers/productReducers.js";
+import { authReducer, customerReducer } from "./reducers/userReducers.js";
 import { bagReducer } from "./reducers/bagReducers.js";
 import { messageReducer } from "./reducers/messageReducers.js";
 import { orderReducer } from "./reducers/orderReducers.js";
@@ -19,6 +16,7 @@ const reducer = combineReducers({
   productDetails: productDetailsReducer,
   shippingOptions: (state = {}) => state,
   order: orderReducer,
+  customer: customerReducer,
 });
 
 const shippingOptions = [
