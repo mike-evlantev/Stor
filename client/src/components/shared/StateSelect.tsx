@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Form } from "react-bootstrap";
-import { validateState } from "../../services/formValidator";
 
 interface StateSelectProps {
     selectedState: string;

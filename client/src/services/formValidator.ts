@@ -57,12 +57,12 @@ export function validateField({key, value}: {key: string, value: string}) {
             break;
         case "phone":
             if (!regex.phone.test(value)) {
-                error = "Valid Phone is required";
+                error = "Valid phone is required";
             }
             break;
         case "email":
             if (!regex.email.test(value)) {
-                error = "Valid Email is required";
+                error = "Valid email is required";
             }
             break;
         case "password":
@@ -94,7 +94,7 @@ export function validateState(state: string): string {
 export function validateEmail(email: string): string {
     let error = "";
     if (!regex.email.test(email)) {
-        error = "Valid Email is required";
+        error = "Valid email is required";
     }
     return error;
 };
