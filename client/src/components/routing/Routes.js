@@ -12,6 +12,7 @@ import { PrivateRoute } from "./PrivateRoute";
 import Dashboard from "../pages/Dashboard";
 import WishList from "../pages/WishList";
 import Order from "../Order";
+import { PageNotFound } from "../pages/PageNotFound.tsx"
 
 export const Routes = () => {
   return (
@@ -37,6 +38,7 @@ export const Routes = () => {
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/profile" component={Profile} />
         <PrivateRoute exact path="/wishlist" component={WishList} />
+        <Route path="*" component={PageNotFound} />
       </Switch>
     </Container>
   );
