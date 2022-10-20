@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ListGroup } from "react-bootstrap";
 import { validateField } from "../../../services/formValidator";
-import { KeyValuePair } from "../../../types/KeyValuePair";
+import { KeyValuePair } from "../../../types/IKeyValuePair";
 import { EmailForm } from "../../shared/EmailForm";
 
 interface Props {
@@ -16,7 +16,7 @@ export const ContactInfoForm: React.FC<Props> = ({email, error, onChange, handle
     let valid = true;
     const error = validateField({key: "email", value: email});
     if (error) valid = false;
-    handleErrorsChange({["email"]: error});
+    handleErrorsChange({email: error});
     return valid;
   };
 

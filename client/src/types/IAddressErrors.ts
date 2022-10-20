@@ -1,6 +1,4 @@
-import { Address } from "./Address";
-
-export interface AddressErrors {
+export interface IAddressErrors {
     address1?: string,
     address2?: string,
     city?: string,

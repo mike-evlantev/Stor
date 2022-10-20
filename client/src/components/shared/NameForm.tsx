@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Col, Form } from "react-bootstrap"
-import { Name } from "../../types/Name";
-import { NameErrors } from "../../types/NameErrors";
+import { IName } from "../../types/IName";
+import { INameErrors } from "../../types/INameErrors";
 
 interface NameFormProps {
-    name: Name;
-    errors: NameErrors;
+    name: IName;
+    errors: INameErrors;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => boolean;
 }
 
@@ -29,7 +29,7 @@ export const NameForm = ({name, onChange, errors}: NameFormProps) => {
                 onBlur={onChange}
                 isInvalid={!!errors?.last}
                 name="last"
-                placeholder={last}
+                value={last}
                 onChange={onChange}
             />
             <Form.Control.Feedback type="invalid">{errors?.last}</Form.Control.Feedback>

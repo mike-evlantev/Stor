@@ -1,28 +1,25 @@
 import * as React from "react";
-import { Col, Form, ListGroup } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { updateCustomer, updateCustomerError } from "../../../actions/userActions";
-import { KeyValuePair } from "../../../types/KeyValuePair";
+import { Form, ListGroup } from "react-bootstrap";
+import { IKeyValuePair } from "../../../types/IKeyValuePair";
 import { AddressForm } from "../../shared/AddressForm";
 import { NameForm } from "../../shared/NameForm";
 import { validateField } from "../../../services/formValidator";
-import { AddressErrors } from "../../../types/AddressErrors";
-import { NameErrors } from "../../../types/NameErrors";
-import StateSelect from "../../shared/StateSelect";
-import { Address } from "../../../types/Address";
-import { Name } from "../../../types/Name";
+import { IAddressErrors } from "../../../types/IAddressErrors";
+import { INameErrors } from "../../../types/INameErrors";
+import { IAddress } from "../../../types/IAddress";
+import { IName } from "../../../types/IName";
 
 interface Props {
-    errors: AddressErrors & NameErrors;
-    handleErrorsChange: (errors: KeyValuePair<string>) => void;
-    name: Name;
-    handleNameChange: (name: KeyValuePair<string>) => void;
-    address: Address;
-    handleAddressChange: (adderss: KeyValuePair<string>) => void;
+    errors: IAddressErrors & INameErrors;
+    handleErrorsChange: (errors: IKeyValuePair<string>) => void;
+    name: IName;
+    handleNameChange: (name: IKeyValuePair<string>) => void;
+    address: IAddress;
+    handleAddressChange: (adderss: IKeyValuePair<string>) => void;
 }
 
 export const ShippingAddressForm: React.FC<Props> = ({errors, handleErrorsChange, name, handleNameChange, address, handleAddressChange}: Props) => {
-    const onValidateNameChange = (obj: KeyValuePair<string>): boolean => {
+    const onValidateNameChange = (obj: IKeyValuePair<string>): boolean => {
         let valid = true;
     
         Object.keys(obj).map((key) => {
@@ -39,12 +36,12 @@ export const ShippingAddressForm: React.FC<Props> = ({errors, handleErrorsChange
     const onNameChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
         e.preventDefault();
         const { name, value } = e.target;
-        const obj = {[name]: value} as KeyValuePair<string>;
+        const obj = {[name]: value} as IKeyValuePair<string>;
         handleNameChange(obj);
         return onValidateNameChange(obj);
     }
 
-    const onValidateShippingAddressChange = (obj: KeyValuePair<string>): boolean => {
+    const onValidateShippingAddressChange = (obj: IKeyValuePair<string>): boolean => {
         let valid = true;
     
         Object.keys(obj).map((key) => {
@@ -61,7 +58,7 @@ export const ShippingAddressForm: React.FC<Props> = ({errors, handleErrorsChange
     const onShippingAddressChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
         e.preventDefault();
         const { name, value } = e.target;
-        const obj = {[name]: value} as KeyValuePair<string>;
+        const obj = {[name]: value} as IKeyValuePair<string>;
         handleAddressChange(obj);
         return onValidateShippingAddressChange(obj);
     };

@@ -1,16 +1,16 @@
 import * as React from "react";
 import { Col, Form } from "react-bootstrap";
 import StateSelect from "./StateSelect";
-import { Address } from "../../types/Address";
-import { AddressErrors } from "../../types/AddressErrors";
+import { IAddress } from "../../types/IAddress";
+import { IAddressErrors } from "../../types/IAddressErrors";
 import { validateField } from "../../services/formValidator";
-import { KeyValuePair } from "../../types/KeyValuePair";
+import { IKeyValuePair } from "../../types/IKeyValuePair";
 
 interface AddressFormProps {
-    address: Address;
-    errors: AddressErrors;
+    address: IAddress;
+    errors: IAddressErrors;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => boolean;
-    handleErrorsChange: (obj: KeyValuePair<string>) => void;
+    handleErrorsChange: (obj: IKeyValuePair<string>) => void;
 }
 
 export const AddressForm = ({address, onChange, errors, handleErrorsChange}: AddressFormProps) => {
@@ -24,7 +24,7 @@ export const AddressForm = ({address, onChange, errors, handleErrorsChange}: Add
         let valid = true;
         const error = validateField({key: "state", value: state});
         if (error) valid = false;
-        handleErrorsChange({["state"]: error});
+        handleErrorsChange({state: error});
         return valid;
       };
 

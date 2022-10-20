@@ -1,6 +1,4 @@
-import { Name } from "./Name";
-
-export interface NameErrors {
+export interface INameErrors {
     title?: string,
     first?: string,
     middle?: string,

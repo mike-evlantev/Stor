@@ -1,4 +1,4 @@
-export interface Name {
+export interface IName {
     title?: string,
     first: string,
     middle?: string,

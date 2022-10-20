@@ -2,7 +2,7 @@ import * as React from "react";
 import { ButtonGroup, Card, ListGroup, ToggleButton } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { updateShipping } from "../../../actions/bagActions";
-import { ShippingOption } from "../../../types/ShippingOption";
+import { IShippingOption } from "../../../types/IShippingOption";
 
 export const ShippingMethodForm = () => {
     const dispatch = useDispatch();
@@ -12,7 +12,7 @@ export const ShippingMethodForm = () => {
     const handleShippingOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         const selectedId = parseInt(e.currentTarget.value);
-        const selectedShippingOption = shippingOptions.find((o: ShippingOption) => o.id === selectedId);
+        const selectedShippingOption = shippingOptions.find((o: IShippingOption) => o.id === selectedId);
         setShippingOptionId(selectedId);
         dispatch(updateShipping(selectedShippingOption));
     };
@@ -22,7 +22,7 @@ export const ShippingMethodForm = () => {
         <ListGroup.Item>
           <h2 className="py-3">Shipping options</h2>
           <ButtonGroup toggle>
-            {shippingOptions.map((option: ShippingOption, i: number) => (
+            {shippingOptions.map((option: IShippingOption, i: number) => (
               <Card
                 as={ToggleButton}
                 key={i}
