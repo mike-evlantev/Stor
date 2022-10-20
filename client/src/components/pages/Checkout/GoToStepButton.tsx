@@ -2,18 +2,18 @@ import * as React from "react";
 import { Button } from "react-bootstrap";
 
 interface Props {
+    label: string;
     nextStep: number;
-    //disabled: boolean;
     handleClick: (step: number) => void;
 }
 
-export const GoToStepButton: React.FC<Props> = ({ nextStep, handleClick }: Props) => {
+export const GoToStepButton: React.FC<Props> = ({ label, nextStep, handleClick }: Props) => {
     return (
-        <div className="my-2 float-right">
-            <Button variant="primary" className="my-2 float-right" onClick={() => handleClick(nextStep)}>
-                Go to next step
+        <div className="d-flex flex-column ml-auto mx-2">
+            <Button variant="primary" className="my-2" onClick={() => handleClick(nextStep)}>
+                {label}
             </Button>
-            <p className="text-muted">{`Proceed to step ${nextStep} of 3`}</p>
+            <span className="text-muted">Proceed to step {nextStep} of 3</span>
         </div>
     );
 };
