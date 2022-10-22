@@ -6,6 +6,7 @@ import { PaymentMethod } from "../../../enums/PaymentMethod";
 import { validateField } from "../../../services/formValidator";
 import { IAddress } from "../../../types/IAddress";
 import { IAddressErrors } from "../../../types/IAddressErrors";
+import { ICreditCardValidation } from "../../../types/ICreditCardValidation";
 import { IKeyValuePair } from "../../../types/IKeyValuePair";
 import { Address } from "../../shared/Address";
 import { AddressForm } from "../../shared/AddressForm";
@@ -15,35 +16,63 @@ import { GoBackButton } from "./GoBackButton";
 import { GoToStepButton } from "./GoToStepButton";
 import { ShippingInfoSummary } from "./ShippingInfoSummary";
 
-interface BillingInfoFormErrors extends IAddressErrors {
-    //email: string
-}
+interface BillingInfoFormErrors extends IAddressErrors { }
 
 interface Props {
-    handlePaymentMethodChange: (paymentMethod: PaymentMethod) => void;
-    handleStepChange: (step: number) => void;
+    onPaymentMethodChange: (paymentMethod: PaymentMethod) => void;
+    onStepChange: (step: number) => void;
 }
 
-const initErrors = {address1: "", address2: "", city: "", state: "", zip: ""};
+const initAddress = {address1: "", address2: "", city: "", state: "", zip: ""};
+const initErrors = {address1: "", address2: "", city: "", state: "", zip: "", nameOnCard: ""};
+const initCreditCardValidation: ICreditCardValidation = {
+    number: {elementType: "cardNumber", brand: "unknown", empty: true, complete: false, error: undefined}, 
+    expiry: {elementType: "cardExpiry", empty: true, complete: false, error: undefined}, 
+    cvc: {elementType: "cardCvc", empty: true, complete: false, error: undefined}
+  };
 
-export const BillingInfoForm: React.FC<Props> = ({handleStepChange, handlePaymentMethodChange}) => {
+export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodChange}) => {
     const dispatch = useDispatch();
     const customer = useSelector((state: any) => state.customer);
-    const [nameOnCard, setNameOnCard] = React.useState(customer.nameOnCard);
+    const [nameOnCard, setNameOnCard] = React.useState(customer.nameOnCard || "");
     const [sameAsShipping, setSameAsShipping] = React.useState(true);
-    const [address, setAddress] = React.useState<IAddress>(customer.shippingAddress);
-    const [errors, setErrors] = React.useState<BillingInfoFormErrors>(initErrors);
-    //const [paymentMethod, setPaymentMethod] = React.useState<PaymentMethod>(PaymentMethod.CreditCard); 
+    const [address, setAddress] = React.useState<IAddress>(initAddress);
+    const [errors, setErrors] = React.useState<BillingInfoFormErrors & {nameOnCard: string}>(initErrors);
+    const [creditCardValidation, setCreditCardValidation] = React.useState<ICreditCardValidation>(initCreditCardValidation);
 
     const handleNextStepClick = (step: number) => {
         const finalAddress = sameAsShipping ? customer.shippingAddress : address;
-        const [valid, errorObj] = onValidateChange(finalAddress);
-        if (valid) {
-            dispatch(updateCustomer({billingAddress: finalAddress}));
-            handleStepChange(step);
+        const [valid, errorObj] = onValidateChange({...finalAddress, nameOnCard});
+        
+        // validate cc
+        const emptyStripeElements = Array.from(document.querySelectorAll('div.StripeElement--empty'));
+
+        const stripeValid = (creditCardValidation.number.complete && !creditCardValidation.number.empty && !creditCardValidation.number.error)
+                        && (creditCardValidation.expiry.complete && !creditCardValidation.expiry.empty && !creditCardValidation.expiry.error)
+                        && (creditCardValidation.cvc.complete && !creditCardValidation.cvc.empty && !creditCardValidation.cvc.error);
+        console.log(stripeValid);
+        
+        if (valid && stripeValid) {
+            dispatch(updateCustomer({billingAddress: finalAddress, nameOnCard}));
+            onStepChange(step);
         } else {
+            // TODO: use creditCardValidation object instead of querySelectorAll
+            if (emptyStripeElements?.length > 0) {
+                emptyStripeElements.forEach(element => {
+                    if (element.id.includes("number")) {
+                        setCreditCardValidation((prev: ICreditCardValidation)  => ({...prev, number: {...prev.number, error: {type: "validation_error", code: "", message: "Your card number is incomplete."}}}));
+                    }
+                    if (element.id.includes("expiry")) {
+                        setCreditCardValidation((prev: ICreditCardValidation)  => ({...prev, expiry: {...prev.expiry, error: {type: "validation_error", code: "", message: "Your card's expiration date is incomplete."}}}));
+                    }
+                    if (element.id.includes("cvc")) {
+                        setCreditCardValidation((prev: ICreditCardValidation)  => ({...prev, cvc: {...prev.cvc, error: {type: "validation_error", code: "", message: "Your card's security code is incomplete."}}}));
+                    }
+                });
+            }
+
             const {first, last, address1, address2, city, state, zip, email} = errorObj;
-            dispatch(updateCustomerError({first, last, shippingAddress: {address1, address2, city, state, zip}, email}))
+            dispatch(updateCustomerError({first, last, billingAddress: {address1, address2, city, state, zip}, email}))
         }       
     }
 
@@ -51,7 +80,6 @@ export const BillingInfoForm: React.FC<Props> = ({handleStepChange, handlePaymen
         let valid = true;
         let errorObj: {[k: string]: string} = {};
 
-        console.log(obj);
         Object.keys(obj).map((key) => {
           const value = (obj as any)[key] as string;
           const error = validateField({key, value});
@@ -94,24 +122,26 @@ export const BillingInfoForm: React.FC<Props> = ({handleStepChange, handlePaymen
         return onValidateBillingAddressChange(obj);
     };
 
-    const onNameOnCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onNameOnCardChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
         e.preventDefault();
-        console.log(e.currentTarget.value);
         setNameOnCard(e.currentTarget.value);
+        return onValidateNameOnCardChange(e.currentTarget.value);
     }
+
+    const onValidateNameOnCardChange = (nameOnCard: string): boolean => {
+        let valid = true;
+        const error = validateField({key: "nameOnCard", value: nameOnCard});
+        if (error) valid = false;
+        handleErrorsChange({nameOnCard: error});
+        return valid;
+    };
 
     const handleSameAsShipping = (same: boolean) => {
         setSameAsShipping(same);
-        if (same) {
-            //setAddress(customer.shippingAddress);
-            dispatch(updateCustomer({billingAddress: customer.shippingAddress}));
-        } else {
-            //setAddress({} as IAddress);
-        }
     }
 
     const handleTestDataClick = () => {
-        setAddress({address1: "225 15th St", city: "Del Mar", state: "CA", zip: "92014"});
+        setAddress({address1: "225 15th St", address2: "", city: "Del Mar", state: "CA", zip: "92014"});
     }
 
     const handleErrorsChange = (obj: IKeyValuePair<string>) => {
@@ -120,7 +150,7 @@ export const BillingInfoForm: React.FC<Props> = ({handleStepChange, handlePaymen
 
     return (
         <>
-            <ShippingInfoSummary handleStepChange={handleStepChange} />
+            <ShippingInfoSummary onStepChange={onStepChange} />
             <ListGroup variant="flush" className="py-1">
                 <ListGroup.Item>
                     <h4>Payment</h4>
@@ -129,7 +159,7 @@ export const BillingInfoForm: React.FC<Props> = ({handleStepChange, handlePaymen
                         <Accordion.Toggle
                         as={Card.Header}
                         eventKey="0"
-                        onClick={() => handlePaymentMethodChange(PaymentMethod.PayPal)}
+                        onClick={() => onPaymentMethodChange(PaymentMethod.PayPal)}
                         >
                         <i className="fab fa-paypal"></i>&nbsp; PayPal
                         </Accordion.Toggle>
@@ -139,9 +169,9 @@ export const BillingInfoForm: React.FC<Props> = ({handleStepChange, handlePaymen
                             Sign in to PayPal and return to complete your order
                             </Card.Text>
                             <Button
-                            variant="info"
-                            type="submit"
-                            className="btn btn-block"
+                                variant="info"
+                                type="submit"
+                                className="btn btn-block"
                             >
                             PayPal
                             </Button>
@@ -152,30 +182,29 @@ export const BillingInfoForm: React.FC<Props> = ({handleStepChange, handlePaymen
                         <Accordion.Toggle
                         as={Card.Header}
                         eventKey="1"
-                        onClick={() => handlePaymentMethodChange(PaymentMethod.CreditCard)}
+                        onClick={() => onPaymentMethodChange(PaymentMethod.CreditCard)}
                         >
                         <i className="fas fa-credit-card"></i>&nbsp; Credit Card
                         </Accordion.Toggle>
                         <Accordion.Collapse eventKey="1">
                         <Card.Body>
-                            
-                            
-                            <CreditCardForm />
+                            <CreditCardForm initValidation={initCreditCardValidation} creditCardValidation={creditCardValidation} onCreditCardValidation={setCreditCardValidation} />
                             <Form.Group>
                                 <Form.Label>Name on Card</Form.Label>
-                                <Form.Control type="text" onChange={onNameOnCardChange} value={nameOnCard}/>
-                                <div className="mt-3 mb-1"><strong>Billing Address</strong></div>
+                                <Form.Control type="text" onBlur={onNameOnCardChange} onChange={onNameOnCardChange} value={nameOnCard} isInvalid={!!errors?.nameOnCard} />
+                                <Form.Control.Feedback type="invalid">{errors?.nameOnCard}</Form.Control.Feedback>
+                                <div className="mt-3 mb-2"><strong>Billing Address</strong></div>
                                 <Form.Check
                                     type="checkbox"
                                     label="Same as shipping"
-                                    className="pb-1"
+                                    className="mb-2"
                                     checked={sameAsShipping}
                                     onChange={() => handleSameAsShipping(!sameAsShipping)} />
                                 {sameAsShipping
                                     ? <Address className={"ml-4"} address={customer.shippingAddress} />
                                     : <>
-                                        <AddressForm address={address} onChange={onBillingAddressChange} errors={errors} handleErrorsChange={handleErrorsChange} />
-                                        <Dev>
+                                        <AddressForm address={address} onChange={onBillingAddressChange} errors={errors} onErrorsChange={handleErrorsChange} />
+                                        <Dev className={"d-flex flex-column w-25 p-2"}>
                                             <Button variant="secondary" className="my-2 btn-sm" onClick={handleTestDataClick}>
                                                 Use test data
                                             </Button>
@@ -189,7 +218,7 @@ export const BillingInfoForm: React.FC<Props> = ({handleStepChange, handlePaymen
                 </ListGroup.Item>
             </ListGroup>
             <div className="d-flex align-items-start">
-                <GoBackButton prevStep={1} handleClick={handleStepChange} />
+                <GoBackButton prevStep={1} handleClick={onStepChange} />
                 <GoToStepButton label={"Review Order"} nextStep={3} handleClick={handleNextStepClick} />
             </div>
         </>
