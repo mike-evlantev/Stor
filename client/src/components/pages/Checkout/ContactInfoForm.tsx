@@ -1,14 +1,14 @@
 import * as React from "react";
 import { ListGroup } from "react-bootstrap";
 import { validateField } from "../../../services/formValidator";
-import { KeyValuePair } from "../../../types/IKeyValuePair";
+import { IKeyValuePair } from "../../../types/IKeyValuePair";
 import { EmailForm } from "../../shared/EmailForm";
 
 interface Props {
   email: string;
   onChange: (email: string) => void;
   error: string;
-  handleErrorsChange: (obj: KeyValuePair<string>) => void;
+  handleErrorsChange: (obj: IKeyValuePair<string>) => void;
 }
 
 export const ContactInfoForm: React.FC<Props> = ({email, error, onChange, handleErrorsChange}: Props) => {

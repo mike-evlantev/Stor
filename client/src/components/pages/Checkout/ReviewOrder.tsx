@@ -13,10 +13,10 @@ import { SubmitOrderButton } from "./SubmitOrderButton";
 
 interface Props {
     paymentMethod: PaymentMethod;
-    handleStepChange: (step: number) => void;
+    onStepChange: (step: number) => void;
 }
 
-export const ReviewOrder: React.FC<Props> = ({paymentMethod, handleStepChange}) => {
+export const ReviewOrder: React.FC<Props> = ({paymentMethod, onStepChange}) => {
     const dispatch = useDispatch();
     const history = useHistory();
     const stripe = useStripe();
@@ -156,7 +156,7 @@ export const ReviewOrder: React.FC<Props> = ({paymentMethod, handleStepChange}) 
         <>
             Order Review
             <div className="d-flex align-items-start">
-                <GoBackButton prevStep={1} handleClick={handleStepChange} />
+                <GoBackButton prevStep={2} handleClick={onStepChange} />
                 <SubmitOrderButton orderSubmitLoading={orderSubmitLoading} bagItems={bagItems} handleSubmitOrder={handleSubmitOrder} />
             </div>
         </>

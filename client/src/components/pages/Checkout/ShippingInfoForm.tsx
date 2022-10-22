@@ -16,7 +16,7 @@ import { ShippingAddressForm } from "./ShippingAddressForm";
 import { ShippingMethodForm } from "./ShippingMethodForm";
 
 interface Props {
-    handleStepChange: (step: number) => void;
+    onStepChange: (step: number) => void;
 }
 
 interface ShippingInfoFormErrors extends INameErrors, IAddressErrors {
@@ -25,7 +25,7 @@ interface ShippingInfoFormErrors extends INameErrors, IAddressErrors {
 
 const initErrors = {first: "", last: "", address1: "", address2: "", city: "", state: "", zip: "", email: ""};
 
-export const ShippingInfoForm: React.FC<Props> = ({handleStepChange}) => {
+export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
     const dispatch = useDispatch();
     const customer = useSelector((state: any) => state.customer);
     const { isAuthenticated } = useSelector((state: any) => state.auth);
@@ -38,7 +38,7 @@ export const ShippingInfoForm: React.FC<Props> = ({handleStepChange}) => {
         const [valid, errorObj] = onValidateChange({...name, ...address, email});
         if (valid) {
             dispatch(updateCustomer({...name, shippingAddress: address, email}));
-            handleStepChange(step);
+            onStepChange(step);
         } else {
             const {first, last, address1, address2, city, state, zip, email} = errorObj;
             dispatch(updateCustomerError({first, last, shippingAddress: {address1, address2, city, state, zip}, email}))
@@ -104,7 +104,7 @@ export const ShippingInfoForm: React.FC<Props> = ({handleStepChange}) => {
                 handleErrorsChange={handleErrorsChange} />
             <ShippingMethodForm />
             <div className="d-flex">
-                <Dev>
+                <Dev className={"d-flex flex-column p-2"}>
                     <Button variant="secondary" className="my-2 btn-sm" onClick={handleTestDataClick}>
                         Use test data
                     </Button>

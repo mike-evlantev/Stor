@@ -10,10 +10,10 @@ interface AddressFormProps {
     address: IAddress;
     errors: IAddressErrors;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => boolean;
-    handleErrorsChange: (obj: IKeyValuePair<string>) => void;
+    onErrorsChange: (obj: IKeyValuePair<string>) => void;
 }
 
-export const AddressForm = ({address, onChange, errors, handleErrorsChange}: AddressFormProps) => {
+export const AddressForm = ({address, onChange, errors, onErrorsChange}: AddressFormProps) => {
     const onStateChange = (e: React.ChangeEvent<HTMLSelectElement>): boolean => {
         e.preventDefault();
         onChange(e as unknown as React.ChangeEvent<HTMLInputElement>);
@@ -24,7 +24,7 @@ export const AddressForm = ({address, onChange, errors, handleErrorsChange}: Add
         let valid = true;
         const error = validateField({key: "state", value: state});
         if (error) valid = false;
-        handleErrorsChange({state: error});
+        onErrorsChange({state: error});
         return valid;
       };
 
