@@ -76,6 +76,11 @@ export function validateField({key, value}: {key: string, value: string}) {
                 error = "Password must contain at least one letter";
             }
             break;
+        case "nameOnCard":
+            if (!value) {
+                error = "Name on card is required";
+            }
+            break;
         default:
             break;
     }

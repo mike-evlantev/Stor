@@ -80,7 +80,12 @@ const customerInitialState = {
   billingAddress: {address1: "", address2: "", city: "", state: "", zip: ""},
   phone: "",
   email: "",
-  nameOnCard: ""
+  card: {
+    number: {elementType: "cardNumber", brand: "unknown", empty: true, complete: false, error: undefined}, 
+    expiry: {elementType: "cardExpiry", empty: true, complete: false, error: undefined}, 
+    cvc: {elementType: "cardCvc", empty: true, complete: false, error: undefined},
+    nameOnCard: ""
+  }
 }
 
 export const customerReducer = (state = customerInitialState, action) => {
