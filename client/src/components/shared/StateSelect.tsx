@@ -4,10 +4,11 @@ import { Form } from "react-bootstrap";
 interface StateSelectProps {
     selectedState: string;
     error?: string;
-    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => boolean;
+    onBlur: (e: React.FocusEvent<HTMLInputElement>) => boolean;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => boolean;
 }
 
-const StateSelect = ({ selectedState, onChange, error }: StateSelectProps) => {
+const StateSelect: React.FC<StateSelectProps> = ({ selectedState, onBlur, onChange, error }) => {
   // 50 states +
   // American Samoa (AS)      District of Columbia (DC)     Federated States Of Micronesia (FM)
   // Guam (GU)                Marshall Islands (MH)         Northern Mariana Islands (MP)
@@ -79,7 +80,7 @@ const StateSelect = ({ selectedState, onChange, error }: StateSelectProps) => {
   return (
     <>
       <Form.Control
-        onBlur={onChange}
+        onBlur={onBlur}
         isInvalid={!!error}
         as="select"
         value={selectedState}

@@ -11,56 +11,71 @@ import { IName } from "../../../types/IName";
 
 interface Props {
     errors: IAddressErrors & INameErrors;
-    handleErrorsChange: (errors: IKeyValuePair<string>) => void;
+    onErrorsChange: (errors: IKeyValuePair<string>) => void;
     name: IName;
-    handleNameChange: (name: IKeyValuePair<string>) => void;
+    onNameChange: (name: IKeyValuePair<string>) => void;
     address: IAddress;
-    handleAddressChange: (adderss: IKeyValuePair<string>) => void;
+    onAddressChange: (adderss: IKeyValuePair<string>) => void;
 }
 
-export const ShippingAddressForm: React.FC<Props> = ({errors, handleErrorsChange, name, handleNameChange, address, handleAddressChange}: Props) => {
-    const onValidateNameChange = (obj: IKeyValuePair<string>): boolean => {
+export const ShippingAddressForm: React.FC<Props> = ({errors, onErrorsChange, name, onNameChange, address, onAddressChange}: Props) => {
+    const handleValidateNameChange = (obj: IKeyValuePair<string>): boolean => {
         let valid = true;
     
         Object.keys(obj).map((key) => {
             const value = obj[key];
             const error = validateField({key, value});
             if (error) valid = false;
-            handleErrorsChange({[key]: error});
+            onErrorsChange({[key]: error});
             return error;
         });
 
         return valid;
     };
 
-    const onNameChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
+    const handleNameFocus = (e: React.FocusEvent<HTMLInputElement>): boolean => {
         e.preventDefault();
         const { name, value } = e.target;
         const obj = {[name]: value} as IKeyValuePair<string>;
-        handleNameChange(obj);
-        return onValidateNameChange(obj);
+        return handleValidateNameChange(obj);
     }
 
-    const onValidateShippingAddressChange = (obj: IKeyValuePair<string>): boolean => {
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
+        e.preventDefault();
+        const { name, value } = e.target;
+        const obj = {[name]: value} as IKeyValuePair<string>;
+        onNameChange(obj);
+        return handleValidateNameChange(obj);
+    }
+
+    const handleValidateShippingAddressChange = (obj: IKeyValuePair<string>): boolean => {
         let valid = true;
     
         Object.keys(obj).map((key) => {
             const value = obj[key];
             const error = validateField({key, value});
             if (error) valid = false;
-            handleErrorsChange({[key]: error});
+            onErrorsChange({[key]: error});
             return error;
         });
 
         return valid;
     };
 
-    const onShippingAddressChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
+    const handleShippingAddressChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
         e.preventDefault();
         const { name, value } = e.target;
         const obj = {[name]: value} as IKeyValuePair<string>;
-        handleAddressChange(obj);
-        return onValidateShippingAddressChange(obj);
+        onAddressChange(obj);
+        return handleValidateShippingAddressChange(obj);
+    };
+
+    const handleShippingAddressFocus = (e: React.FocusEvent<HTMLInputElement>): boolean => {
+        e.preventDefault();
+        const { name, value } = e.target;
+        const obj = {[name]: value} as IKeyValuePair<string>;
+        onAddressChange(obj);
+        return handleValidateShippingAddressChange(obj);
     };
 
     return (
@@ -68,8 +83,8 @@ export const ShippingAddressForm: React.FC<Props> = ({errors, handleErrorsChange
             <ListGroup.Item>
                 <h2 className="py-3">Shipping address</h2>
                 <Form>
-                    <NameForm name={name} onChange={onNameChange} errors={errors} />
-                    <AddressForm address={address} onChange={onShippingAddressChange} errors={errors} handleErrorsChange={handleErrorsChange} />
+                    <NameForm className={"my-2"} name={name} onBlur={handleNameFocus} onChange={handleNameChange} errors={errors} />
+                    <AddressForm className={"my-2"} address={address} onBlur={handleShippingAddressFocus} onChange={handleShippingAddressChange} errors={errors} onErrorsChange={onErrorsChange} />
                 </Form>
             </ListGroup.Item>
         </ListGroup>

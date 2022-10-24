@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Col, Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import StateSelect from "./StateSelect";
 import { IAddress } from "../../types/IAddress";
 import { IAddressErrors } from "../../types/IAddressErrors";
@@ -9,18 +9,25 @@ import { IKeyValuePair } from "../../types/IKeyValuePair";
 interface AddressFormProps {
     address: IAddress;
     errors: IAddressErrors;
+    onBlur: (e: React.FocusEvent<HTMLInputElement>) => void
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => boolean;
     onErrorsChange: (obj: IKeyValuePair<string>) => void;
 }
 
-export const AddressForm = ({address, onChange, errors, onErrorsChange}: AddressFormProps) => {
-    const onStateChange = (e: React.ChangeEvent<HTMLSelectElement>): boolean => {
+export const AddressForm: React.FC<AddressFormProps & React.HTMLAttributes<HTMLDivElement>> = ({address, onBlur, onChange, errors, onErrorsChange, ...props}) => {
+    const {className} = props;
+    const handleStateFocus = (e: React.FocusEvent<HTMLInputElement>): boolean => {
+        e.preventDefault();
+        return handleValidateStateChange(e.target.value);
+    };
+    
+    const handleStateChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
         e.preventDefault();
         onChange(e as unknown as React.ChangeEvent<HTMLInputElement>);
-        return onValidateStateChange(e.target.value);
+        return handleValidateStateChange(e.target.value);
     };
 
-    const onValidateStateChange = (state: string): boolean => {
+    const handleValidateStateChange = (state: string): boolean => {
         let valid = true;
         const error = validateField({key: "state", value: state});
         if (error) valid = false;
@@ -30,11 +37,11 @@ export const AddressForm = ({address, onChange, errors, onErrorsChange}: Address
 
     return (
         <>            
-            <Form.Row>
+            <Form as={Row} className={className}>
                 <Form.Group as={Col}>
                     <Form.Label>Address</Form.Label>
                     <Form.Control
-                        onBlur={onChange}
+                        onBlur={onBlur}
                         isInvalid={!!errors?.address1}
                         name="address1"
                         value={address?.address1}
@@ -44,19 +51,19 @@ export const AddressForm = ({address, onChange, errors, onErrorsChange}: Address
                 <Form.Group as={Col} lg={4}>
                     <Form.Label>Address 2</Form.Label>
                     <Form.Control
-                        onBlur={onChange}
+                        onBlur={onBlur}
                         isInvalid={!!errors?.address2}
                         name="address2"
                         value={address?.address2}
                         onChange={onChange} />
                     <Form.Control.Feedback type="invalid">{errors?.address2}</Form.Control.Feedback>
                 </Form.Group>
-            </Form.Row>
-            <Form.Row>
+            </Form>
+            <Form as={Row} className={className}>
                 <Form.Group as={Col}>
                     <Form.Label>City</Form.Label>
                     <Form.Control
-                        onBlur={onChange}
+                        onBlur={onBlur}
                         isInvalid={!!errors?.city}
                         name="city"
                         value={address?.city}
@@ -67,20 +74,21 @@ export const AddressForm = ({address, onChange, errors, onErrorsChange}: Address
                     <Form.Label>State</Form.Label>
                     <StateSelect
                         selectedState={address?.state}
-                        onChange={onStateChange}
+                        onBlur={handleStateFocus}
+                        onChange={handleStateChange}
                         error={errors?.state} />
                 </Form.Group>
                 <Form.Group as={Col} lg={4}>
                     <Form.Label>Zip</Form.Label>
                     <Form.Control
-                        onBlur={onChange}
+                        onBlur={onBlur}
                         isInvalid={!!errors?.zip}
                         name="zip"
                         value={address?.zip}
                         onChange={onChange} />
                     <Form.Control.Feedback type="invalid">{errors?.zip}</Form.Control.Feedback>
                 </Form.Group>
-            </Form.Row>
+            </Form>
         </>
     );
 }

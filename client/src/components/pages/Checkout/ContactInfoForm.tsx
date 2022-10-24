@@ -20,6 +20,12 @@ export const ContactInfoForm: React.FC<Props> = ({email, error, onChange, handle
     return valid;
   };
 
+  const onEmailFocus = (e: React.FocusEvent<HTMLInputElement>): boolean => {
+    e.preventDefault();
+    const email = e.target.value;
+    return onValidateEmailChange(email);
+  };
+
   const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
     e.preventDefault();
     const email = e.target.value;
@@ -31,7 +37,7 @@ export const ContactInfoForm: React.FC<Props> = ({email, error, onChange, handle
     <ListGroup variant="flush" className="py-1">
       <ListGroup.Item>
         <h2 className="py-3">Contact information</h2>
-        <EmailForm label={"Email address for notifications"} email={email} error={error} onChange={onEmailChange} />
+        <EmailForm label={"Email address for notifications"} email={email} error={error} onBlur={onEmailFocus} onChange={onEmailChange} />
       </ListGroup.Item>
     </ListGroup>
   );

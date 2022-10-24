@@ -23,7 +23,7 @@ interface ShippingInfoFormErrors extends INameErrors, IAddressErrors {
     email: string
 }
 
-const initErrors = {first: "", last: "", address1: "", address2: "", city: "", state: "", zip: "", email: ""};
+const initErrors = {first: "", last: "", shippingAddress: {address1: "", address2: "", city: "", state: "", zip: ""}, email: ""};
 
 export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
     const dispatch = useDispatch();
@@ -35,9 +35,10 @@ export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
     const [errors, setErrors] = React.useState<ShippingInfoFormErrors>(initErrors);
 
     const handleNextStepClick = (step: number) => {
-        const [valid, errorObj] = onValidateChange({...name, ...address, email});
+        const [valid, errorObj] = handleValidateChange({...name, ...address, email});
         if (valid) {
             dispatch(updateCustomer({...name, shippingAddress: address, email}));
+            dispatch(updateCustomerError(initErrors));
             onStepChange(step);
         } else {
             const {first, last, address1, address2, city, state, zip, email} = errorObj;
@@ -61,7 +62,7 @@ export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
         setErrors(prev => ({...prev, ...obj}));
     }
 
-    const onValidateChange = <T extends object>(obj: T): [boolean, {[k: string]: any}] => {
+    const handleValidateChange = <T extends object>(obj: T): [boolean, {[k: string]: any}] => {
         let valid = true;
         let errorObj: {[k: string]: string} = {};
 
@@ -97,11 +98,11 @@ export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
                 handleErrorsChange={handleErrorsChange} />
             <ShippingAddressForm
                 name={name}
-                handleNameChange={handleNameChange}
+                onNameChange={handleNameChange}
                 address={address}
-                handleAddressChange={handleAddressChange}
+                onAddressChange={handleAddressChange}
                 errors={errors} 
-                handleErrorsChange={handleErrorsChange} />
+                onErrorsChange={handleErrorsChange} />
             <ShippingMethodForm />
             <div className="d-flex">
                 <Dev className={"d-flex flex-column p-2"}>
@@ -109,7 +110,7 @@ export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
                         Use test data
                     </Button>
                 </Dev>
-                <GoToStepButton label={"Go to next step"} nextStep={2} handleClick={handleNextStepClick} />
+                <GoToStepButton label={"Go to next step"} nextStep={2} onClick={handleNextStepClick} />
             </div>
         </>
     );
