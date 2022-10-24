@@ -85,15 +85,15 @@ export const updateUser = asyncHandler(async (req, res) => {
 
       // TODO: validate fields
 
-      user.first = first || user.first;
-      user.middle = middle || user.middle;
-      user.last = last || user.last;
-      user.address1 = address1 || user.address1;
-      user.address2 = address2 || user.address2;
-      user.city = city || user.city;
-      user.state = state || user.state;
-      user.zip = zip || user.zip;
-      user.phone = phone || user.phone;
+      user.first = first;
+      user.middle = middle;
+      user.last = last;
+      user.address1 = address1;
+      user.address2 = address2;
+      user.city = city;
+      user.state = state;
+      user.zip = zip;
+      user.phone = phone;
       // if (password) user.password = password || user.password;
 
       const updatedUser = await user.save();
