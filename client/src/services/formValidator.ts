@@ -56,12 +56,16 @@ export function validateField({key, value}: {key: string, value: string | undefi
             }
             break;
         case "phone":
-            if (value && !regex.phone.test(value)) {
+            if (!value) {
+                error = "Phone is required";
+            } else if (!regex.phone.test(value)) {
                 error = "Valid phone is required";
             }
             break;
         case "email":
-            if (value && !regex.email.test(value)) {
+            if (!value) {
+                error = "Email is required";
+            } else if (!regex.email.test(value)) {
                 error = "Valid email is required";
             }
             break;
