@@ -10,9 +10,9 @@ import {
   Card,
   Container,
 } from "react-bootstrap";
-import QtySelect from "../QtySelect.js";
+import { QtySelect } from "../shared/QtySelect.tsx";
 import { addToBag, removeFromBag } from "../../actions/bagActions.js";
-import EmptyBag from "../EmptyBag.js";
+import { EmptyBag } from "../shared/EmptyBag.tsx";
 
 const Bag = ({ history }) => {
   const bag = useSelector((state) => state.bag);

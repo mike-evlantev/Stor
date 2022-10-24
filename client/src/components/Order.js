@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import EmptyBag from "./EmptyBag";
+import { EmptyBag }  from "./shared/EmptyBag.tsx";
 import { Loader } from "./shared/Loader.tsx";
 import Checkout from "./pages/Checkout/Checkout";
 import Confirmation from "./pages/Confirmation";
