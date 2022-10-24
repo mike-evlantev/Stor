@@ -61,7 +61,7 @@ const Header = () => {
                 </LinkContainer>
               )}
             </Nav>
-            <Form inline>
+            <Form className="d-flex">
               <Form.Control
                 type="text"
                 placeholder="Search"

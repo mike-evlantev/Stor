@@ -86,7 +86,7 @@ export const CreditCardForm: React.FC<Props> = ({initValidation, creditCardValid
 
     return (
       <div>
-        <Form.Group>
+        <Form.Group className="mb-3">
           <Form.Label>Card Number</Form.Label>
           <div id="card-number-element" className={`form-control ${creditCardValidation.number.error?.message ? "is-invalid" : ""}`}>{/* iframe with Stripe element */}</div>
           {creditCardValidation.number.error?.message && <span className="invalid-feedback">{creditCardValidation.number.error.message}</span>}

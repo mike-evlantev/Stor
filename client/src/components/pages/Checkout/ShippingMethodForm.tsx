@@ -1,37 +1,34 @@
 import * as React from "react";
-import { ButtonGroup, Card, ListGroup, ToggleButton } from "react-bootstrap";
+import { Button, ButtonGroup, Card, ListGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { updateShipping } from "../../../actions/bagActions";
 import { IShippingOption } from "../../../types/IShippingOption";
 
-export const ShippingMethodForm = () => {
+export const ShippingMethodForm: React.FC = () => {
     const dispatch = useDispatch();
     const shippingOptions = useSelector((state: any) => state.shippingOptions);
     const [shippingOptionId, setShippingOptionId] = React.useState(1);
 
-    const handleShippingOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        const selectedId = parseInt(e.currentTarget.value);
-        const selectedShippingOption = shippingOptions.find((o: IShippingOption) => o.id === selectedId);
-        setShippingOptionId(selectedId);
-        dispatch(updateShipping(selectedShippingOption));
+    const handleShippingOptionClick = (id: number) => {
+      const selectedShippingOption = shippingOptions.find((o: IShippingOption) => o.id === id);
+      setShippingOptionId(id);
+      dispatch(updateShipping(selectedShippingOption));
     };
 
     return (
       <ListGroup variant="flush" className="py-1">
         <ListGroup.Item>
           <h2 className="py-3">Shipping options</h2>
-          <ButtonGroup toggle>
+          <ButtonGroup>
             {shippingOptions.map((option: IShippingOption, i: number) => (
               <Card
-                as={ToggleButton}
+                as={Button}
                 key={i}
-                type="radio"
                 variant="outline-dark"
                 name="shipping"
                 value={option.id}
-                checked={option.id === shippingOptionId}
-                onChange={handleShippingOptionChange}
+                active={option.id === shippingOptionId}
+                onClick={() => handleShippingOptionClick(option.id)}
               >
                 <Card.Body>
                   <Card.Title className="mb-4">{option.timeframe}</Card.Title>
