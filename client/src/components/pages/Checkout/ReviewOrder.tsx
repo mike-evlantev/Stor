@@ -72,7 +72,7 @@ export const ReviewOrder: React.FC<Props> = ({paymentMethod, onStepChange}) => {
                         const { data: client_secret } = await processCardPayment({ amount: total });
     
                         // 3. confirm payment intent (must be executed client-side)
-                        const { paymentIntent, error }: PaymentIntentResult = await stripe.confirmCardPayment(client_secret, { payment_method: paymentMethod.id });
+                        const { paymentIntent, error }: PaymentIntentResult = await stripe.confirmCardPayment(client_secret, { payment_method: paymentMethod?.id });
                         if (paymentIntent && !error) {
                             result.id = paymentIntent.id;
                             result.status = paymentIntent.status;

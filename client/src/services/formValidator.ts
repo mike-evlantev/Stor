@@ -6,7 +6,7 @@ const regex = {
     password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, // Minimum eight characters, at least one letter and one number:
 };
 
-export function validateField({key, value}: {key: string, value: string}) {
+export function validateField({key, value}: {key: string, value: string | undefined}) {
     let error = "";
     //console.log(`formValidator ${key}:${value}`);
     switch (key) {
@@ -32,7 +32,7 @@ export function validateField({key, value}: {key: string, value: string}) {
             }
             break;
         case "address2":
-            if (value.length > 255) {
+            if (value && value.length > 255) {
                 error = "Address is too long";
             }
             break;
@@ -56,12 +56,12 @@ export function validateField({key, value}: {key: string, value: string}) {
             }
             break;
         case "phone":
-            if (!regex.phone.test(value)) {
+            if (value && !regex.phone.test(value)) {
                 error = "Valid phone is required";
             }
             break;
         case "email":
-            if (!regex.email.test(value)) {
+            if (value && !regex.email.test(value)) {
                 error = "Valid email is required";
             }
             break;

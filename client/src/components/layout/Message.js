@@ -7,8 +7,8 @@ const Message = () => {
   return (
     messages !== null &&
     messages.length > 0 &&
-    messages.map((message) => (
-      <Alert variant={message.type}>{message.text}</Alert>
+    messages.map((message, i) => (
+      <Alert key={i} variant={message.type}>{message.text}</Alert>
     ))
   );
 };

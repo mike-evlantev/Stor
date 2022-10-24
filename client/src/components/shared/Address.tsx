@@ -7,7 +7,7 @@ interface Props {
     address: IAddress;
 }
 
-export const Address: React.FC<Props & React.HTMLAttributes<any>> = ({name, address, ...props}) => {
+export const Address: React.FC<Props & React.HTMLAttributes<HTMLDivElement>> = ({name, address, ...props}) => {
     const {address1, address2, city, state, zip} = address;
     return(
         <div {...props}>
