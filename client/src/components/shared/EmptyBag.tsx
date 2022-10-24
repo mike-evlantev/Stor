@@ -1,8 +1,8 @@
-import React from "react";
+import * as React from "react";
 import { Button, Row } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 
-const EmptyBag = () => {
+export const EmptyBag: React.FC = () => {
   const history = useHistory();
   const handleShopNow = () => {
     history.push("/");
@@ -19,5 +19,3 @@ const EmptyBag = () => {
     </div>
   );
 };
-
-export default EmptyBag;
