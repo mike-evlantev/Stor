@@ -1,7 +1,7 @@
-import React from 'react';
+import * as React from "react";
 import {Spinner} from 'react-bootstrap';
 
-const Loader = () => {
+export const Loader: React.FC = () => {
   return (
     <Spinner 
       animation='border' 
@@ -13,5 +13,3 @@ const Loader = () => {
       }} />
   )
 }
-
-export default Loader;

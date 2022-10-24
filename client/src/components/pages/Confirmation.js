@@ -3,7 +3,7 @@ import { Card, Col, Container, Image, ListGroup, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import { clearBag } from "../../actions/bagActions";
-import Loader from "../Loader";
+import { Loader } from "../shared/Loader.tsx";
 
 const Confirmation = () => {
   const history = useHistory();

@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Product from "../Product.js";
-import Loader from "../Loader.js";
+import { Loader } from "../shared/Loader.tsx";
 import { getProducts } from "../../actions/productActions.js";
 
 const Home = () => {

@@ -14,7 +14,7 @@ import {
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Rating from "../Rating.js";
-import Loader from "../Loader.js";
+import { Loader } from "../shared/Loader.tsx";
 import QtySelect from "../QtySelect.js";
 import { addToBag } from "../../actions/bagActions.js";
 import { getProductDetails } from "../../actions/productActions.js";

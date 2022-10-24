@@ -3,14 +3,14 @@ import { Route, Switch } from "react-router-dom";
 import Message from "../layout/Message";
 import Bag from "../pages/Bag";
 import Home from "../pages/Home";
-import PrivacyPolicy from "../pages/PrivacyPolicy";
-import Profile from "../pages/Profile";
-import SignIn from "../pages/SignIn";
-import TermsOfUse from "../pages/TermsOfUse";
+import { PrivacyPolicy } from "../pages/PrivacyPolicy.tsx";
+import { Profile } from "../pages/Profile.tsx";
+import { SignIn } from "../pages/SignIn.tsx";
+import { TermsOfUse } from "../pages/TermsOfUse.tsx";
 import Product from "../pages/Product";
 import { PrivateRoute } from "./PrivateRoute";
-import Dashboard from "../pages/Dashboard";
-import WishList from "../pages/WishList";
+import { Dashboard } from "../pages/Dashboard.tsx";
+import { WishList } from "../pages/WishList.tsx";
 import Order from "../Order";
 import { PageNotFound } from "../pages/PageNotFound.tsx"
 
