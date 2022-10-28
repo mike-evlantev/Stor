@@ -15,7 +15,7 @@ export const processPayment = asyncHandler(async (req, res) => {
     payment_method_types: ["card"],
   });
 
-  res.status(200).json(result.client_secret);
+  res.status(200).send(result.client_secret);
 });
 
 const toCents = (amount) => {
