@@ -3,6 +3,7 @@ import { Accordion, Button, Card, Form, ListGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCustomer, updateCustomerError } from "../../../actions/userActions";
 import { PaymentMethod } from "../../../enums/PaymentMethod";
+import { useStripeMethods } from "../../../hooks/useStripeMethods";
 import { validateField } from "../../../services/formValidator";
 import { IAddress } from "../../../types/IAddress";
 import { IAddressErrors } from "../../../types/IAddressErrors";
@@ -35,18 +36,20 @@ const initCreditCardValidation: ICreditCardValidation = {
 
 export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodChange}) => {
     const dispatch = useDispatch();
+    
     const customer = useSelector((state: any) => state.customer);
     const [nameOnCard, setNameOnCard] = React.useState(customer.nameOnCard || "");
     const [sameAsShipping, setSameAsShipping] = React.useState(true);
     const [address, setAddress] = React.useState<IAddress>(initAddress);
     const [errors, setErrors] = React.useState<BillingInfoFormErrors>(initErrors);
     const [creditCardValidation, setCreditCardValidation] = React.useState<ICreditCardValidation>(initCreditCardValidation);
+    const {createPaymentMethod} = useStripeMethods();
 
     React.useEffect(() => {
         dispatch(updateCustomer({card: creditCardValidation}));
     }, [creditCardValidation]);
 
-    const handleNextStepClick = (step: number) => {
+    const handleNextStepClick = async (step: number) => {
         const finalAddress = sameAsShipping ? customer.shippingAddress : address;
         const [valid, errorObj] = handleValidateChange({...finalAddress, nameOnCard});
 
@@ -69,6 +72,13 @@ export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodC
         if (valid && stripeValid) {
             dispatch(updateCustomer({billingAddress: finalAddress, nameOnCard}));
             dispatch(updateCustomerError(initErrors));
+
+            const paymentMethod = await createPaymentMethod();
+            if (paymentMethod) {
+                dispatch(updateCustomer({card: {...creditCardValidation, paymentMethod}}));
+            }
+            
+
             onStepChange(step);
         } else {
             const {address1, address2, city, state, zip, nameOnCard} = errorObj;
@@ -178,7 +188,7 @@ export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodC
                         <Accordion.Collapse eventKey="0">
                         <Card.Body>
                             <Card.Text>
-                            Sign in to PayPal and return to complete your order
+                                Sign in to PayPal and return to complete your order
                             </Card.Text>
                             <Button
                                 variant="info"
