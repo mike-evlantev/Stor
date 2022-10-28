@@ -41,13 +41,13 @@ const Confirmation = () => {
                 </div>
                 <div>
                   Order date:{" "}
-                  {new Date(order.createdAt).toLocaleDateString(
+                  {new Date(order?.createdAt).toLocaleDateString(
                     undefined,
                     options
                   )}
                 </div>
                 <div>
-                  {order.shippingOption.name} ({order.shippingOption.timeframe})
+                  {order?.shippingOption.name} ({order?.shippingOption.timeframe})
                 </div>
               </strong>
             </ListGroup.Item>
@@ -57,17 +57,17 @@ const Confirmation = () => {
               <h4 className="py-3">Shipping address</h4>
               <strong>
                 <div>
-                  {order.first}&nbsp;{order.last}
+                  {order?.first}&nbsp;{order?.last}
                 </div>
                 <div>
-                  {order.shippingAddress.address1}
+                  {order?.shippingAddress?.address1}
                   {", "}
-                  {order.shippingAddress.address2}
+                  {order?.shippingAddress?.address2}
                 </div>
                 <div>
-                  {order.shippingAddress.city}
+                  {order?.shippingAddress?.city}
                   {", "}
-                  {order.shippingAddress.state} {order.shippingAddress.zip}
+                  {order?.shippingAddress?.state} {order?.shippingAddress?.zip}
                 </div>
               </strong>
             </ListGroup.Item>
