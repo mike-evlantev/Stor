@@ -5,7 +5,7 @@ import { IProduct } from "../../types/IProduct";
 interface Props {
     product: IProduct;
     qty: number;
-    onChange: (id: number, e: React.ChangeEvent<HTMLSelectElement>) => void;
+    onChange: (id: string, e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export const QtySelect: React.FC<Props> = ({product, qty, onChange}) => {
