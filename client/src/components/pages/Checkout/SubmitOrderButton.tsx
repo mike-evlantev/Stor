@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Button } from "react-bootstrap";
-import { useCcFormValidation } from "../../../hooks/useCcFormValidation";
 
 interface SubmitOrderButtonProps {
     orderSubmitLoading: boolean;

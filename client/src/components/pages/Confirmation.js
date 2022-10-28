@@ -1,8 +1,7 @@
 import React, { Fragment } from "react";
-import { Card, Col, Container, Image, ListGroup, Row } from "react-bootstrap";
+import { ListGroup } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
-import { clearBag } from "../../actions/bagActions";
+import { useHistory } from "react-router-dom";
 import { Loader } from "../shared/Loader.tsx";
 
 const Confirmation = () => {
@@ -11,15 +10,12 @@ const Confirmation = () => {
     (state) => state.order
   );
 
-  //dispatch(clearBag());
-
   if (!success || !order) {
     history.push("/");
     return null;
   }
 
   const options = {
-    //weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",

@@ -46,14 +46,6 @@ export const ReviewOrder: React.FC<Props> = ({paymentMethod, onStepChange}) => {
     };
 
       const processOrder = () => {
-        // const shippingAddress = {
-        //   address1: currentUser.address1,
-        //   address2: currentUser.address2,
-        //   city: currentUser.city,
-        //   state: currentUser.state,
-        //   zip: currentUser.zip,
-        // };
-    
         const { id, icon, ...shippingOption } = shippingOptions.find(
             (o: IShippingOption) => o.id === 1//shippingOptionId
         );

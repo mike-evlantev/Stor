@@ -190,12 +190,8 @@ export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodC
                             <Card.Text>
                                 Sign in to PayPal and return to complete your order
                             </Card.Text>
-                            <Button
-                                variant="info"
-                                type="submit"
-                                className="btn btn-block"
-                            >
-                            PayPal
+                            <Button variant="info" type="submit" className="btn btn-block">
+                                PayPal
                             </Button>
                         </Card.Body>
                         </Accordion.Collapse>
