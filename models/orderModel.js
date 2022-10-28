@@ -91,29 +91,29 @@ const orderSchema = mongoose.Schema(
       default: 0.0,
       required: true,
     },
-    paymentMethod: {
-      type: String,
-      enum: ["credit card", "paypal"],
-      required: true,
-    },
-    creditCardPaymentResult: creditCardPaymentResult,
-    payPalPaymentResult: {
-      id: { type: String },
-      status: { type: String },
-      update_time: { type: String },
-      email_address: { type: String },
-    },
-    isPaid: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
+    // paymentMethod: {
+    //   type: String,
+    //   enum: ["credit card", "paypal"],
+    //   required: true,
+    // },
+    // creditCardPaymentResult: creditCardPaymentResult,
+    // payPalPaymentResult: {
+    //   id: { type: String },
+    //   status: { type: String },
+    //   update_time: { type: String },
+    //   email_address: { type: String },
+    // },
+    // isPaid: {
+    //   type: Boolean,
+    //   default: false,
+    //   required: true,
+    // },
     shippingAddress: addressSchema,
     shippingOption: shippingOptionSchema,
     isDelivered: {
       type: Boolean,
       default: false,
-      required: true,
+      required: false,
     },
     deliveryDate: {
       type: Date,
