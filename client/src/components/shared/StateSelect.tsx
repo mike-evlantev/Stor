@@ -4,8 +4,8 @@ import { Form } from "react-bootstrap";
 interface StateSelectProps {
     selectedState: string;
     error?: string;
-    onBlur: (e: React.FocusEvent<HTMLInputElement>) => boolean;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => boolean;
+    onBlur: (e: React.FocusEvent<HTMLSelectElement>) => boolean;
+    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => boolean;
 }
 
 const StateSelect: React.FC<StateSelectProps> = ({ selectedState, onBlur, onChange, error }) => {
@@ -79,10 +79,9 @@ const StateSelect: React.FC<StateSelectProps> = ({ selectedState, onBlur, onChan
 
   return (
     <>
-      <Form.Control
+      <Form.Select 
         onBlur={onBlur}
         isInvalid={!!error}
-        as="select"
         value={selectedState}
         name="state"
         onChange={onChange}
@@ -93,7 +92,7 @@ const StateSelect: React.FC<StateSelectProps> = ({ selectedState, onBlur, onChan
             {st}
           </option>
         ))}
-      </Form.Control>
+      </Form.Select>
       <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
     </>
   );

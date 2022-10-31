@@ -11,7 +11,7 @@ export const SubmitOrderButton = ({orderSubmitLoading, bagItems, handleSubmitOrd
     return (
       <Button
         variant="primary"
-        className="my-2 float-right"
+        className="my-2 float-end"
         onClick={() => handleSubmitOrder()}
         disabled={
           orderSubmitLoading || !bagItems || bagItems.length === 0

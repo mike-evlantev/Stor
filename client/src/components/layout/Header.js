@@ -1,23 +1,26 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { Navbar, Nav, NavDropdown, Container, Form } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { logout } from "../../actions/userActions";
+import { logout, reset } from "../../features/auth/authSlice";
 import { useHistory } from "react-router-dom";
 import { Fragment } from "react";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { useAppSelector } from "../../hooks/useAppSelector";
 
 const Header = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const history = useHistory();
-  const { isAuthenticated, loggedInUser } = useSelector((state) => state.auth);
-  const { bagItems } = useSelector((state) => state.bag);
-
-  const handleLogout = () => {
-    dispatch(logout());
-  };
+  const { isAuthenticated, loggedInUser } = useAppSelector((state) => state.auth);
+  const { bagItems } = useAppSelector((state) => state.bag);
 
   const handleRoute = (route) => {
     history.push(route);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(reset());
+    handleRoute("/");
   };
 
   return (
@@ -31,7 +34,7 @@ const Header = () => {
           </LinkContainer>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
+            <Nav className="ms-auto">
               {isAuthenticated ? (
                 <Fragment>
                   {loggedInUser.isAdmin && (
@@ -74,7 +77,7 @@ const Header = () => {
                   <i className="fas fa-shopping-bag fa-2x"></i>
                   {bagItems && bagItems.length > 0 && (
                     <span className="fa-layers-counter fa-4x fa-layers-top-right">
-                      {bagItems.length}
+                      {bagItems.reduce((acc, item) => acc + item.quantity, 0)}
                     </span>
                   )}
                 </span>

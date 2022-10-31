@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { updateUser } from "../../actions/userActions";
+import { alert } from "../../features/messages/messagesSlice";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { useAppSelector } from "../../hooks/useAppSelector";
 import { validateField } from "../../services/formValidator";
 import { IAddress } from "../../types/IAddress";
 import { IKeyValuePair } from "../../types/IKeyValuePair";
@@ -25,14 +26,14 @@ export const Profile: React.FC = () => {
       password: "",
     };
   
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const [errors, setErrors] = React.useState(errorsInitialState);
     const [formValid, setFormValid] = React.useState(true);
   
-    const { loggedInUser, loading } = useSelector((state: any) => state.auth);
+    const { loggedInUser, loading } = useAppSelector((state: any) => state.auth);
     const [userData, setUserData] = React.useState<IUser>(loggedInUser);
-    const name: IName = userData;
-    const address: IAddress = userData;
+    // const name: IName = userData;
+    // const address: IAddress = userData;
   
     const validateForm = () => {
       let valid = true;
@@ -77,7 +78,8 @@ export const Profile: React.FC = () => {
     };
   
     const handleSubmit = () => {
-      dispatch(updateUser(userData));
+      //dispatch(updateUser(userData));
+      dispatch(alert({text: "Submit method not yet implemented", type: "danger"}));
     };
 
     const handleErrorsChange = (obj: IKeyValuePair<string>) => {
@@ -91,7 +93,7 @@ export const Profile: React.FC = () => {
         ) : (
           <Row className="d-flex justify-content-center p-5">
             <Col md={8}>
-              <Form>
+              <div>
                 <Form as={Row} className="my-2">
                   <Form.Group as={Col} lg={5}>
                     <Form.Label>Email</Form.Label>
@@ -103,18 +105,18 @@ export const Profile: React.FC = () => {
                     />
                   </Form.Group>
                 </Form>
-                <NameForm className={"my-2"} name={name} onBlur={handleUserFocus} onChange={handleUserChange} errors={errors} />
-                <AddressForm className={"my-2"} address={address} onBlur={handleUserFocus} onChange={handleUserChange} errors={errors} onErrorsChange={handleErrorsChange} /> 
+                <NameForm className={"my-2"} name={{} as IName} onBlur={handleUserFocus} onChange={handleUserChange} errors={errors} />
+                <AddressForm className={"my-2"} address={{} as IAddress} onBlur={handleUserFocus} onChange={handleUserChange} errors={errors} onErrorsChange={handleErrorsChange} /> 
                 <Button
                   type="submit"
                   variant="primary"
-                  className="float-right my-4"
+                  className="float-end my-4"
                   disabled={!formValid}
                   onClick={handleSubmit}
                 >
                   Save
                 </Button>
-              </Form>
+              </div>
             </Col>
           </Row>
         )}

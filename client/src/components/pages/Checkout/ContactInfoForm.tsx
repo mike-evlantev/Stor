@@ -34,7 +34,7 @@ export const ContactInfoForm: React.FC<Props> = ({email, error, onChange, handle
   };
 
   return (
-    <ListGroup variant="flush" className="py-1">
+    <ListGroup variant="flush" className="py-3">
       <ListGroup.Item>
         <h2 className="py-3">Contact information</h2>
         <EmailForm label={"Email address for notifications"} email={email} error={error} onBlur={onEmailFocus} onChange={onEmailChange} />

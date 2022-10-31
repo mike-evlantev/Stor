@@ -79,7 +79,7 @@ export const ShippingAddressForm: React.FC<Props> = ({errors, onErrorsChange, na
     };
 
     return (
-        <ListGroup variant="flush" className="py-1">
+        <ListGroup variant="flush" className="py-3">
             <ListGroup.Item>
                 <h2 className="py-3">Shipping address</h2>
                 <Form>

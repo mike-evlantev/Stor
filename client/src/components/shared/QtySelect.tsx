@@ -10,8 +10,7 @@ interface Props {
 
 export const QtySelect: React.FC<Props> = ({product, qty, onChange}) => {
   return (
-    <Form.Control
-      as='select'
+    <Form.Select
       value={qty}
       onChange={(e) => onChange(product.id, e as unknown as React.ChangeEvent<HTMLSelectElement>)}
     >
@@ -22,6 +21,6 @@ export const QtySelect: React.FC<Props> = ({product, qty, onChange}) => {
             <option key={x} value={x}>{x}</option>
           ))
       }
-    </Form.Control>
+    </Form.Select>
   )
 };

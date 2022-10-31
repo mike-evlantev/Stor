@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Fragment } from "react";
 import { Col, Image, ListGroup, Row } from "react-bootstrap";
-import { useSelector } from "react-redux";
 
 const OrderItems = ({ items, subtotal, shipping, tax, total }) => {
   const [itemsVisible, setItemsVisible] = useState(true);
+  const totalQty = items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <Fragment>
@@ -18,7 +18,7 @@ const OrderItems = ({ items, subtotal, shipping, tax, total }) => {
         onClick={() => setItemsVisible(!itemsVisible)}
       >
         <i className="fas fa-shopping-bag fa-lg"></i>&nbsp;&nbsp;
-        {items.length} {items.length > 1 ? "items" : "item"}
+        {totalQty} {totalQty > 1 ? "items" : "item"}
         &nbsp;&nbsp;
         <i
           className={
@@ -27,14 +27,14 @@ const OrderItems = ({ items, subtotal, shipping, tax, total }) => {
               : "fas fa-chevron-down fa-lg"
           }
         ></i>
-        <strong className="float-right pr-1">${total.toFixed(2)}</strong>
+        <strong className="float-end pr-1">${total.toFixed(2)}</strong>
       </div>
       <ListGroup variant="flush">
         {itemsVisible &&
           items &&
           items.length > 0 &&
           items.map((item) => (
-            <ListGroup.Item key={item.product}>
+            <ListGroup.Item key={item.id}>
               <Row>
                 <Col md={3}>
                   <Image src={item.image} alt={item.name} fluid />
@@ -42,8 +42,8 @@ const OrderItems = ({ items, subtotal, shipping, tax, total }) => {
                 <Col md={9} className="d-flex flex-column p-0">
                   <strong>{item.name}</strong>
                   <div className="mt-auto">
-                    <span>Qty:{item.qty}</span>
-                    <span className="float-right pr-3">${item.price}</span>
+                    <span>Qty:{item.quantity}</span>
+                    <span className="float-end pr-3">${item.price}</span>
                   </div>
                 </Col>
               </Row>
@@ -51,21 +51,21 @@ const OrderItems = ({ items, subtotal, shipping, tax, total }) => {
           ))}
         <ListGroup.Item className="d-flex">
           <div>Subtotal</div>
-          <div className="ml-auto">${subtotal.toFixed(2)}</div>
+          <div className="ms-auto">${subtotal.toFixed(2)}</div>
         </ListGroup.Item>
         <ListGroup.Item className="d-flex">
           <div>Shipping</div>
-          <div className="ml-auto">${shipping.cost.toFixed(2)}</div>
+          <div className="ms-auto">${shipping.cost.toFixed(2)}</div>
         </ListGroup.Item>
         <ListGroup.Item className="d-flex">
           <div>Tax</div>
-          <div className="ml-auto">${tax.toFixed(2)}</div>
+          <div className="ms-auto">${tax.toFixed(2)}</div>
         </ListGroup.Item>
         <ListGroup.Item className="d-flex">
           <div>
             <strong>Order Total</strong>
           </div>
-          <div className="ml-auto">
+          <div className="ms-auto">
             <strong>${total.toFixed(2)}</strong>
           </div>
         </ListGroup.Item>

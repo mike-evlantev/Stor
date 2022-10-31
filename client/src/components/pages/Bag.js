@@ -1,27 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  Row,
-  Col,
-  ListGroup,
-  Image,
-  Button,
-  Card,
-  Container,
-} from "react-bootstrap";
+import { Row, Col, ListGroup, Image, Button, Card, Container, } from "react-bootstrap";
 import { QtySelect } from "../shared/QtySelect.tsx";
-import { addToBag, removeFromBag } from "../../actions/bagActions.js";
-import { EmptyBag } from "../shared/EmptyBag.tsx";
+import { EmptyBag } from "./Bag/EmptyBag.tsx";
+import { addToBag, removeFromBag } from "../../features/bag/bagSlice";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { useAppSelector } from "../../hooks/useAppSelector";
 
 const Bag = ({ history }) => {
-  const bag = useSelector((state) => state.bag);
+  const bag = useAppSelector(state => state.bag);
   const { bagItems, subtotal, shipping, tax, total } = bag;
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleQtyChange = (productId, e) => {
-    dispatch(addToBag(productId, Number(e.target.value)));
+    dispatch(addToBag({...bagItems.find(i => i.id === productId), quantity: Number(e.target.value)}));
   };
 
   const handleRemoveItemFromBag = (product) => {
@@ -32,6 +25,10 @@ const Bag = ({ history }) => {
     history.push("/checkout");
   };
 
+  const handleCheckout1 = () => {
+    history.push("/checkout1");
+  };
+
   return (
     <Container className="d-flex py-5">
       {bagItems.length === 0 ? (
@@ -39,11 +36,11 @@ const Bag = ({ history }) => {
       ) : (
         <Row className="py-3">
           <Col md={8}>
-            <h1>My Bag ({bagItems.length})</h1>
+            <h1>My Bag ({bagItems.reduce((acc, item) => acc + item.quantity, 0)})</h1>
             <hr />
             <ListGroup variant="flush">
               {bagItems.map((item) => (
-                <ListGroup.Item key={item.product}>
+                <ListGroup.Item key={item.id}>
                   <Card className="border-0">
                     <Row>
                       <Col md={4}>
@@ -51,7 +48,7 @@ const Bag = ({ history }) => {
                       </Col>
                       <Col md={8}>
                         <Card.Title>
-                          <Link to={`/product/${item.product}`}>
+                          <Link to={`/product/${item.id}`}>
                             {item.name}
                           </Link>
                         </Card.Title>
@@ -64,7 +61,7 @@ const Bag = ({ history }) => {
                             Qty:{" "}
                             <QtySelect
                               product={item}
-                              qty={item.qty}
+                              qty={item.quantity}
                               onChange={handleQtyChange}
                             />
                           </Col>
@@ -92,21 +89,21 @@ const Bag = ({ history }) => {
             <ListGroup variant="flush">
               <ListGroup.Item className="d-flex">
                 <div>Subtotal</div>
-                <div className="ml-auto">${subtotal.toFixed(2)}</div>
+                <div className="ms-auto">${subtotal.toFixed(2)}</div>
               </ListGroup.Item>
               <ListGroup.Item className="d-flex">
                 <div>Shipping</div>
-                <div className="ml-auto">${shipping.cost.toFixed(2)}</div>
+                <div className="ms-auto">{shipping.cost.toFixed(2)}</div>
               </ListGroup.Item>
               <ListGroup.Item className="d-flex">
                 <div>Tax</div>
-                <div className="ml-auto">${tax.toFixed(2)}</div>
+                <div className="ms-auto">${tax.toFixed(2)}</div>
               </ListGroup.Item>
               <ListGroup.Item className="d-flex">
                 <div>
                   <strong>Estimated Total</strong>
                 </div>
-                <div className="ml-auto">
+                <div className="ms-auto">
                   <strong>${total.toFixed(2)}</strong>
                 </div>
               </ListGroup.Item>
@@ -118,6 +115,15 @@ const Bag = ({ history }) => {
               onClick={handleCheckout}
             >
               <i className="fas fa-burn"></i>&nbsp;&nbsp;Checkout
+            </Button>
+
+            <Button
+              type="button"
+              className="btn-block mt-4"
+              disabled={bagItems.length === 0}
+              onClick={handleCheckout1}
+            >
+              <i className="fas fa-burn"></i>&nbsp;&nbsp;Checkout1
             </Button>
           </Col>
         </Row>

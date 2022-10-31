@@ -16,12 +16,12 @@ interface AddressFormProps {
 
 export const AddressForm: React.FC<AddressFormProps & React.HTMLAttributes<HTMLDivElement>> = ({address, onBlur, onChange, errors, onErrorsChange, ...props}) => {
     const {className} = props;
-    const handleStateFocus = (e: React.FocusEvent<HTMLInputElement>): boolean => {
+    const handleStateFocus = (e: React.FocusEvent<HTMLSelectElement>): boolean => {
         e.preventDefault();
         return handleValidateStateChange(e.target.value);
     };
     
-    const handleStateChange = (e: React.ChangeEvent<HTMLInputElement>): boolean => {
+    const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>): boolean => {
         e.preventDefault();
         onChange(e as unknown as React.ChangeEvent<HTMLInputElement>);
         return handleValidateStateChange(e.target.value);
