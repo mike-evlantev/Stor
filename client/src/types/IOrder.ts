@@ -1,15 +1,17 @@
+import { PaymentMethod } from "@stripe/stripe-js";
 import { IAddress } from "./IAddress";
-import { IOrderItem } from "./IOrderItem";
+import { IBagItem } from "./IBagItem";
 import { IShippingOption } from "./IShippingOption";
 
 export interface IOrder {
     first: string;
     middle?: string;
     last: string;
-    orderItems: IOrderItem[];
-    taxAmount: number;
-    totalAmount: number;
-    paymentMethod: string;
+    orderItems: IBagItem[];
+    subtotal: number;
+    tax: number;
+    total: number;
+    paymentMethod: PaymentMethod;
     shippingAddress: IAddress;
     shippingOption: IShippingOption;
 }
