@@ -1,8 +1,11 @@
 import * as React from "react";
 import { Accordion, Button, Card, Form, ListGroup } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { updateCustomer, updateCustomerError } from "../../../actions/userActions";
+import { useHistory } from "react-router-dom";
 import { PaymentMethod } from "../../../enums/PaymentMethod";
+import { alert } from "../../../features/messages/messagesSlice";
+import { updateCustomer, updateCustomerErrors } from "../../../features/user/customerSlice";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import { useStripeMethods } from "../../../hooks/useStripeMethods";
 import { validateField } from "../../../services/formValidator";
 import { IAddress } from "../../../types/IAddress";
@@ -23,22 +26,21 @@ interface BillingInfoFormErrors extends IAddressErrors  {
 
 interface Props {
     onPaymentMethodChange: (paymentMethod: PaymentMethod) => void;
-    onStepChange: (step: number) => void;
 }
 
 const initAddress = {address1: "", address2: "", city: "", state: "", zip: ""};
-const initErrors = {address1: "", address2: "", city: "", state: "", zip: "", nameOnCard: ""};
+const initErrors = {billingAddress: {address1: "", address2: "", city: "", state: "", zip: ""} , nameOnCard: ""};
 const initCreditCardValidation: ICreditCardValidation = {
     number: {elementType: "cardNumber", brand: "unknown", empty: true, complete: false, error: undefined}, 
     expiry: {elementType: "cardExpiry", empty: true, complete: false, error: undefined}, 
     cvc: {elementType: "cardCvc", empty: true, complete: false, error: undefined}
   };
 
-export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodChange}) => {
-    const dispatch = useDispatch();
-    
-    const customer = useSelector((state: any) => state.customer);
-    const [nameOnCard, setNameOnCard] = React.useState(customer.nameOnCard || "");
+export const BillingInfoForm: React.FC<Props> = ({onPaymentMethodChange}) => {
+    const dispatch = useAppDispatch();
+    const history = useHistory();
+    const customer = useAppSelector(state => state.customer);
+    const [nameOnCard, setNameOnCard] = React.useState(customer.card.nameOnCard || "");
     const [sameAsShipping, setSameAsShipping] = React.useState(true);
     const [address, setAddress] = React.useState<IAddress>(initAddress);
     const [errors, setErrors] = React.useState<BillingInfoFormErrors>(initErrors);
@@ -46,7 +48,7 @@ export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodC
     const {createPaymentMethod} = useStripeMethods();
 
     React.useEffect(() => {
-        dispatch(updateCustomer({card: creditCardValidation}));
+        dispatch(updateCustomer({card: {...customer.card, ...creditCardValidation}}));
     }, [creditCardValidation]);
 
     const handleNextStepClick = async (step: number) => {
@@ -70,19 +72,22 @@ export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodC
                         && (creditCardValidation.cvc.complete && !creditCardValidation.cvc.empty && !creditCardValidation.cvc.error);
         
         if (valid && stripeValid) {
-            dispatch(updateCustomer({billingAddress: finalAddress, nameOnCard}));
-            dispatch(updateCustomerError(initErrors));
+            //dispatch(updateCustomer({billingAddress: finalAddress, card: {nameOnCard}}));
+            
 
             const paymentMethod = await createPaymentMethod();
             if (paymentMethod) {
-                dispatch(updateCustomer({card: {...creditCardValidation, paymentMethod}}));
+                dispatch(updateCustomer({card: {...creditCardValidation, nameOnCard, paymentMethod}}));
+            } else {
+                dispatch(alert({text: "Failed to create stripe payment method", type: "danger"}))
             }
             
-
-            onStepChange(step);
+            dispatch(updateCustomerErrors(initErrors));
+            history.push(`/checkout${step}`);
         } else {
             const {address1, address2, city, state, zip, nameOnCard} = errorObj;
-            dispatch(updateCustomerError({billingAddress: {address1, address2, city, state, zip}, nameOnCard}));
+            // TODO: clear state for errored key.
+            dispatch(updateCustomerErrors({billingAddress: {address1, address2, city, state, zip}, nameOnCard}));
         }       
     }
 
@@ -171,10 +176,14 @@ export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodC
         setErrors(prev => ({...prev, ...obj}));
     }
 
+    const handleStepChange = (step: number) => {
+        history.push(`/checkout${step}`);
+    } 
+
     return (
         <>
-            <ShippingInfoSummary onStepChange={onStepChange} />
-            <ListGroup variant="flush" className="py-1">
+            <ShippingInfoSummary onStepChange={handleStepChange} />
+            <ListGroup variant="flush" className="py-3">
                 <ListGroup.Item>
                     <h4>Payment</h4>
                     <Accordion defaultActiveKey="1">
@@ -235,8 +244,10 @@ export const BillingInfoForm: React.FC<Props> = ({onStepChange, onPaymentMethodC
                 </ListGroup.Item>
             </ListGroup>
             <div className="d-flex align-items-start">
-                <GoBackButton prevStep={1} handleClick={onStepChange} />
-                <GoToStepButton label={"Review Order"} nextStep={3} onClick={handleNextStepClick} />
+                <GoBackButton prevStep={1} />
+                <div className="ms-auto">
+                    <GoToStepButton label={"Review Order"} nextStep={3} onClick={handleNextStepClick} />
+                </div>                
             </div>
         </>
     );

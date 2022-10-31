@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Button } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { updateCustomer, updateCustomerError } from "../../../actions/userActions";
+import { useHistory } from "react-router-dom";
+import { updateCustomer, updateCustomerErrors } from "../../../features/user/customerSlice";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import { validateField } from "../../../services/formValidator";
 import { IAddress } from "../../../types/IAddress";
 import { IAddressErrors } from "../../../types/IAddressErrors";
@@ -26,9 +28,10 @@ interface ShippingInfoFormErrors extends INameErrors, IAddressErrors {
 const initErrors = {first: "", last: "", shippingAddress: {address1: "", address2: "", city: "", state: "", zip: ""}, email: ""};
 
 export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
-    const dispatch = useDispatch();
-    const customer = useSelector((state: any) => state.customer);
-    const { isAuthenticated } = useSelector((state: any) => state.auth);
+    const history = useHistory();
+    const dispatch = useAppDispatch();
+    const customer = useAppSelector(state => state.customer);
+    const { isAuthenticated } = useAppSelector(state => state.auth);
     const [email, setEmail] = React.useState<string>(customer.email);
     const [name, setName] = React.useState<IName>({first: customer.first, last: customer.last});
     const [address, setAddress] = React.useState<IAddress>(customer.shippingAddress);
@@ -38,11 +41,11 @@ export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
         const [valid, errorObj] = handleValidateChange({...name, ...address, email});
         if (valid) {
             dispatch(updateCustomer({...name, shippingAddress: address, email}));
-            dispatch(updateCustomerError(initErrors));
-            onStepChange(step);
+            dispatch(updateCustomerErrors(initErrors));
+            history.push("/checkout2");
         } else {
             const {first, last, address1, address2, city, state, zip, email} = errorObj;
-            dispatch(updateCustomerError({first, last, shippingAddress: {address1, address2, city, state, zip}, email}))
+            dispatch(updateCustomerErrors({first, last, shippingAddress: {address1, address2, city, state, zip}, email}))
         }       
     }
 
@@ -110,7 +113,9 @@ export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
                         Use test data
                     </Button>
                 </Dev>
-                <GoToStepButton label={"Go to next step"} nextStep={2} onClick={handleNextStepClick} />
+                <div className="ms-auto">
+                    <GoToStepButton label={"Go to next step"} nextStep={2} onClick={handleNextStepClick} />
+                </div>                
             </div>
         </>
     );

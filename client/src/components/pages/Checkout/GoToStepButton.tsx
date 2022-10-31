@@ -9,7 +9,7 @@ interface Props {
 
 export const GoToStepButton: React.FC<Props> = ({ label, nextStep, onClick }: Props) => {
     return (
-        <div className="d-flex flex-column ml-auto mx-2">
+        <div className="d-flex flex-column mx-2">
             <Button variant="primary" className="my-2" onClick={() => onClick(nextStep)}>
                 {label}
             </Button>

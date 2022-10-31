@@ -1,15 +1,13 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { EmptyBag }  from "./shared/EmptyBag.tsx";
+import { EmptyBag }  from "./pages/Bag/EmptyBag.tsx";
 import { Loader } from "./shared/Loader.tsx";
 import Checkout from "./pages/Checkout/Checkout";
 import Confirmation from "./pages/Confirmation";
 import OrderItems from "./pages/OrderItems";
-import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 const Order = ({ orderStage }) => {
   const [stageDisplayTitle, setStageDisplayTitle] = useState("");
   const [stageDisplaySubtitle, setStageDisplaySubtitle] = useState("");
@@ -47,10 +45,6 @@ const Order = ({ orderStage }) => {
     }
   };
 
-  const options = {
-    appearance
-  };
-
   useEffect(() => {
     if (orderStage === "checkout") {
       setStageDisplayTitle("Checkout");
@@ -67,7 +61,7 @@ const Order = ({ orderStage }) => {
   const renderLeft = () => {
     switch (orderStage) {
       case "checkout":
-        return <Elements stripe={stripePromise}><Checkout /></Elements>;
+        return <Checkout />;
       case "confirmation":
         return <Confirmation />;
       default:
