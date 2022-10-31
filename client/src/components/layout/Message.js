@@ -3,7 +3,7 @@ import { Alert } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
 const Message = () => {
-  const messages = useSelector((state) => state.messages);
+  const { messages } = useSelector((state) => state.messages);
   return (
     messages !== null &&
     messages.length > 0 &&

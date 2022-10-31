@@ -1,6 +1,7 @@
 import * as React from "react";
 import { ListGroup } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { availableShippingOptions } from "../../../constants/shippingOptions";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import { IName } from "../../../types/IName";
 import { IShippingOption } from "../../../types/IShippingOption";
 import { Address } from "../../shared/Address";
@@ -10,9 +11,7 @@ interface Props {
 }
 
 export const ShippingInfoSummary = ({onStepChange}: Props) => {
-    const shippingOptions = useSelector((state: any) => state.shippingOptions);
-    const shippingOptionId = 1; // TODO: useSelector
-    const customer = useSelector((state: any) => state.customer);
+    const { customer, bag } = useAppSelector(state => state);
     
     return (
         <ListGroup variant="flush" className="py-1">
@@ -28,7 +27,7 @@ export const ShippingInfoSummary = ({onStepChange}: Props) => {
             </ListGroup.Item>
             <ListGroup.Item className="d-flex justify-content-between align-items-center">
                 <h4 className="py-3">Estimated delivery:</h4>
-                <strong>{shippingOptions.find((o: IShippingOption) => o.id === shippingOptionId).name}</strong>
+                <strong>{availableShippingOptions.find((o: IShippingOption) => o.id === bag.shipping.id)!.name}</strong>
                 <u onClick={() => onStepChange(1)}>Edit</u>
             </ListGroup.Item>
         </ListGroup>

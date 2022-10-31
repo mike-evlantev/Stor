@@ -1,12 +1,12 @@
 import React, { Fragment } from "react";
 import { ListGroup } from "react-bootstrap";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { useAppSelector } from "../../hooks/useAppSelector";
 import { Loader } from "../shared/Loader.tsx";
 
 const Confirmation = () => {
   const history = useHistory();
-  const { success, loading, error, ...order } = useSelector(
+  const { success, loading, error, ...order } = useAppSelector(
     (state) => state.order
   );
 

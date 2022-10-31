@@ -1,10 +1,12 @@
 import * as React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import { login, register } from "../../actions/userActions";
 import { validateEmail, validatePassword } from "../../services/formValidator";
 import { Loader } from "../shared/Loader";
+import { register, login } from "../../features/auth/authSlice";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { useAppSelector } from "../../hooks/useAppSelector";
+import { IUser } from "../../types/IUser";
 
 export const SignIn: React.FC = () => {
     const errorsInitialState = {
@@ -26,11 +28,11 @@ export const SignIn: React.FC = () => {
     const [registerPasswordVisible, setRegisterPasswordVisible] = React.useState(false);
     const [emailSignUp, setEmailSignUp] = React.useState(false);
   
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const history = useHistory();
     const location = useLocation();
   
-    const { isAuthenticated, loading } = useSelector((state: any) => state.auth);
+    const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
   
     const redirect = location.search ? location.search.split("=")[1] : "/";
   
@@ -73,10 +75,10 @@ export const SignIn: React.FC = () => {
     };
   
     const handleLogin = () => {
-      dispatch(login(loginEmail, loginPassword));
+      dispatch(login({email: loginEmail, password: loginPassword} as IUser));
     };
     const handleRegister = () => {
-      dispatch(register(registerEmail, registerPassword));
+      dispatch(register({email: registerEmail, password: registerPassword} as IUser));
     };
   
     React.useEffect(() => {

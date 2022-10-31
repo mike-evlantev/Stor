@@ -1,17 +1,19 @@
 import * as React from "react";
 import { Button, Col, Form, ListGroup, Row } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../../actions/userActions";
+import { login } from "../../../features/auth/authSlice";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
+import { IUser } from "../../../types/IUser";
 
 export const CheckoutSignIn: React.FC = () => {
-    const dispatch = useDispatch();
-    const { loading: authLoading } = useSelector((state: any) => state.auth);
+    const dispatch = useAppDispatch();
+    const { loading: authLoading } = useAppSelector((state) => state.auth);
     const [loginEmail, setLoginEmail] = React.useState("");
     const [loginPassword, setLoginPassword] = React.useState("");
     const [signInVisible, setSignInVisible] = React.useState(false);
 
     const handleLogin = () => {
-        dispatch(login(loginEmail, loginPassword));
+        dispatch(login({email: loginEmail, password: loginPassword} as IUser));
     };
 
     return (
