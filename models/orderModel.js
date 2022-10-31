@@ -3,10 +3,10 @@ import mongoose from "mongoose";
 const orderItemSchema = mongoose.Schema(
   {
     name: { type: String, required: true },
-    qty: { type: Number, required: true },
+    quantity: { type: Number, required: true },
     image: { type: String, required: true },
     price: { type: Number, required: true },
-    product: {
+    id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "Product", // reference specific model
@@ -17,19 +17,24 @@ const orderItemSchema = mongoose.Schema(
   }
 );
 
-const creditCardPaymentResult = mongoose.Schema(
+const card = mongoose.Schema(
   {
-    network: {
-      type: String,
-      enum: ["visa", "mastercard", "amex", "discover"],
-      required: true,
-    },
-    last4: { type: String, required: true },
-    status: {
-      type: String,
-      enum: ["success", "failed", "warning"],
-      required: true,
-    },
+    brand: { type: String, required: true },
+    country: {type: String, required: false},
+    exp_month: {type: Number, required: true},
+    exp_year: {type: Number, required: true},
+    funding: {type: String, required: true},
+    last4: {type: String, required: true}    
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const paymentMethod = mongoose.Schema(
+  {
+    id: { type: String, required: true },
+    card: card
   },
   {
     timestamps: true,
@@ -74,42 +79,30 @@ const orderSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    // User removed to allow non-users to submit orders
-    // user: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   required: true,
-    //   ref: "User", // reference specific model
-    // },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: false, // could be an unregistered guest user
+      ref: "User", // reference specific model
+    },
     orderItems: [orderItemSchema],
-    taxAmount: {
+    subtotal: {
       type: Number,
       default: 0.0,
       required: true,
     },
-    totalAmount: {
+    tax: {
       type: Number,
       default: 0.0,
       required: true,
     },
-    // paymentMethod: {
-    //   type: String,
-    //   enum: ["credit card", "paypal"],
-    //   required: true,
-    // },
-    // creditCardPaymentResult: creditCardPaymentResult,
-    // payPalPaymentResult: {
-    //   id: { type: String },
-    //   status: { type: String },
-    //   update_time: { type: String },
-    //   email_address: { type: String },
-    // },
-    // isPaid: {
-    //   type: Boolean,
-    //   default: false,
-    //   required: true,
-    // },
+    total: {
+      type: Number,
+      default: 0.0,
+      required: true,
+    },
     shippingAddress: addressSchema,
     shippingOption: shippingOptionSchema,
+    paymentMethod: paymentMethod,
     isDelivered: {
       type: Boolean,
       default: false,

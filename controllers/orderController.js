@@ -12,9 +12,10 @@ export const createOrder = asyncHandler(async (req, res) => {
     orderItems,
     shippingAddress,
     paymentMethod,
-    taxAmount,
+    subtotal,
+    tax,
     shippingOption,
-    totalAmount,
+    total
   } = req.body;
 
   const order = new Order({
@@ -22,12 +23,13 @@ export const createOrder = asyncHandler(async (req, res) => {
     middle,
     last,
     orderItems,
-    //user: req.user._id,
+    userId: req.user?._id,
     shippingAddress,
     paymentMethod,
-    taxAmount,
+    subtotal,
+    tax,
     shippingOption,
-    totalAmount,
+    total,
   });
 
   const createdOrder = await order.save();
