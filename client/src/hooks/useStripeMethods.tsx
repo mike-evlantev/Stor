@@ -1,8 +1,10 @@
 import { useElements, useStripe } from "@stripe/react-stripe-js";
-import { PaymentIntent, PaymentIntentResult, PaymentMethod, PaymentMethodCreateParams, StripeCardNumberElement } from "@stripe/stripe-js";
+import { PaymentIntent, PaymentIntentResult, PaymentMethod, PaymentMethodCreateParams } from "@stripe/stripe-js";
 import axios, { AxiosResponse } from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { setMessage } from "../actions/messageActions";
+import { alert } from "../features/messages/messagesSlice";
+import { narrowError } from "../utils/errorUtils";
+import { useAppDispatch } from "./useAppDispatch";
+import { useAppSelector } from "./useAppSelector";
 
 interface useStripeMethodsResult {
     createPaymentMethod: () => Promise<PaymentMethod | undefined>;
@@ -14,11 +16,11 @@ interface useStripeMethodsResult {
 export const useStripeMethods = (): useStripeMethodsResult => {
     const stripe = useStripe();
     const elements = useElements();
-    const dispatch = useDispatch();
-    const customer = useSelector((state: any) => state.customer);
-    const {total} = useSelector((state: any) => state.bag);
-    const {nameOnCard, email, phone, billingAddress, card} = customer;
-    const {address1: line1, city, state, zip: postal_code} = billingAddress;    
+    const dispatch = useAppDispatch();
+    const customer = useAppSelector(state => state.customer);
+    const {total} = useAppSelector(state => state.bag);
+    const {email, phone, billingAddress, card} = customer;
+    const {address1, address2, city, state, zip} = billingAddress;    
 
     if (!stripe || !elements) {
         const msg1 = !stripe && "Stripe is undefined";
@@ -37,12 +39,13 @@ export const useStripeMethods = (): useStripeMethodsResult => {
             }
 
             const billingDetails: PaymentMethodCreateParams.BillingDetails = {
-                name: nameOnCard,
+                name: card.nameOnCard,
                 email,
                 phone,
-                address: { city, line1, state, postal_code }
+                address: { city, line1: address1, line2: address2, state, postal_code: zip }
             };
 
+            console.log(billingDetails);
             const {error, paymentMethod} = await stripe.createPaymentMethod({
                 type: "card",
                 card: cardNumber,
@@ -53,11 +56,10 @@ export const useStripeMethods = (): useStripeMethodsResult => {
                 throw new Error(error.message);
             }
 
-            console.log('paymentMethod' ,paymentMethod);
             return paymentMethod;
         } catch (error) {
             const message = narrowError(error);
-            dispatch(setMessage(message, "danger"));
+            dispatch(alert({text: message, type: "danger"}));
         }
     }
 
@@ -71,11 +73,11 @@ export const useStripeMethods = (): useStripeMethodsResult => {
                 },
             };
             const result = await axios.post("/api/payment", payload, config);
-            console.log('clientSecret', result.data)
+            
             return result.data;
         } catch (error) {
             const message = narrowError(error);
-            dispatch(setMessage(message, "danger"));
+            dispatch(alert({text: message, type: "danger"}));
         }
         
     };
@@ -92,30 +94,16 @@ export const useStripeMethods = (): useStripeMethodsResult => {
             return paymentIntent;
         } catch (error) {
             const message = narrowError(error);
-            dispatch(setMessage(message, "danger"));
+            dispatch(alert({text: message, type: "danger"}));
         }
     }
 
     const processStripeCreditCardPayment = async () => {
-        console.log(card);
         const {paymentMethod} = card;
         const clientSecret = await createPaymentIntent();
-        const paymentIntent = await confirmPaymentIntent(String(clientSecret), paymentMethod);
+        const paymentIntent = await confirmPaymentIntent(String(clientSecret), paymentMethod as PaymentMethod);
         return paymentIntent;
     }
     
     return {createPaymentMethod, createPaymentIntent, confirmPaymentIntent, processStripeCreditCardPayment};
-}
-
-const narrowError = (error: unknown): string => {
-    let message: string;
-    if (typeof error === "string") {
-        message = error;
-    } else if (error instanceof Error) {
-        message = error.message;
-    } else {
-        message = String(error);
-    }
-
-    return message;
 }
