@@ -22,7 +22,7 @@ const Home = () => {
         <Fragment>
           <h1>Latest Products</h1>
           <Row>
-            {products ? (
+            {products?.length > 0 ? (
               products.map((p, i) => (
                 <Col key={i} sm={12} md={6} lg={4} xl={3}>
                   <ProductCard product={p} />
