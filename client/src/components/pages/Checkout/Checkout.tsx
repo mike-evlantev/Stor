@@ -15,15 +15,9 @@ export const Checkout: React.FC<Props> = ({children}) => {
     const { bagItems, shipping, subtotal, tax, total } = useSelector((state: any) => state.bag);
     const { loading: orderSubmitLoading } = useSelector((state: any) => state.order);
 
-    const [paymentMethod, setPaymentMethod] = React.useState(PaymentMethod.CreditCard);
-
-    const handlePaymentMethodChange = (paymentMethod: PaymentMethod) => {
-        setPaymentMethod(paymentMethod);
-      }
-
-    const childrenWithProps = React.Children.map(children, child =>
-        React.cloneElement(child, { paymentMethod, handlePaymentMethodChange })
-    );
+    // const childrenWithProps = React.Children.map(children, child =>
+    //     React.cloneElement(child, { paymentMethod, handlePaymentMethodChange })
+    // );
     
     return (
         <Container className="d-flex flex-column py-5">
@@ -40,7 +34,7 @@ export const Checkout: React.FC<Props> = ({children}) => {
                         </Row> */}
                         <Row className="py-3">
                             {/* LEFT COLUMN */}
-                            <Col md={7}>{childrenWithProps}</Col>
+                            <Col md={7}>{children}</Col>
                             {/* RIGHT COLUMN */}
                             <Col md={5}>
                                 <div className="sticky-top">

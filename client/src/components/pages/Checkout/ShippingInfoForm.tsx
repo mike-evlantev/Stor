@@ -17,17 +17,13 @@ import { GoToStepButton } from "./GoToStepButton";
 import { ShippingAddressForm } from "./ShippingAddressForm";
 import { ShippingMethodForm } from "./ShippingMethodForm";
 
-interface Props {
-    onStepChange: (step: number) => void;
-}
-
 interface ShippingInfoFormErrors extends INameErrors, IAddressErrors {
     email: string
 }
 
 const initErrors = {first: "", last: "", shippingAddress: {address1: "", address2: "", city: "", state: "", zip: ""}, email: ""};
 
-export const ShippingInfoForm: React.FC<Props> = ({onStepChange}) => {
+export const ShippingInfoForm: React.FC = () => {
     const history = useHistory();
     const dispatch = useAppDispatch();
     const customer = useAppSelector(state => state.customer);

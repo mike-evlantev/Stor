@@ -24,10 +24,6 @@ interface BillingInfoFormErrors extends IAddressErrors  {
     nameOnCard: string;
 }
 
-interface Props {
-    onPaymentMethodChange: (paymentMethod: PaymentMethod) => void;
-}
-
 const initAddress = {address1: "", address2: "", city: "", state: "", zip: ""};
 const initErrors = {billingAddress: {address1: "", address2: "", city: "", state: "", zip: ""} , nameOnCard: ""};
 const initCreditCardValidation: ICreditCardValidation = {
@@ -36,7 +32,7 @@ const initCreditCardValidation: ICreditCardValidation = {
     cvc: {elementType: "cardCvc", empty: true, complete: false, error: undefined}
   };
 
-export const BillingInfoForm: React.FC<Props> = ({onPaymentMethodChange}) => {
+export const BillingInfoForm: React.FC = () => {
     const dispatch = useAppDispatch();
     const history = useHistory();
     const customer = useAppSelector(state => state.customer);
@@ -45,6 +41,11 @@ export const BillingInfoForm: React.FC<Props> = ({onPaymentMethodChange}) => {
     const [address, setAddress] = React.useState<IAddress>(initAddress);
     const [errors, setErrors] = React.useState<BillingInfoFormErrors>(initErrors);
     const [creditCardValidation, setCreditCardValidation] = React.useState<ICreditCardValidation>(initCreditCardValidation);
+    const [paymentMethod, setPaymentMethod] = React.useState(PaymentMethod.CreditCard);
+
+    const handlePaymentMethodChange = (paymentMethod: PaymentMethod) => {
+        setPaymentMethod(paymentMethod);
+    }
     const {createPaymentMethod} = useStripeMethods();
 
     React.useEffect(() => {
@@ -191,7 +192,7 @@ export const BillingInfoForm: React.FC<Props> = ({onPaymentMethodChange}) => {
                         <Accordion.Item
                             as={Card.Header}
                             eventKey="0"
-                            onClick={() => onPaymentMethodChange(PaymentMethod.PayPal)}>
+                            onClick={() => handlePaymentMethodChange(PaymentMethod.PayPal)}>
                             <i className="fab fa-paypal"></i>&nbsp; PayPal
                         </Accordion.Item>
                         <Accordion.Collapse eventKey="0">
@@ -209,7 +210,7 @@ export const BillingInfoForm: React.FC<Props> = ({onPaymentMethodChange}) => {
                         <Accordion.Item
                             as={Card.Header}
                             eventKey="1"
-                            onClick={() => onPaymentMethodChange(PaymentMethod.CreditCard)}>
+                            onClick={() => handlePaymentMethodChange(PaymentMethod.CreditCard)}>
                             <i className="fas fa-credit-card"></i>&nbsp; Credit Card
                         </Accordion.Item>
                         <Accordion.Collapse eventKey="1">
