@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import './bootstrap.min.css'; // downloaded theme from https://bootswatch.com/simplex/
-import App from "./App";
+import { App } from "./App";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { Elements } from "@stripe/react-stripe-js";
