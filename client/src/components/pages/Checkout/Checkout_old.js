@@ -4,7 +4,7 @@ import { BillingInfoForm } from "./BillingInfoForm.tsx";
 import { ReviewOrder } from "./ReviewOrder.tsx";
 import { PaymentMethod } from "../../../enums/PaymentMethod";
 
-const Checkout = () => {
+const CheckoutOld = () => {
   const [step, setStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState(PaymentMethod.CreditCard);
 
@@ -36,4 +36,4 @@ const Checkout = () => {
   return renderCheckout();
 };
 
-export default Checkout;
+export default CheckoutOld;

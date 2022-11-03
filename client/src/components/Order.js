@@ -3,7 +3,7 @@ import { Col, Container, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { EmptyBag }  from "./pages/Bag/EmptyBag.tsx";
 import { Loader } from "./shared/Loader.tsx";
-import Checkout from "./pages/Checkout/Checkout";
+import CheckoutOld from "./pages/Checkout/Checkout_old";
 import Confirmation from "./pages/Confirmation";
 import OrderItems from "./pages/OrderItems";
 import { Elements } from "@stripe/react-stripe-js";
@@ -61,7 +61,7 @@ const Order = ({ orderStage }) => {
   const renderLeft = () => {
     switch (orderStage) {
       case "checkout":
-        return <Checkout />;
+        return <CheckoutOld />;
       case "confirmation":
         return <Confirmation />;
       default:
