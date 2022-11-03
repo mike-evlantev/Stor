@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Container } from "react-bootstrap";
 import { Route, Switch } from "react-router-dom";
-import Message from "../layout/Message";
+import { Message } from "../layout/Message";
 import Order from "../Order";
 import Bag from "../pages/Bag";
 import { BillingInfoForm } from "../pages/Checkout/BillingInfoForm";
