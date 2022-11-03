@@ -41,11 +41,7 @@ export const BillingInfoForm: React.FC = () => {
     const [address, setAddress] = React.useState<IAddress>(initAddress);
     const [errors, setErrors] = React.useState<BillingInfoFormErrors>(initErrors);
     const [creditCardValidation, setCreditCardValidation] = React.useState<ICreditCardValidation>(initCreditCardValidation);
-    const [paymentMethod, setPaymentMethod] = React.useState(PaymentMethod.CreditCard);
 
-    const handlePaymentMethodChange = (paymentMethod: PaymentMethod) => {
-        setPaymentMethod(paymentMethod);
-    }
     const {createPaymentMethod} = useStripeMethods();
 
     React.useEffect(() => {
@@ -179,7 +175,12 @@ export const BillingInfoForm: React.FC = () => {
 
     const handleStepChange = (step: number) => {
         history.push(`/checkout${step}`);
-    } 
+    }
+    const [openKey, setOpenKey] = React.useState<number | undefined>(undefined);
+
+    const handleToggle = (key: number | undefined) => {
+        setOpenKey(openKey !== key ? key : undefined);
+    }
 
     return (
         <>
@@ -187,34 +188,22 @@ export const BillingInfoForm: React.FC = () => {
             <ListGroup variant="flush" className="py-3">
                 <ListGroup.Item>
                     <h4>Payment</h4>
-                    <Accordion defaultActiveKey="1">
-                    <Card>
-                        <Accordion.Item
-                            as={Card.Header}
-                            eventKey="0"
-                            onClick={() => handlePaymentMethodChange(PaymentMethod.PayPal)}>
-                            <i className="fab fa-paypal"></i>&nbsp; PayPal
-                        </Accordion.Item>
-                        <Accordion.Collapse eventKey="0">
-                        <Card.Body>
-                            <Card.Text>
-                                Sign in to PayPal and return to complete your order
-                            </Card.Text>
+                    <div style={{margin: "2rem auto"}}>
+                        <div onClick={() => handleToggle(1)} className="d-flex flex-row justify-content-between p-3" style={{cursor: "pointer"}}>
+                            <div><i className="fab fa-paypal"></i>&nbsp; PayPal</div>
+                            <div>{openKey === 1 ? '-' : '+'}</div>
+                        </div>
+                        {openKey === 1 && <div className="p-3">
+                            Sign in to PayPal and return to complete your order
                             <Button variant="info" type="submit" className="btn btn-block">
                                 PayPal
-                            </Button>
-                        </Card.Body>
-                        </Accordion.Collapse>
-                    </Card>
-                    <Card>
-                        <Accordion.Item
-                            as={Card.Header}
-                            eventKey="1"
-                            onClick={() => handlePaymentMethodChange(PaymentMethod.CreditCard)}>
-                            <i className="fas fa-credit-card"></i>&nbsp; Credit Card
-                        </Accordion.Item>
-                        <Accordion.Collapse eventKey="1">
-                        <Card.Body>
+                            </Button>  
+                        </div>}
+                        <div onClick={() => handleToggle(2)} className="d-flex flex-row justify-content-between p-3" style={{cursor: "pointer"}}>
+                            <div><i className="fas fa-credit-card"></i>&nbsp; Credit Card</div>
+                            <div>{openKey === 2 ? '-' : '+'}</div>
+                        </div>
+                        {openKey === 2 && <div className="p-3">
                             <CreditCardForm initValidation={initCreditCardValidation} creditCardValidation={creditCardValidation} onCreditCardValidation={setCreditCardValidation} />
                             <Form.Group>
                                 <Form.Label>Name on Card</Form.Label>
@@ -238,10 +227,8 @@ export const BillingInfoForm: React.FC = () => {
                                         </Dev>
                                     </>}
                             </Form.Group>  
-                        </Card.Body>
-                        </Accordion.Collapse>
-                    </Card>
-                    </Accordion>
+                        </div>}
+                    </div>
                 </ListGroup.Item>
             </ListGroup>
             <div className="d-flex align-items-start">
@@ -252,4 +239,16 @@ export const BillingInfoForm: React.FC = () => {
             </div>
         </>
     );
-  };
+};
+
+// interface AccordionProps {
+//     creditCardValidation: ICreditCardValidation;
+//     onCreditCardValidation: (value: React.SetStateAction<ICreditCardValidation>) => void;
+// }
+
+// const Accordion: React.FC<AccordionProps> = ({creditCardValidation, onCreditCardValidation}) => {
+//     const [isActive, setIsActive] = React.useState(false);
+//     return (
+        
+//     );
+// }
