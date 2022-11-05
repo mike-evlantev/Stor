@@ -224,13 +224,19 @@ export const BillingInfoForm: React.FC = () => {
         }
     ];
 
+    const [openKey, setOpenKey] = React.useState<number | undefined>(undefined);
+
+    const handleToggle = (key: number | undefined) => {
+        setOpenKey(openKey !== key ? key : undefined);
+    }
+
     return (
         <>
             <ShippingInfoSummary onStepChange={handleStepChange} />
             <ListGroup variant="flush" className="py-3">
                 <ListGroup.Item>
                     <h4>Payment</h4>
-                    {/* <div style={{margin: "2rem auto"}}>
+                    <div style={{margin: "2rem auto"}}>
                         <div onClick={() => handleToggle(1)} className="d-flex flex-row justify-content-between p-3" style={{cursor: "pointer"}}>
                             <div><i className="fab fa-paypal"></i>&nbsp; PayPal</div>
                             <div>{openKey === 1 ? '-' : '+'}</div>
@@ -271,8 +277,8 @@ export const BillingInfoForm: React.FC = () => {
                             </Form.Group>  
                         </div>}
                     </div>
-                    <hr /> */}
-                    <Accordion items={items}/>
+                    <hr />
+                    {/* <Accordion items={items}/> */}
                 </ListGroup.Item>
             </ListGroup>
             <div className="d-flex align-items-start">
