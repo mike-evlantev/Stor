@@ -32,8 +32,7 @@ const Confirmation = () => {
               <h4 className="py-3">Order Information</h4>
               <strong>
                 <div>
-                  Order number: {/*TODO: order.confirmationNumber*/}
-                  {Math.floor(1000000000 + Math.random() * 9000000000)}
+                  Order number: {order?.orderNumber}
                 </div>
                 <div>
                   Order date:{" "}

@@ -13,7 +13,6 @@ const submit = async (orderData: IOrder) => {
 
     const response = await axios.post(API_URL, orderData, config);
 
-    console.log(response);
     return response.data;
 }
 

@@ -4,6 +4,7 @@ import { IBagItem } from "./IBagItem";
 import { IShippingOption } from "./IShippingOption";
 
 export interface IOrder {
+    orderNumber: number;
     first: string;
     middle?: string;
     last: string;

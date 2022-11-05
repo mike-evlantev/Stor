@@ -11,6 +11,7 @@ const initialState: OrderState = {
     loading: false,
     error: undefined,
     success: false,
+    orderNumber: 0,
     first: "",
     middle: "",
     last: "",

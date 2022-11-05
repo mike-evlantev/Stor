@@ -20,6 +20,7 @@ export const ReviewOrder: React.FC = () => {
     
     const processOrder = async () => {    
         const order: IOrder = {
+            orderNumber: -1, // generated and overwritten by mongoose
             first,
             last,
             orderItems: bagItems,
