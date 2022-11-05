@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import Inc from "mongoose-sequence";
+const AutoIncrement = Inc(mongoose); 
 
 const orderItemSchema = mongoose.Schema(
   {
@@ -67,6 +69,11 @@ const shippingOptionSchema = mongoose.Schema(
 
 const orderSchema = mongoose.Schema(
   {
+    orderNumber: {
+      type: Number,
+      required: true,
+      default: 0
+    },
     first: {
       type: String,
       required: true,
@@ -116,5 +123,7 @@ const orderSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+orderSchema.plugin(AutoIncrement, {inc_field: 'orderNumber', start_seq: 1000000000});
 
 export default mongoose.model("Order", orderSchema);
