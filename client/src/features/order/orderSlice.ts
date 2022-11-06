@@ -12,6 +12,7 @@ const initialState: OrderState = {
     error: undefined,
     success: false,
     orderNumber: 0,
+    createdAt: "",
     first: "",
     middle: "",
     last: "",

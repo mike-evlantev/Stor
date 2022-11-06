@@ -4,7 +4,8 @@ import { IBagItem } from "./IBagItem";
 import { IShippingOption } from "./IShippingOption";
 
 export interface IOrder {
-    orderNumber: number;
+    orderNumber: number;  // generated and overwritten by mongoose
+    createdAt: string;  // generated and overwritten by mongoose
     first: string;
     middle?: string;
     last: string;
