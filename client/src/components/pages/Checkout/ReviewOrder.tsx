@@ -20,7 +20,8 @@ export const ReviewOrder: React.FC = () => {
     
     const processOrder = async () => {    
         const order: IOrder = {
-            orderNumber: -1, // generated and overwritten by mongoose
+            orderNumber: -1,
+            createdAt: "",
             first,
             last,
             orderItems: bagItems,
@@ -32,14 +33,14 @@ export const ReviewOrder: React.FC = () => {
             paymentMethod: card.paymentMethod as PaymentMethod
         };
 
-        dispatch(submitOrder(order));
-        history.push("/confirmation");
+        dispatch(await submitOrder(order));
     };
 
     const handleSubmitOrder = async () => {
         const paymentResult = await processStripeCreditCardPayment();  
         console.log(paymentResult);
-        processOrder();
+        await processOrder();
+        history.push("/confirmation");
     };
 
     return(
