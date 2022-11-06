@@ -1,10 +1,9 @@
 import * as React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { PaymentMethod } from "../../../enums/PaymentMethod";
 import { Loader } from "../../shared/Loader";
 import { EmptyBag } from "../Bag/EmptyBag";
-import OrderItems from "../OrderItems";
+import { OrderItems } from "./OrderItems";
 
 interface Props {
     children: React.ReactElement;
