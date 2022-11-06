@@ -23,7 +23,6 @@ export const ProductDetails: React.FC<Props> = ({ match }) => {
     const [showModal, setShowModal] = React.useState(false);
 
     React.useEffect(() => {
-        console.log("ProductDetails.tsx useEffect");
         dispatch(getProductById(match.params.id));
     }, []);
 
@@ -40,7 +39,7 @@ export const ProductDetails: React.FC<Props> = ({ match }) => {
     };
 
     const handleQuantityChange = (_: string, e: React.ChangeEvent<HTMLSelectElement>) => setQuantity(Number(e.target.value));
-    console.log(product);
+
     return (
         <>
             <Link className="btn btn-light my-3" to="/">
@@ -102,14 +101,14 @@ export const ProductDetails: React.FC<Props> = ({ match }) => {
                                 </ListGroup.Item>
                                 )}
                                 <ListGroup.Item>
-                                <Button
-                                    className="btn-block"
-                                    type="button"
-                                    disabled={!inStock}
-                                    onClick={handleAddToBag}
-                                >
-                                    Add to bag
-                                </Button>
+                                    <Button
+                                        className="btn-block"
+                                        type="button"
+                                        disabled={!inStock}
+                                        onClick={handleAddToBag}
+                                    >
+                                        Add to bag
+                                    </Button>
                                 </ListGroup.Item>
                             </ListGroup>
                         </Card>
