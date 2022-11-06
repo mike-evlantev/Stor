@@ -102,7 +102,7 @@ export const SignIn: React.FC = () => {
                   <h4>Here are some perks:</h4>
                 </div>
               </Row>
-              <Row className="d-flex justify-content-around pt-4">
+              <div className="d-flex flex-row justify-content-around pt-4">
                 <div className="text-center">
                   <p>
                     <i className="fas fa-search-location fa-3x"></i>
@@ -133,7 +133,7 @@ export const SignIn: React.FC = () => {
                   </p>
                   <p>Tailored Suggestions</p>
                 </div>
-              </Row>
+              </div>
               <hr />
             </div>
             <Row className="d-flex justify-content-around p-5">
@@ -164,7 +164,7 @@ export const SignIn: React.FC = () => {
                   <Button
                     variant="primary"
                     type="submit"
-                    className="btn btn-block mt-4"
+                    className="w-100 mt-4"
                     disabled={loading || !loginFormValid}
                   >
                     Sign In
@@ -204,7 +204,7 @@ export const SignIn: React.FC = () => {
                       <Button
                         type="button"
                         variant="outline-secondary"
-                        style={{borderTopLeftRadius: 0, borderBottomLeftRadius: 0, borderLeftStyle: "none"}}
+                        style={{borderTopRightRadius: "0.375rem", borderBottomRightRadius: "0.375rem", borderLeftStyle: "none"}}
                         onClick={() => setRegisterPasswordVisible(!registerPasswordVisible)}>
                         <i className={registerPasswordVisible ? "fas fa-eye-slash" : "fas fa-eye"}></i>
                       </Button>                    
@@ -224,7 +224,7 @@ export const SignIn: React.FC = () => {
                   <Button
                     variant="primary"
                     type="submit"
-                    className="btn btn-block mt-4"
+                    className="w-100 mt-4"
                     disabled={loading || !registerFormValid}
                   >
                     Create Account
