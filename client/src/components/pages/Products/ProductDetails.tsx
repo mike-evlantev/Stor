@@ -128,7 +128,7 @@ interface ModalProps {
 
 const AddToBagModal: React.FC<ModalProps> = ({bagItem, handleModalClose}) => {
     const history = useHistory();
-    const handleCheckout = () => history.push("/checkout");
+    const handleCheckout = () => history.push("/checkout1");
     const handleViewBag = () => history.push("/bag");
     
     return(
