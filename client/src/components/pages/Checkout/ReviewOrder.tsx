@@ -9,14 +9,15 @@ import { GoBackButton } from "./GoBackButton";
 import { SubmitOrderButton } from "./SubmitOrderButton";
 import { IOrder } from "../../../types/IOrder";
 import { PaymentMethod } from "@stripe/stripe-js";
+import { Loader } from "../../shared/Loader";
 
 export const ReviewOrder: React.FC = () => {
     const dispatch = useAppDispatch();
     const history = useHistory();
     const { processStripeCreditCardPayment } = useStripeMethods();
     const { bagItems, shipping, subtotal, tax, total } = useAppSelector(state => state.bag);
-    const { loading: orderSubmitLoading } = useAppSelector(state => state.order);
     const { first, last, shippingAddress, card } = useAppSelector(state => state.customer);
+    const [loading, setLoading] = React.useState(false);
     
     const processOrder = async () => {    
         const order: IOrder = {
@@ -37,6 +38,7 @@ export const ReviewOrder: React.FC = () => {
     };
 
     const handleSubmitOrder = async () => {
+        setLoading(true);
         const paymentResult = await processStripeCreditCardPayment();  
         console.log(paymentResult);
         await processOrder();
@@ -45,11 +47,15 @@ export const ReviewOrder: React.FC = () => {
 
     return(
         <>
-            Order Review
-            <div className="d-flex align-items-start">
-                <GoBackButton prevStep={2} />
-                <SubmitOrderButton orderSubmitLoading={orderSubmitLoading} bagItems={bagItems} handleSubmitOrder={handleSubmitOrder} />
-            </div>
+            {loading
+                ? <Loader />
+                : <>
+                    Order Review
+                    <div className="d-flex align-items-start">
+                        <GoBackButton prevStep={2} />
+                        <SubmitOrderButton orderSubmitLoading={loading} bagItems={bagItems} handleSubmitOrder={handleSubmitOrder} />
+                    </div>
+                </>}
         </>
     );
 }
