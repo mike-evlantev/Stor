@@ -11,7 +11,6 @@ export const Header: React.FC = () => {
     const history = useHistory();
     const { isAuthenticated, loggedInUser } = useAppSelector(state => state.auth);
     const { bagItems } = useAppSelector(state => state.bag);
-    console.log(bagItems.reduce((acc, item) => acc + item.quantity, 0));
 
     const handleRoute = (route: string) => {
         history.push(route);
