@@ -262,19 +262,25 @@ export const BillingInfoForm: React.FC = () => {
                 <ListGroup.Item>
                     <h4>Payment</h4>
                     <div style={{margin: "2rem auto"}}>
-                        <div onClick={() => handleToggle(1)} className="d-flex flex-row justify-content-between p-3" style={{cursor: "pointer"}}>
+                        {/* key is necessary on parent element to be able to re-render child element: 
+                            in this case, the chevron (up/down) icon next to item qty
+                            https://reactjs.org/docs/reconciliation.html */}
+                        <div key={`paypal-${openKey}`} onClick={() => handleToggle(1)} className="d-flex flex-row justify-content-between p-3" style={{cursor: "pointer"}}>
                             <div><i className="fab fa-paypal"></i>&nbsp; PayPal</div>
-                            <div>{openKey === 1 ? '-' : '+'}</div>
+                            <i className={openKey === 1 ? "fas fa-chevron-up fa-lg" : "fas fa-chevron-down fa-lg"}></i>                            
                         </div>
-                        {openKey === 1 && <div className="p-3">
-                            Sign in to PayPal and return to complete your order
-                            <Button variant="info" type="submit" className="btn btn-block">
+                        {openKey === 1 && <div className="d-flex flex-column p-3">
+                            <span>Sign in to PayPal and return to complete your order</span>
+                            <Button variant="info" type="submit" className="w-100">
                                 PayPal
                             </Button>  
                         </div>}
-                        <div onClick={() => handleToggle(2)} className="d-flex flex-row justify-content-between p-3" style={{cursor: "pointer"}}>
+                        {/* key is necessary on parent element to be able to re-render child element: 
+                            in this case, the chevron (up/down) icon next to item qty
+                            https://reactjs.org/docs/reconciliation.html */}
+                        <div key={`creditcard-${openKey}`} onClick={() => handleToggle(2)} className="d-flex flex-row justify-content-between p-3" style={{cursor: "pointer"}}>
                             <div><i className="fas fa-credit-card"></i>&nbsp; Credit Card</div>
-                            <div>{openKey === 2 ? '-' : '+'}</div>
+                            <i className={openKey === 2 ? "fas fa-chevron-up fa-lg" : "fas fa-chevron-down fa-lg"}></i>
                         </div>
                         {openKey === 2 && <div className="p-3">
                             <CreditCardForm initValidation={initCreditCardValidation} creditCardValidation={creditCardValidation} onCreditCardValidation={setCreditCardValidation} />
@@ -302,7 +308,6 @@ export const BillingInfoForm: React.FC = () => {
                             </Form.Group>  
                         </div>}
                     </div>
-                    <hr />
                     {/* <Accordion items={items}/> */}
                 </ListGroup.Item>
             </ListGroup>
