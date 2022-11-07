@@ -25,7 +25,7 @@ export const OrderItems: React.FC<Props> = ({items, subtotal, shipping, tax, tot
                 <i className="fas fa-shopping-bag fa-lg"></i>&nbsp;&nbsp;
                 {totalQty} {totalQty > 1 ? "items" : "item"}
                 &nbsp;&nbsp;
-                <i className={itemsVisible ? "fas fa-chevron-up fa-lg" : "fas fa-chevron-down fa-lg"}></i>
+                <i className={itemsVisible ? "fas fa-chevron-up fa-lg" : "fas fa-chevron-down fa-lg"} style={{cursor: "pointer"}}></i>
                 <strong className="float-end pr-1">${total.toFixed(2)}</strong>
             </div>
             <ListGroup variant="flush">
@@ -37,9 +37,9 @@ export const OrderItems: React.FC<Props> = ({items, subtotal, shipping, tax, tot
                             </Col>
                             <Col md={9} className="d-flex flex-column p-0">
                                 <strong>{item.name}</strong>
-                                <div className="mt-auto">
-                                    <span>Qty:{item.quantity}</span>
-                                    <span className="float-end pr-3">${item.price}</span>
+                                <div className="d-flex mt-auto">
+                                    <span>Qty: {item.quantity}</span>
+                                    <span style={{paddingRight: "0.75rem"}} className="ms-auto">${item.price}</span>
                                 </div>
                             </Col>
                         </Row>
