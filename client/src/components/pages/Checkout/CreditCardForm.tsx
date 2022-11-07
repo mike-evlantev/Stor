@@ -19,6 +19,7 @@ export const CreditCardForm: React.FC<Props> = ({initValidation, creditCardValid
       const options = {
         style: {
           base: {
+            fontSize: "1.2rem",
             fontFamily: "Open Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
             "::placeholder": {
               color: "transparent",
