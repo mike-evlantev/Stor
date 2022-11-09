@@ -10,6 +10,7 @@ import { Loader } from "../shared/Loader";
 export const Confirmation: React.FC = () => {
     const history = useHistory();
     const { success, loading, error, ...order } = useAppSelector(state => state.order);
+    const { email, shippingAddress } = useAppSelector(state => state.customer);
 
     // If the user clicks the back button after submitting the order redirect home
     React.useEffect(() => {
@@ -36,6 +37,12 @@ export const Confirmation: React.FC = () => {
             {loading 
                 ? <Loader /> 
                 : <>
+                    <div className="d-flex flex-column align-items-center">
+                        <h1 className="my-2"><strong>Thank you!</strong></h1>
+                        <h4>Your Stor order <strong>#{order.orderNumber}</strong> has been placed.</h4>
+                        <span>An order confirmation and receipt will be emailed to <strong>{email}</strong> shortly.</span>
+                    </div>
+                    
                     <ListGroup variant="flush" className="py-1">
                         <ListGroup.Item>
                             <h4 className="py-3">Order Information</h4>
