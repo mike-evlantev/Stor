@@ -39,7 +39,7 @@ export const Routes: React.FC = () => {
                 <Route
                     exact
                     path="/checkout3"
-                    component={ReviewOrder}
+                    component={() => <Checkout><ReviewOrder /></Checkout>}
                 />
                 <Route
                     exact
