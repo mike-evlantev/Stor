@@ -196,11 +196,7 @@ export const BillingInfoForm: React.FC = () => {
     const handleErrorsChange = (obj: IKeyValuePair<string>) => {
         setErrors(prev => ({...prev, ...obj}));
     }
-
-    const handleStepChange = (step: number) => {
-        history.push(`/checkout${step}`);
-    }
-
+    
     const items: AccordionItem[] = [
         {
             key: 1,
@@ -257,7 +253,7 @@ export const BillingInfoForm: React.FC = () => {
 
     return (
         <>
-            <ShippingInfoSummary onStepChange={handleStepChange} />
+            <ShippingInfoSummary />
             <ListGroup variant="flush" className="py-3">
                 <ListGroup.Item>
                     <h4>Payment</h4>
