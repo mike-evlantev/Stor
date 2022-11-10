@@ -59,7 +59,7 @@ export const ProductDetails: React.FC<Props> = ({ match }) => {
                             <ListGroup.Item>
                                 <Rating value={0} numReviews={0}/>
                             </ListGroup.Item>
-                            <ListGroup.Item>${product.price.toFixed(2)}</ListGroup.Item>
+                            <ListGroup.Item>${product.price?.toFixed(2)}</ListGroup.Item>
                             <ListGroup.Item>{product.description}</ListGroup.Item>
                         </ListGroup>
                     </Col>
@@ -70,7 +70,7 @@ export const ProductDetails: React.FC<Props> = ({ match }) => {
                                 <Row>
                                     <Col>Price:</Col>
                                     <Col>
-                                        <strong>${product.price.toFixed(2)}</strong>
+                                        <strong>${product.price?.toFixed(2)}</strong>
                                     </Col>
                                 </Row>
                                 </ListGroup.Item>
@@ -157,11 +157,11 @@ const AddToBagModal: React.FC<ModalProps> = ({bagItem, handleModalClose}) => {
                                     </tr>
                                     <tr>
                                         <td>Price:</td>
-                                        <td>${bagItem.price.toFixed(2)}</td>
+                                        <td>${bagItem.price?.toFixed(2)}</td>
                                     </tr>
                                     <tr>
                                         <td>Subtotal:</td>
-                                        <td>${(bagItem.quantity * bagItem.price).toFixed(2)}</td>
+                                        <td>${(bagItem.quantity * bagItem.price)?.toFixed(2)}</td>
                                     </tr>
                                 </tbody>
                             </Table>
