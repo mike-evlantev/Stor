@@ -11,13 +11,14 @@ import { PaymentMethod } from "@stripe/stripe-js";
 import { Loader } from "../../shared/Loader";
 import { ShippingInfoSummary } from "./ShippingInfoSummary";
 import { Button, Col, Form, ListGroup } from "react-bootstrap";
+import { Last4 } from "./Last4";
 
 export const ReviewOrder: React.FC = () => {
     const dispatch = useAppDispatch();
     const history = useHistory();
     const { processStripeCreditCardPayment } = useStripeMethods();
     const { bagItems, shipping, subtotal, tax, total } = useAppSelector(state => state.bag);
-    const { first, last, shippingAddress, card } = useAppSelector(state => state.customer);
+    const { first, last, shippingAddress, card, email, phone } = useAppSelector(state => state.customer);
     const [loading, setLoading] = React.useState(false);
     
     const processOrder = async () => {    
@@ -32,9 +33,11 @@ export const ReviewOrder: React.FC = () => {
             total,
             shippingAddress,
             shippingOption: shipping as IShippingOption,
-            paymentMethod: card.paymentMethod as PaymentMethod
+            paymentMethod: card.paymentMethod as PaymentMethod,
+            email,
+            phone
         };
-
+        console.log(order);
         dispatch(await submitOrder(order));
     };
 
@@ -46,28 +49,7 @@ export const ReviewOrder: React.FC = () => {
         history.push("/confirmation");
     };
 
-    const getCreditCardBrandIcon = (brand: string | undefined) => {
-        //`amex`, `diners`, `discover`, `jcb`, `mastercard`, `unionpay`, `visa`, or `unknown`.
-        switch (brand) {
-            case "amex":
-                return <i className="fab fa-cc-amex fa-4x"></i>;
-            case "diners":
-                return <i className="fab fa-cc-diners-club fa-4x"></i>;
-            case "discover":
-                return <i className="fab fa-cc-discover fa-4x"></i>;
-            case "jcb":
-                return <i className="fab fa-cc-jcb fa-4x"></i>;
-            case "mastercard":
-                return <i className="fab fa-cc-mastercard fa-4x"></i>;
-            case "visa":
-                return <i className="fab fa-cc-visa fa-2x"></i>;
-            case "unionpay":
-            case "unknown":
-            case undefined:
-            default:
-                return <i className="fas fa-credit-card fa-4x"></i>;
-        }
-    }
+    
 
     return(
         <>
@@ -84,18 +66,14 @@ export const ReviewOrder: React.FC = () => {
                                 </h4>
                             </Col>
                             <Col sm={5}>
-                                <div className="d-flex align-items-center">
-                                    {getCreditCardBrandIcon(card.paymentMethod?.card?.brand)}
-                                    <div className="mx-1"></div>
-                                    <strong>ending in {card.paymentMethod?.card?.last4}</strong>
-                                </div>
+                                <Last4 brand={card.paymentMethod?.card?.brand} last4={card.paymentMethod?.card?.last4} />
                             </Col>
                             <Col sm={1}>
                                 <u className="float-end" onClick={() => history.push("checkout2")} style={{cursor: "pointer"}}>Edit</u>
                             </Col>
                         </ListGroup.Item>
                     </ListGroup>
-                    <div className="d-flex align-items-start">
+                    <div className="d-flex align-items-start mt-5">
                         <GoBackButton prevStep={2} />
                         <div className="ms-auto">
                             <Button
