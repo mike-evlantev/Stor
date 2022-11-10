@@ -15,7 +15,9 @@ export const createOrder = asyncHandler(async (req, res) => {
     subtotal,
     tax,
     shippingOption,
-    total
+    total,
+    email,
+    phone
   } = req.body;
 
   const order = new Order({
@@ -30,6 +32,8 @@ export const createOrder = asyncHandler(async (req, res) => {
     tax,
     shippingOption,
     total,
+    email,
+    phone
   });
 
   const createdOrder = await order.save();

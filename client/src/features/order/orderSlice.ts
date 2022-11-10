@@ -23,6 +23,8 @@ const initialState: OrderState = {
     paymentMethod: undefined,
     shippingAddress: undefined,
     shippingOption: undefined,
+    email: "",
+    phone: ""
 }
 
 // Submit order
@@ -32,9 +34,7 @@ export const submitOrder = createAsyncThunk(
         try {
             return await orderService.submit(order);
         } catch (error) {
-            console.log(error);
             const message = narrowError(error);
-            console.log(message);
             thunkAPI.dispatch(alert({text: message, type: "danger"}));
             return thunkAPI.rejectWithValue(message);
         }

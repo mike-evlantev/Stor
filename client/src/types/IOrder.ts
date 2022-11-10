@@ -16,4 +16,6 @@ export interface IOrder {
     paymentMethod: PaymentMethod;
     shippingAddress: IAddress;
     shippingOption: IShippingOption;
+    email: string;
+    phone: string;
 }

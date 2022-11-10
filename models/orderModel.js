@@ -61,6 +61,7 @@ const shippingOptionSchema = mongoose.Schema(
     name: { type: String, required: true },
     timeframe: { type: String, required: true },
     cost: { type: Number, required: true },
+    icon: { type: String, required: false },
   },
   {
     timestamps: true,
@@ -110,6 +111,14 @@ const orderSchema = mongoose.Schema(
     shippingAddress: addressSchema,
     shippingOption: shippingOptionSchema,
     paymentMethod: paymentMethod,
+    email: {
+      type: String,
+      required: false,
+    },
+    phone: {
+      type: String,
+      required: false,
+    },
     isDelivered: {
       type: Boolean,
       default: false,
