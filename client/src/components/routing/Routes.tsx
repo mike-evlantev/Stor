@@ -7,7 +7,7 @@ import { BillingInfoForm } from "../pages/Checkout/BillingInfoForm";
 import { Checkout } from "../pages/Checkout/Checkout";
 import { ReviewOrder } from "../pages/Checkout/ReviewOrder";
 import { ShippingInfoForm } from "../pages/Checkout/ShippingInfoForm";
-import { Confirmation } from "../pages/Confirmation";
+import { Confirmation } from "../pages/Checkout/Confirmation";
 import { Dashboard } from "../pages/Dashboard";
 import { Home } from "../pages/Home";
 import { PageNotFound } from "../pages/PageNotFound";
@@ -18,6 +18,7 @@ import { SignIn } from "../pages/SignIn";
 import { TermsOfUse } from "../pages/TermsOfUse";
 import { WishList } from "../pages/WishList";
 import { PrivateRoute } from "./PrivateRoute";
+import { ReturnPolicy } from "../pages/ReturnPolicy";
 
 export const Routes: React.FC = () => {
     return (
@@ -50,6 +51,7 @@ export const Routes: React.FC = () => {
                 <Route exact path="/privacy" component={PrivacyPolicy} />
                 <Route exact path="/product/:id" component={ProductDetails} />
                 <Route path="/terms" component={TermsOfUse} />
+                <Route path="/returns" component={ReturnPolicy} />
                 <PrivateRoute exact path="/dashboard" component={Dashboard} />
                 <PrivateRoute exact path="/profile" component={Profile} />
                 <PrivateRoute exact path="/wishlist" component={WishList} />
