@@ -20,10 +20,10 @@ export const ShippingMethodForm: React.FC = () => {
       <ListGroup.Item>
         <h2 className="py-3">Shipping options</h2>
         <ButtonGroup className="w-100">
-          {availableShippingOptions.map((option: IShippingOption, i: number) => (
+          {availableShippingOptions.map((option: IShippingOption) => (
             <Card
               as={Button}
-              key={i}
+              key={option.id}
               variant="outline-dark"
               name="shipping"
               value={option.id}
@@ -33,7 +33,7 @@ export const ShippingMethodForm: React.FC = () => {
               <Card.Body>
                 <Card.Title className="mb-4">{option.timeframe}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
-                  <i className={option.icon}></i>
+                  <i className={`${option.icon} fa-3x`}></i>
                 </Card.Subtitle>
                 <Card.Text>{option.name}</Card.Text>
                 <Card.Title>
