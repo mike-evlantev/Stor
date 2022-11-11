@@ -82,7 +82,7 @@ export const ShippingInfoForm: React.FC = () => {
     };
 
     const handleTestDataClick = () => {
-        setEmail("jimmy@durante.com");
+        setEmail(process.env.REACT_APP_ADMIN_EMAIL as string);
         setName({first: "Jimmy", last: "Durante"});
         setAddress({address1: "1844 Grand Ave", address2: "#1", city: "Del Mar", state: "CA", zip: "92014"});
     }
