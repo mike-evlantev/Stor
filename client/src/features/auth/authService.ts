@@ -20,7 +20,7 @@ const register = async (userData: Pick<IUser, "email" | "password">) => {
     return data;
 }
 
-// Register user
+// Log in user
 const login = async (userData: Pick<IUser, "email" | "password">) => {
     const config = {
         headers: {
