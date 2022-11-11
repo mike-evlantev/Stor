@@ -3,6 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { useStripeMethods } from "../../../hooks/useStripeMethods";
+import { useEmailMethods } from "../../../hooks/useEmailMethods";
 import { IShippingOption } from "../../../types/IShippingOption";
 import { submitOrder } from "../../../features/order/orderSlice";
 import { GoBackButton } from "./GoBackButton";
@@ -17,6 +18,7 @@ export const ReviewOrder: React.FC = () => {
     const dispatch = useAppDispatch();
     const history = useHistory();
     const { processStripeCreditCardPayment } = useStripeMethods();
+    const { sendEmail } = useEmailMethods();
     const { bagItems, shipping, subtotal, tax, total } = useAppSelector(state => state.bag);
     const { first, last, shippingAddress, card, email, phone } = useAppSelector(state => state.customer);
     const [loading, setLoading] = React.useState(false);
@@ -37,7 +39,7 @@ export const ReviewOrder: React.FC = () => {
             email,
             phone
         };
-        console.log(order);
+        
         dispatch(await submitOrder(order));
     };
 
@@ -45,11 +47,14 @@ export const ReviewOrder: React.FC = () => {
         setLoading(true);
         const paymentResult = await processStripeCreditCardPayment();  
         console.log(paymentResult);
-        await processOrder();
+        
+        // Although async, do not await these functions 
+        // as they need to finish running prior to redirecting to confirmation
+        processOrder();
+        sendEmail();
+
         history.push("/confirmation");
     };
-
-    
 
     return(
         <>
