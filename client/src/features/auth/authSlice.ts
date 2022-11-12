@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { IUser } from "../../types/IUser";
+import { loggedInUserFromStorage } from "../../utils/authUtils";
 import { narrowError } from "../../utils/errorUtils";
 import { BaseState } from "../BaseState";
 import { alert } from "../messages/messagesSlice";
@@ -9,10 +10,6 @@ interface AuthState extends BaseState {
     isAuthenticated: boolean;
     loggedInUser: IUser | undefined
 }
-
-const loggedInUserFromStorage: IUser = localStorage.getItem("loggedInUser")
-  ? JSON.parse(localStorage.getItem("loggedInUser") as string)
-  : undefined;
 
 const initialState: AuthState = {
     loading: false,
