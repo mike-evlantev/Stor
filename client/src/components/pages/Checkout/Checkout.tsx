@@ -2,7 +2,7 @@ import * as React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Loader } from "../../shared/Loader";
-import { EmptyBag } from "../Bag/EmptyBag";
+import { EmptyBag } from "../bag/EmptyBag";
 import { OrderItems } from "./OrderItems";
 
 interface Props {

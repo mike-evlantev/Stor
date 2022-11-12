@@ -4,7 +4,7 @@ import { getProducts } from "../../features/products/productsSlice";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { useAppSelector } from "../../hooks/useAppSelector";
 import { Loader } from "../shared/Loader";
-import { ProductCard } from "./Products/ProductCard";
+import { ProductCard } from "./products/ProductCard";
 
 export const Home: React.FC = () => {
     const dispatch = useAppDispatch();
