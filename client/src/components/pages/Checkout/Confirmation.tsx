@@ -1,12 +1,12 @@
 import * as React from "react";
-import { Button, Col, Image, ListGroup } from "react-bootstrap";
+import { Button, Col, Image } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { IAddress } from "../../../types/IAddress";
 import { IName } from "../../../types/IName";
 import { Address } from "../../shared/Address";
 import { Loader } from "../../shared/Loader";
-import { Last4 } from "./Last4";
+import { Last4 } from "../../shared/Last4";
 
 export const Confirmation: React.FC = () => {
     const history = useHistory();
@@ -25,12 +25,6 @@ export const Confirmation: React.FC = () => {
         history.push("/");
         return null;
     }
-
-    const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-    };
 
     return (
         <>
