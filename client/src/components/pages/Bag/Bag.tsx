@@ -45,7 +45,7 @@ export const Bag: React.FC = () => {
                                     </Col>
                                     <Col md={8}>
                                         <Card.Title>
-                                            <Link to={`/product/${item.id}`}>
+                                            <Link to={`/products/${item.id}`}>
                                                 {item.name}
                                             </Link>
                                         </Card.Title>

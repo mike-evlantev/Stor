@@ -13,7 +13,7 @@ export const ProductCard: React.FC<Props> = ({product}) => {
     const history = useHistory();
   
     const goToProductDetails = () =>{ 
-        history.push(`/product/${product.id}`);
+        history.push(`/products/${product.id}`);
     }
     return(
         <Card className="my-3" onClick={() => goToProductDetails()} style={{cursor: "pointer"}}>
