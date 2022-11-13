@@ -12,7 +12,7 @@ import { PaymentMethod } from "@stripe/stripe-js";
 import { Loader } from "../../shared/Loader";
 import { ShippingInfoSummary } from "./ShippingInfoSummary";
 import { Button, Col, Form, ListGroup } from "react-bootstrap";
-import { Last4 } from "./Last4";
+import { Last4 } from "../../shared/Last4";
 
 export const ReviewOrder: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -25,6 +25,7 @@ export const ReviewOrder: React.FC = () => {
     
     const processOrder = async () => {    
         const order: IOrder = {
+            id: "",
             orderNumber: -1,
             createdAt: "",
             first,
