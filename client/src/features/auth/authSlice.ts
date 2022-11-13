@@ -91,7 +91,10 @@ export const authSlice = createSlice({
                 state.isAuthenticated = false;
                 state.loggedInUser = {} as IUser;
             })
-            .addCase(logout.fulfilled, (state) => { state.loggedInUser = {} as IUser; })
+            .addCase(logout.fulfilled, (state) => { 
+                state.isAuthenticated = false;
+                state.loggedInUser = {} as IUser; 
+            })
     }
 });
 
