@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Col, ListGroup, Modal, Row, Image, Card, Form, Button, Container, Table } from "react-bootstrap";
-import { Link, RouteComponentProps, useHistory } from "react-router-dom";
+import { Link, RouteComponentProps, useHistory, useParams } from "react-router-dom";
 import { addToBag } from "../../../features/bag/bagSlice";
 import { getProductById } from "../../../features/products/productsSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
@@ -10,20 +10,19 @@ import Rating from "../../Rating";
 import { Loader } from "../../shared/Loader";
 import { QtySelect } from "../../shared/QtySelect";
 
-interface MatchParams {
+interface Params {
     id: string;
 }
 
-interface Props extends RouteComponentProps<MatchParams> {}
-
-export const ProductDetails: React.FC<Props> = ({ match }) => {
+export const ProductDetails: React.FC = () => {
     const dispatch = useAppDispatch();
+    const { id } = useParams<Params>();
     const { loading, product } = useAppSelector(state => state.products);
     const [quantity, setQuantity] = React.useState(1);
     const [showModal, setShowModal] = React.useState(false);
 
     React.useEffect(() => {
-        dispatch(getProductById(match.params.id));
+        dispatch(getProductById(id));
     }, []);
 
     const inStock = product.countInStock > 0;
