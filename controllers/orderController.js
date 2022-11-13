@@ -39,3 +39,11 @@ export const createOrder = asyncHandler(async (req, res) => {
   const createdOrder = await order.save();
   res.status(201).json(createdOrder);
 });
+
+// @route       GET api/orders
+// @desc        Get all orders
+// @access      Private (Admin)
+export const getOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({});
+  res.json(orders);
+});

@@ -133,6 +133,16 @@ const orderSchema = mongoose.Schema(
   }
 );
 
+// Duplicate the ID field.
+orderSchema.virtual('id').get(function(){
+  return this._id.toHexString();
+});
+
+// Ensure virtual fields are serialised.
+orderSchema.set('toJSON', {
+  virtuals: true
+});
+
 orderSchema.plugin(AutoIncrement, {inc_field: 'orderNumber', start_seq: 1000000000});
 
 export default mongoose.model("Order", orderSchema);
