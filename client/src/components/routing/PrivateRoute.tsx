@@ -20,3 +20,17 @@ export const PrivateRoute: React.FC<Props> = ({ component: Component, ...rest })
         />
     );
 }
+
+export const AdminRoute: React.FC<Props> = ({ component: Component, ...rest }) => {
+    const { isAuthenticated, loading, loggedInUser } = useAppSelector(state => state.auth);
+    return (
+        <Route
+            {...rest}
+            render={(props) =>
+                !isAuthenticated && !loading && loggedInUser?.isAdmin
+                    ? <Redirect to="/login" />
+                    : <Component {...props} />
+            }
+        />
+    );
+}

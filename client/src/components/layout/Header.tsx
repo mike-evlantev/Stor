@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
                 <Container>
                     <LinkContainer to="/">
                         <Navbar.Brand>
-                        <i className="fas fa-burn text-primary"></i>&nbsp;&nbsp;Stor
+                            <i className="fas fa-burn text-primary"></i>&nbsp;&nbsp;Stor
                         </Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Toggle />
@@ -37,7 +37,7 @@ export const Header: React.FC = () => {
                             {isAuthenticated 
                                 ? <>
                                     {loggedInUser?.isAdmin && (
-                                        <LinkContainer to="/login">
+                                        <LinkContainer to="/admin/orders">
                                             <Nav.Link className="my-auto mx-2">Admin</Nav.Link>
                                         </LinkContainer>
                                     )}
