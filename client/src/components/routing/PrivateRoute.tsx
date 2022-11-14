@@ -27,7 +27,7 @@ export const AdminRoute: React.FC<Props> = ({ component: Component, ...rest }) =
         <Route
             {...rest}
             render={(props) =>
-                !isAuthenticated && !loading && loggedInUser?.isAdmin
+                !isAuthenticated && !loading && !loggedInUser?.isAdmin
                     ? <Redirect to="/login" />
                     : <Component {...props} />
             }
