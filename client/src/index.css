@@ -25,3 +25,7 @@ main {
 .dev:hover {
   opacity: unset;
 }
+
+img.hover-zoom:hover {
+  transform: scale(5);
+}
