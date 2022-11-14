@@ -1,11 +1,12 @@
 import * as React from "react";
 
 interface Props {
+    boldText: boolean;
     brand: string | undefined;
     last4: string | undefined;
 }
 
-export const Last4: React.FC<Props> = ({brand, last4}) => {
+export const Last4: React.FC<Props> = ({boldText, brand, last4}) => {
     const getCreditCardBrandIcon = (brand: string | undefined) => {
         //`amex`, `diners`, `discover`, `jcb`, `mastercard`, `unionpay`, `visa`, or `unknown`.
         switch (brand) {
@@ -33,7 +34,7 @@ export const Last4: React.FC<Props> = ({brand, last4}) => {
         <div className="d-flex align-items-center">
             {getCreditCardBrandIcon(brand)}
             <div className="mx-1"></div>
-            <strong>ending in {last4}</strong>
+            <span className={boldText ? "fw-bold" : ""}>ending in {last4}</span>
         </div>
     );
 }

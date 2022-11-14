@@ -91,7 +91,7 @@ export const Confirmation: React.FC = () => {
                                     <h5><strong>Payment</strong></h5>
                                 </Col>
                                 <Col sm={6}>
-                                    <Last4 brand={order.paymentMethod?.card?.brand} last4={order.paymentMethod?.card?.last4} />                               
+                                    <Last4 boldText={true} brand={order.paymentMethod?.card?.brand} last4={order.paymentMethod?.card?.last4} />                               
                                 </Col>
                             </div>
                             <div className="d-flex align-items-start mx-5 mb-3">
