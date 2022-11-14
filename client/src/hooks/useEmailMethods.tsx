@@ -3,6 +3,7 @@ import { narrowError } from "../utils/errorUtils";
 import { useAppDispatch } from "./useAppDispatch";
 import { alert } from "../features/messages/messagesSlice";
 import { IUser } from "../types/IUser";
+import { setAuthToken } from "../utils/authUtils";
 
 interface useEmailMethodsResult {
     sendEmail: () => Promise<void>;
@@ -16,17 +17,20 @@ export const useEmailMethods = (): useEmailMethodsResult => {
     const sendEmail = async () => {
         try {
             const token = await getToken({email, password});
+            setAuthToken(token);
             const payload = { message: "triggering send email from home component" };
             const config = {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
                 },
             };
-            const result = await axios.post("/api/email/send", payload, config);
-            
-            console.log(result.data);
-            return result.data;
+            const response = await axios
+                .post("/api/email/send", payload, config)
+                .then(response => response.data)
+                .catch((error) => {
+                    console.error(error);
+                });
+            return response;
         } catch (error) {
             const message = narrowError(error);
             dispatch(alert({text: message, type: "danger"}));
