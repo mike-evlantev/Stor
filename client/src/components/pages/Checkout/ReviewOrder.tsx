@@ -47,8 +47,7 @@ export const ReviewOrder: React.FC = () => {
     const handleSubmitOrder = async () => {
         setLoading(true);
         const paymentResult = await processStripeCreditCardPayment();  
-        console.log(paymentResult);
-        
+
         // Although async, do not await these functions 
         // as they need to finish running prior to redirecting to confirmation
         processOrder();
@@ -72,7 +71,7 @@ export const ReviewOrder: React.FC = () => {
                                 </h4>
                             </Col>
                             <Col sm={5}>
-                                <Last4 brand={card.paymentMethod?.card?.brand} last4={card.paymentMethod?.card?.last4} />
+                                <Last4 boldText={true} brand={card.paymentMethod?.card?.brand} last4={card.paymentMethod?.card?.last4} />
                             </Col>
                             <Col sm={1}>
                                 <u className="float-end" onClick={() => history.push("checkout2")} style={{cursor: "pointer"}}>Edit</u>
