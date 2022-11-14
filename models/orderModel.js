@@ -26,17 +26,34 @@ const card = mongoose.Schema(
     exp_month: {type: Number, required: true},
     exp_year: {type: Number, required: true},
     funding: {type: String, required: true},
-    last4: {type: String, required: true}    
-  },
+    last4: {type: String, required: true}
+  }
+);
+
+const address = mongoose.Schema(
   {
-    timestamps: true,
+    city: {type: String, required: false},
+    line1: {type: String, required: false},
+    line2: {type: String, required: false},
+    postal_code: {type: String, required: false},
+    state: {type: String, required: false}
+  }
+);
+
+const billingDetails = mongoose.Schema(
+  {
+    address: address,
+    email: {type: String, required: false},
+    name: {type: String, required: false},
+    phone: {type: String, required: false}
   }
 );
 
 const paymentMethod = mongoose.Schema(
   {
     id: { type: String, required: true },
-    card: card
+    card: card,
+    billing_details: billingDetails
   },
   {
     timestamps: true,
