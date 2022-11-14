@@ -21,8 +21,8 @@ export const getOrders = createAsyncThunk(
     "admin/getOrders",
     async (_, thunkAPI) => {
         try {
-            const orders = await adminService.getOrders();
-            orders.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf());
+            const orders = await adminService.getOrders(thunkAPI.dispatch);
+            if (orders?.length > 0) orders.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf());
             return orders;
         } catch (error) {
             const message = narrowError(error);
