@@ -1,7 +1,8 @@
 import { useElements, useStripe } from "@stripe/react-stripe-js";
-import { PaymentIntent, PaymentIntentResult, PaymentMethod, PaymentMethodCreateParams } from "@stripe/stripe-js";
+import { Address, PaymentIntent, PaymentIntentResult, PaymentMethod, PaymentMethodCreateParams } from "@stripe/stripe-js";
 import axios, { AxiosResponse } from "axios";
 import { alert } from "../features/messages/messagesSlice";
+import { IAddress } from "../types/IAddress";
 import { narrowError } from "../utils/errorUtils";
 import { useAppDispatch } from "./useAppDispatch";
 import { useAppSelector } from "./useAppSelector";
@@ -11,6 +12,8 @@ interface useStripeMethodsResult {
     createPaymentIntent: () => Promise<AxiosResponse<any> | undefined>;
     confirmPaymentIntent: (clientSecret: string, paymentMethod: PaymentMethod) => Promise<PaymentIntent | undefined>;
     processStripeCreditCardPayment: () => Promise<PaymentIntent | undefined>;
+    toAddress: (address: IAddress) => Address;
+    toIAddress: (address: Address | null) => IAddress;
 }
 
 export const useStripeMethods = (): useStripeMethodsResult => {
@@ -44,8 +47,7 @@ export const useStripeMethods = (): useStripeMethodsResult => {
                 phone,
                 address: { city, line1: address1, line2: address2, state, postal_code: zip }
             };
-
-            console.log(billingDetails);
+            
             const {error, paymentMethod} = await stripe.createPaymentMethod({
                 type: "card",
                 card: cardNumber,
@@ -104,6 +106,27 @@ export const useStripeMethods = (): useStripeMethodsResult => {
         const paymentIntent = await confirmPaymentIntent(String(clientSecret), paymentMethod as PaymentMethod);
         return paymentIntent;
     }
+
+    const toAddress = (address: IAddress): Address => {
+        return {
+            line1: address.address1,
+            line2: address?.address2 ?? null,
+            city: address.city,
+            state: address.state,
+            postal_code: address.zip,
+            country: null
+        };
+    }
+
+    const toIAddress = (address: Address | null): IAddress => {
+        return {
+            address1: address?.line1 ?? "",
+            address2: address?.line2 ?? undefined,
+            city: address?.city ?? "",
+            state: address?.state ?? "",
+            zip: address?.postal_code ?? ""
+        };
+    }
     
-    return {createPaymentMethod, createPaymentIntent, confirmPaymentIntent, processStripeCreditCardPayment};
+    return {createPaymentMethod, createPaymentIntent, confirmPaymentIntent, processStripeCreditCardPayment, toAddress, toIAddress};
 }

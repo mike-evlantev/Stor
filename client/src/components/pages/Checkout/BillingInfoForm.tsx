@@ -41,7 +41,7 @@ export const BillingInfoForm: React.FC = () => {
     const [errors, setErrors] = React.useState<BillingInfoFormErrors>(initErrors);
     const [creditCardValidation, setCreditCardValidation] = React.useState<ICreditCardValidation>(initCreditCardValidation);
 
-    const {createPaymentMethod} = useStripeMethods();
+    const {createPaymentMethod, toAddress} = useStripeMethods();
 
     const appearance = {
         theme: 'none',
@@ -75,6 +75,11 @@ export const BillingInfoForm: React.FC = () => {
     const handleNextStepClick = async (step: number) => {
         const finalAddress = sameAsShipping ? customer.shippingAddress : address;
         const [valid, errorObj] = handleValidateChange({...finalAddress, nameOnCard});
+        
+        // if valid udpate customer state right away
+        if (valid) {
+            dispatch(updateCustomer({billingAddress: finalAddress}));
+        }
 
         if (!creditCardValidation.number.complete && creditCardValidation.number.empty) {
             setCreditCardValidation((prev: ICreditCardValidation)  => ({...prev, number: {...prev.number, error: {type: "validation_error", code: "", message: "Your card number is incomplete."}}}));
@@ -93,11 +98,12 @@ export const BillingInfoForm: React.FC = () => {
                         && (creditCardValidation.cvc.complete && !creditCardValidation.cvc.empty && !creditCardValidation.cvc.error);
         
         if (valid && stripeValid) {
-            //dispatch(updateCustomer({billingAddress: finalAddress, card: {nameOnCard}}));
-            
-
             const paymentMethod = await createPaymentMethod();
             if (paymentMethod) {
+                if (!paymentMethod.billing_details.name || !paymentMethod.billing_details.address?.postal_code) {
+                    paymentMethod.billing_details.name = nameOnCard;
+                    paymentMethod.billing_details.address = toAddress(finalAddress);
+                }
                 dispatch(updateCustomer({card: {...creditCardValidation, nameOnCard, paymentMethod}}));
             } else {
                 dispatch(alert({text: "Failed to create stripe payment method", type: "danger"}))
