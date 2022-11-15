@@ -36,11 +36,16 @@ export const OrderDetails: React.FC = () => {
 };
 
 const OrderDetailsInternal = ({order}: {order: IOrder}) => {
-    const { orderNumber, first, last, shippingAddress, shippingOption, orderItems, paymentMethod, subtotal, tax, total } = order;
-    
+    const { orderNumber, first, last, shippingAddress, shippingOption, orderItems, paymentMethod, subtotal, tax, total, createdAt } = order;
+    const { name, address } = { ...paymentMethod.billing_details }; // this spread notation allows to destructure potentially undefined objects
+    const localDate = new Date(createdAt).toLocaleString("en-US");
+
     return(
         <div className="d-flex flex-column">
-            <h5 className="mb-3">Order # {orderNumber}</h5>            
+            <div className="d-flex">
+                <h5 className="mb-3">Order # {orderNumber}</h5>
+                <div className="ms-auto">{localDate}</div>
+            </div>           
             <div className="d-flex align-items-start">
                 <Table className="table-sm">
                     <thead>
@@ -57,10 +62,10 @@ const OrderDetailsInternal = ({order}: {order: IOrder}) => {
                             </td>
                             <td colSpan={2}>
                                 <>
-                                    {paymentMethod.billing_details?.name && <div>{paymentMethod.billing_details.name}</div>}
-                                    <div>{paymentMethod.billing_details.address?.line1}{", "}{paymentMethod.billing_details.address?.line2}</div>
-                                    <div>{paymentMethod.billing_details.address?.city}{", "}{paymentMethod.billing_details.address?.state}&nbsp;{paymentMethod.billing_details.address?.postal_code}</div>
-                                </>                                
+                                    {name && <div>{name}</div>}
+                                    <div>{address?.line1}{", "}{address?.line2}</div>
+                                    <div>{address?.city}{", "}{address?.state}&nbsp;{address?.postal_code}</div>
+                                </>
                             </td>
                             <td></td>
                         </tr>
@@ -78,7 +83,7 @@ const OrderDetailsInternal = ({order}: {order: IOrder}) => {
                         {orderItems?.length > 0 && orderItems.map(o => 
                             <tr key={o.id} className="align-middle">
                                 <td>
-                                    <Link to={`products/${o.id}`}>
+                                    <Link to={`../products/${o.id}`}>
                                         {o.id}
                                     </Link>
                                 </td>
