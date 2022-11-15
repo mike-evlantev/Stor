@@ -1,6 +1,7 @@
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { Address, PaymentIntent, PaymentIntentResult, PaymentMethod, PaymentMethodCreateParams } from "@stripe/stripe-js";
 import axios, { AxiosResponse } from "axios";
+import React from "react";
 import { alert } from "../features/messages/messagesSlice";
 import { IAddress } from "../types/IAddress";
 import { narrowError } from "../utils/errorUtils";
@@ -8,12 +9,11 @@ import { useAppDispatch } from "./useAppDispatch";
 import { useAppSelector } from "./useAppSelector";
 
 interface useStripeMethodsResult {
-    createPaymentMethod: () => Promise<PaymentMethod | undefined>;
+    createPaymentMethod: (billingAddress: IAddress, nameOnCard: string) => Promise<PaymentMethod | undefined>;
     createPaymentIntent: () => Promise<AxiosResponse<any> | undefined>;
     confirmPaymentIntent: (clientSecret: string, paymentMethod: PaymentMethod) => Promise<PaymentIntent | undefined>;
     processStripeCreditCardPayment: () => Promise<PaymentIntent | undefined>;
-    toAddress: (address: IAddress) => Address;
-    toIAddress: (address: Address | null) => IAddress;
+    toAddress: (address: IAddress) => PaymentMethodCreateParams.BillingDetails.Address;
 }
 
 export const useStripeMethods = (): useStripeMethodsResult => {
@@ -21,9 +21,8 @@ export const useStripeMethods = (): useStripeMethodsResult => {
     const elements = useElements();
     const dispatch = useAppDispatch();
     const customer = useAppSelector(state => state.customer);
-    const {total} = useAppSelector(state => state.bag);
     const {email, phone, billingAddress, card} = customer;
-    const {address1, address2, city, state, zip} = billingAddress;    
+    const {total} = useAppSelector(state => state.bag);
 
     if (!stripe || !elements) {
         const msg1 = !stripe && "Stripe is undefined";
@@ -33,7 +32,7 @@ export const useStripeMethods = (): useStripeMethodsResult => {
 
     // To charge a card with Stripe
     // 1. create payment method (client-side)
-    const createPaymentMethod = async (): Promise<PaymentMethod | undefined> => {
+    const createPaymentMethod = async (billingAddress: IAddress, nameOnCard: string): Promise<PaymentMethod | undefined> => {
         try {
             const cardNumber = elements.getElement("cardNumber");
             
@@ -42,10 +41,10 @@ export const useStripeMethods = (): useStripeMethodsResult => {
             }
 
             const billingDetails: PaymentMethodCreateParams.BillingDetails = {
-                name: card.nameOnCard,
+                name: nameOnCard,
                 email,
                 phone,
-                address: { city, line1: address1, line2: address2, state, postal_code: zip }
+                address: toAddress(billingAddress)
             };
             
             const {error, paymentMethod} = await stripe.createPaymentMethod({
@@ -107,26 +106,16 @@ export const useStripeMethods = (): useStripeMethodsResult => {
         return paymentIntent;
     }
 
-    const toAddress = (address: IAddress): Address => {
+    const toAddress = (address: IAddress): PaymentMethodCreateParams.BillingDetails.Address => {
         return {
             line1: address.address1,
-            line2: address?.address2 ?? null,
+            line2: address?.address2,
             city: address.city,
             state: address.state,
             postal_code: address.zip,
-            country: null
-        };
-    }
-
-    const toIAddress = (address: Address | null): IAddress => {
-        return {
-            address1: address?.line1 ?? "",
-            address2: address?.line2 ?? undefined,
-            city: address?.city ?? "",
-            state: address?.state ?? "",
-            zip: address?.postal_code ?? ""
+            country: undefined
         };
     }
     
-    return {createPaymentMethod, createPaymentIntent, confirmPaymentIntent, processStripeCreditCardPayment, toAddress, toIAddress};
+    return {createPaymentMethod, createPaymentIntent, confirmPaymentIntent, processStripeCreditCardPayment, toAddress};
 }

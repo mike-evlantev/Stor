@@ -98,12 +98,8 @@ export const BillingInfoForm: React.FC = () => {
                         && (creditCardValidation.cvc.complete && !creditCardValidation.cvc.empty && !creditCardValidation.cvc.error);
         
         if (valid && stripeValid) {
-            const paymentMethod = await createPaymentMethod();
+            const paymentMethod = await createPaymentMethod(finalAddress, nameOnCard);
             if (paymentMethod) {
-                if (!paymentMethod.billing_details.name || !paymentMethod.billing_details.address?.postal_code) {
-                    paymentMethod.billing_details.name = nameOnCard;
-                    paymentMethod.billing_details.address = toAddress(finalAddress);
-                }
                 dispatch(updateCustomer({card: {...creditCardValidation, nameOnCard, paymentMethod}}));
             } else {
                 dispatch(alert({text: "Failed to create stripe payment method", type: "danger"}))
