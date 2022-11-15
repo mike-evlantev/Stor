@@ -72,7 +72,7 @@ export const Confirmation: React.FC = () => {
                                 <Col sm={6}></Col>
                                 <Col sm={6}>
                                     {order.orderItems?.map(item =>
-                                        <div className="d-flex" key={item.id}>
+                                        <div className="d-flex my-2" key={item.id}>
                                             <Col md={3}>
                                                 <Image src={item.image} alt={item.name} fluid />
                                             </Col>
