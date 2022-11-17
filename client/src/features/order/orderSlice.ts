@@ -32,7 +32,7 @@ export const submitOrder = createAsyncThunk(
     "order/submit",
     async (order: IOrder, thunkAPI) => {
         try {
-            return await orderService.submit(order);
+            return await orderService.submit(order, thunkAPI.dispatch);
         } catch (error) {
             const message = narrowError(error);
             thunkAPI.dispatch(alert({text: message, type: "danger"}));
