@@ -1,12 +1,13 @@
 import * as React from "react";
-import { Image, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Button, Image, Table } from "react-bootstrap";
+import { Link, useHistory } from "react-router-dom";
 import { getProducts } from "../../../features/products/productsSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { Loader } from "../../shared/Loader";
 
 export const Products: React.FC = () => {
+	const history = useHistory();
 	const dispatch = useAppDispatch();
 	const { loading, products } = useAppSelector(state => state.products);
 
@@ -19,6 +20,7 @@ export const Products: React.FC = () => {
             {loading
                 ? <Loader />
                 : <>
+					<Button className="float-end" onClick={() => history.push("products/create")}>Add Product</Button>
                     <Table className="table-sm">
 						<thead>
 							<tr>

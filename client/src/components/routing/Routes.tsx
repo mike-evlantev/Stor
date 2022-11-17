@@ -25,6 +25,7 @@ import { Products } from "../pages/admin/Products";
 import { Users } from "../pages/admin/Users";
 import { OrderDetails } from "../pages/admin/OrderDetails";
 import { EditProductDetails } from "../pages/admin/EditProductDetails";
+import { CreateProduct } from "../pages/admin/CreateProduct";
 
 export const Routes: React.FC = () => {
     return (
@@ -73,6 +74,10 @@ export const Routes: React.FC = () => {
                     exact 
                     path="/admin/products" 
                     component={() => <AdminDashboard><Products /></AdminDashboard>} />
+                 <AdminRoute 
+                    exact 
+                    path="/admin/products/create" 
+                    component={() => <AdminDashboard><CreateProduct /></AdminDashboard>} />
                 <AdminRoute 
                     exact 
                     path="/admin/products/:id" 
