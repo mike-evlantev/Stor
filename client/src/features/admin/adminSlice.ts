@@ -4,16 +4,23 @@ import { narrowError } from "../../utils/errorUtils";
 import { BaseState } from "../BaseState";
 import { adminService } from "./adminService";
 import { alert } from "../messages/messagesSlice";
+import { IProduct } from "../../types/IProduct";
+import { getProductById, getProducts } from "../products/productsSlice";
+import { IKeyValuePair } from "../../types/IKeyValuePair";
 
 interface AdminState extends BaseState {
     orders: IOrder[];
+    products: IProduct[];
+    product: IProduct;
 }
 
 const initialState: AdminState = {
     loading: false,
     success: false,
     error: undefined,
-    orders: []
+    orders: [],
+    products: [],
+    product: {} as IProduct
 }
 
 // Get orders
@@ -22,8 +29,36 @@ export const getOrders = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             const orders = await adminService.getOrders(thunkAPI.dispatch);
-            if (orders?.length > 0) orders.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf());
+            if (orders && orders.length > 0) { orders.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()); }
             return orders;
+        } catch (error) {
+            const message = narrowError(error);
+            thunkAPI.dispatch(alert({text: message, type: "danger"}));
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Create product
+export const createProduct = createAsyncThunk(
+    "admin/createProduct",
+    async (product: IProduct, thunkAPI) => {
+        try {
+            return await adminService.createProduct(product, thunkAPI.dispatch);
+        } catch (error) {
+            const message = narrowError(error);
+            thunkAPI.dispatch(alert({text: message, type: "danger"}));
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Update product
+export const updateProduct = createAsyncThunk(
+    "admin/updateProduct",
+    async (product: IProduct, thunkAPI) => {
+        try {
+            return await adminService.updateProduct(product, thunkAPI.dispatch);
         } catch (error) {
             const message = narrowError(error);
             thunkAPI.dispatch(alert({text: message, type: "danger"}));
@@ -35,23 +70,50 @@ export const getOrders = createAsyncThunk(
 export const adminSlice = createSlice({
     name: "admin",
     initialState,
-    reducers: {},
+    reducers: {
+        updateCurrentProduct: (state, action: PayloadAction<IKeyValuePair<string>>) => {
+            return {...state, product: {...state.product, ...action.payload}};
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(getOrders.pending, (state) => { state.loading = true; })
-            .addCase(getOrders.fulfilled, (state, action: PayloadAction<IOrder[]>) => {
-                state.loading = false;
-                state.success = true;
-                state.orders = action.payload;
+            .addCase(getOrders.fulfilled, (state, action: PayloadAction<IOrder[] | undefined>) => {
+                return {...state, loading: false, success: true, orders: action.payload || []};
             })
             .addCase(getOrders.rejected, (state, action) => {
-                state.loading = false;
-                state.success = false;
-                state.error = narrowError(action.payload);
-                state.orders = [];
+                return {...state, loading: false, success: false, error: narrowError(action.payload)};
+            })
+            .addCase(getProducts.pending, (state) => { state.loading = true; })
+            .addCase(getProducts.fulfilled, (state, action: PayloadAction<IProduct[]>) => {
+                return {...state, loading: false, success: true, products: action.payload || []};
+            })
+            .addCase(getProducts.rejected, (state, action: PayloadAction<unknown>) => {
+                return {...state, loading: false, success: false, error: narrowError(action.payload)};
+            })
+            .addCase(getProductById.pending, (state) => { state.loading = true; })
+            .addCase(getProductById.fulfilled, (state, action: PayloadAction<IProduct>) => {
+                return {...state, loading: false, success: true, product: action.payload || {} as IProduct};
+            })
+            .addCase(getProductById.rejected, (state, action: PayloadAction<unknown>) => {
+                return {...state, loading: false, success: false, error: narrowError(action.payload)};
+            })
+            .addCase(createProduct.pending, (state) => { state.loading = true; })
+            .addCase(createProduct.fulfilled, (state, action: PayloadAction<IProduct | undefined>) =>{
+                return {...state, loading: false, success: true, product: action.payload || {} as IProduct};
+            })
+            .addCase(createProduct.rejected, (state, action) => {
+                return {...state, loading: false, success: false, error: narrowError(action.payload)};
+            })
+            .addCase(updateProduct.pending, (state) => { state.loading = true; })
+            .addCase(updateProduct.fulfilled, (state, action: PayloadAction<IProduct | undefined>) =>{
+                return {...state, loading: false, success: true, product: action.payload || {} as IProduct};
+            })
+            .addCase(updateProduct.rejected, (state, action) => {
+                return {...state, loading: false, success: false, error: narrowError(action.payload)};
             })
     }
 });
 
-//export const { reset } = adminSlice.actions;
+export const { updateCurrentProduct } = adminSlice.actions;
 export default adminSlice.reducer;
