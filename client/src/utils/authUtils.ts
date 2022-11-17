@@ -11,6 +11,9 @@ export const setAuthToken = (token: string) => {
   }
 };
 
-export const loggedInUserFromStorage: IUser = localStorage.getItem("loggedInUser")
-    ? JSON.parse(localStorage.getItem("loggedInUser") as string)
+export const loggedInUserFromStorage = (): IUser => {
+  const user = localStorage.getItem("loggedInUser");
+  return user
+    ? JSON.parse(user as string)
     : undefined;
+}

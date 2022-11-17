@@ -15,8 +15,8 @@ const initialState: AuthState = {
     loading: false,
     error: undefined,
     success: false,
-    isAuthenticated: !!loggedInUserFromStorage?.token,
-    loggedInUser: loggedInUserFromStorage?.token ? loggedInUserFromStorage : undefined
+    isAuthenticated: !!loggedInUserFromStorage()?.token,
+    loggedInUser: loggedInUserFromStorage()?.token ? loggedInUserFromStorage() : undefined
 }
 
 // Register user
