@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Col, ListGroup, Modal, Row, Image, Card, Form, Button, Container, Table } from "react-bootstrap";
-import { Link, RouteComponentProps, useHistory, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { addToBag } from "../../../features/bag/bagSlice";
 import { getProductById } from "../../../features/products/productsSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
