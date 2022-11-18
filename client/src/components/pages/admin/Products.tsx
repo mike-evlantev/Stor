@@ -20,7 +20,7 @@ export const Products: React.FC = () => {
             {loading
                 ? <Loader />
                 : <>
-					<Button className="float-end" onClick={() => history.push("products/create")}>Add Product</Button>
+					<Button className="float-end my-3" onClick={() => history.push("products/create")}>Add Product</Button>
                     <Table className="table-sm">
 						<thead>
 							<tr>
