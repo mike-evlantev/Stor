@@ -42,9 +42,13 @@ export const getOrders = createAsyncThunk(
 // Create product
 export const createProduct = createAsyncThunk(
     "admin/createProduct",
-    async (product: IProduct, thunkAPI) => {
+    async (product: IProduct & {userId: string}, thunkAPI) => {
         try {
-            return await adminService.createProduct(product, thunkAPI.dispatch);
+            const createdProduct = await adminService.createProduct(product, thunkAPI.dispatch);
+            if (createdProduct?.id) {
+                thunkAPI.dispatch(alert({text: "Product created successfully", type: "success"}));
+            }
+            return createdProduct;
         } catch (error) {
             const message = narrowError(error);
             thunkAPI.dispatch(alert({text: message, type: "danger"}));
@@ -58,7 +62,11 @@ export const updateProduct = createAsyncThunk(
     "admin/updateProduct",
     async (product: IProduct, thunkAPI) => {
         try {
-            return await adminService.updateProduct(product, thunkAPI.dispatch);
+            const updatedProduct = await adminService.updateProduct(product, thunkAPI.dispatch);
+            if (updatedProduct?.id) {
+                thunkAPI.dispatch(alert({text: "Product updated successfully", type: "success"}));
+            }
+            return updatedProduct;
         } catch (error) {
             const message = narrowError(error);
             thunkAPI.dispatch(alert({text: message, type: "danger"}));
