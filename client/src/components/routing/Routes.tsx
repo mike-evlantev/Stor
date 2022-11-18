@@ -24,7 +24,7 @@ import { Orders } from "../pages/admin/Orders";
 import { Products } from "../pages/admin/Products";
 import { Users } from "../pages/admin/Users";
 import { OrderDetails } from "../pages/admin/OrderDetails";
-import { EditProductDetails } from "../pages/admin/EditProductDetails";
+import { EditProduct } from "../pages/admin/EditProduct";
 import { CreateProduct } from "../pages/admin/CreateProduct";
 
 export const Routes: React.FC = () => {
@@ -81,7 +81,7 @@ export const Routes: React.FC = () => {
                 <AdminRoute 
                     exact 
                     path="/admin/products/:id" 
-                    component={() => <AdminDashboard><EditProductDetails /></AdminDashboard>} />
+                    component={() => <AdminDashboard><EditProduct /></AdminDashboard>} />
                 <AdminRoute 
                     exact 
                     path="/admin/users" 
