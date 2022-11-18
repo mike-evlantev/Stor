@@ -27,8 +27,14 @@ export const getProductById = asyncHandler(async (req, res) => {
 // @access      Private (Admin)
 export const createProduct = asyncHandler(async (req, res) => {
   const product = new Product(req.body);
-  const created = await product.save();
-  res.status(201).json(created);
+  try {
+    const created = await product.save();
+    res.status(201).json(created);
+  } 
+  catch (error) {
+    throw new Error(error);
+  }
+  
 });
 
 // @route       PUT api/products/update
