@@ -82,6 +82,21 @@ export const adminSlice = createSlice({
         updateCurrentProduct: (state, action: PayloadAction<IKeyValuePair<string>>) => {
             return {...state, product: {...state.product, ...action.payload}};
         },
+        updateCurrentProductImages: (state, action: PayloadAction<{sort: number, url: string}>) => {
+            let images = state.product.images;
+            const {sort, url} = action.payload;
+            if (images.find(i => i.sort === sort)) {
+                if (!url) {
+                    images = images.filter(image => image.sort !== sort);
+                } else {
+                    images = images.map(image => image.sort === sort ? action.payload : image);
+                }
+            } else {
+                images = [...images, action.payload];
+            }
+
+            return {...state, product: {...state.product, images}};
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -123,5 +138,5 @@ export const adminSlice = createSlice({
     }
 });
 
-export const { updateCurrentProduct } = adminSlice.actions;
+export const { updateCurrentProduct, updateCurrentProductImages } = adminSlice.actions;
 export default adminSlice.reducer;

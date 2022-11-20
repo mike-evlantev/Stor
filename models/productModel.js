@@ -8,6 +8,13 @@ const reviewSchema = mongoose.Schema({
   timestamps: true
 });
 
+const imageSchema = mongoose.Schema({
+  url: {type: String, required: true},
+  sort: {type: Number, required: true}
+},{
+  timestamps: true
+});
+
 const productSchema = mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,8 +27,9 @@ const productSchema = mongoose.Schema({
   },
   image: {
     type: String,
-    required: true
+    required: false
   },
+  images: [imageSchema],
   brand: {
     type: String,
     required: true

@@ -1,11 +1,10 @@
 import * as React from "react";
-import { Button, Form, Image, InputGroup, Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { updateCurrentProduct, updateProduct } from "../../../features/admin/adminSlice";
+import { updateCurrentProduct, updateCurrentProductImages, updateProduct } from "../../../features/admin/adminSlice";
 import { getProductById } from "../../../features/products/productsSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
-import { IKeyValuePair } from "../../../types/IKeyValuePair";
 import { Loader } from "../../shared/Loader";
 import { ProductDetailsForm } from "./ProductDetailsForm";
 
@@ -24,10 +23,13 @@ export const EditProduct: React.FC = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        const { name, value } = e.target;
-        const obj = {[name]: value} as IKeyValuePair<string>;
-
-        dispatch(updateCurrentProduct(obj));
+        const { id, name, value } = e.target;
+        if (name === "images") {
+            dispatch(updateCurrentProductImages({sort: Number(id), url: value}));
+        } else {
+            const obj = {[name]: value};
+            dispatch(updateCurrentProduct(obj));
+        }
     };
 
     const handleSubmit = async () => {

@@ -2,6 +2,7 @@ const products = [
   {
     name: 'Airpods Wireless Bluetooth Headphones',
     image: 'https://live.staticflickr.com/65535/52507541024_b4796720b0_z.jpg',
+    images: [{sort: 1, url: 'https://live.staticflickr.com/65535/52507541024_b4796720b0_z.jpg'}],
     description:
       'Bluetooth technology lets you connect it with compatible devices wirelessly High-quality AAC audio offers immersive listening experience Built-in microphone allows you to take calls while working',
     brand: 'Apple',
@@ -14,6 +15,7 @@ const products = [
   {
     name: 'iPhone 11 Pro 256GB Memory',
     image: 'https://live.staticflickr.com/65535/52507540994_097ed7c1d6_z.jpg',
+    images: [{sort: 1, url: 'https://live.staticflickr.com/65535/52507540994_097ed7c1d6_z.jpg'}],
     description:
       'Introducing the iPhone 11 Pro. A transformative triple-camera system that adds tons of capability without complexity. An unprecedented leap in battery life',
     brand: 'Apple',
@@ -26,6 +28,7 @@ const products = [
   {
     name: 'Cannon EOS 80D DSLR Camera',
     image: 'https://live.staticflickr.com/65535/52506784317_b133e8260a_z.jpg',
+    images: [{sort: 1, url: 'https://live.staticflickr.com/65535/52506784317_b133e8260a_z.jpg'}],
     description:
       'Characterized by versatile imaging specs, the Canon EOS 80D further clarifies itself using a pair of robust focusing systems and an intuitive design',
     brand: 'Cannon',
@@ -38,6 +41,7 @@ const products = [
   {
     name: 'Sony Playstation 4 Pro White Version',
     image: 'https://live.staticflickr.com/65535/52507741295_27e83cc551_z.jpg',
+    images: [{sort: 1, url: 'https://live.staticflickr.com/65535/52507741295_27e83cc551_z.jpg'}],
     description:
       'The ultimate home entertainment center starts with PlayStation. Whether you are into gaming, HD movies, television, music',
     brand: 'Sony',
@@ -50,6 +54,7 @@ const products = [
   {
     name: 'Logitech G-Series Gaming Mouse',
     image: 'https://live.staticflickr.com/65535/52507541009_7965843056_z.jpg',
+    images: [{sort: 1, url: 'https://live.staticflickr.com/65535/52507541009_7965843056_z.jpg'}],
     description:
       'Get a better handle on your games with this Logitech LIGHTSYNC gaming mouse. The six programmable buttons allow customization for a smooth playing experience',
     brand: 'Logitech',
@@ -62,6 +67,7 @@ const products = [
   {
     name: 'Amazon Echo Dot 3rd Generation',
     image: 'https://live.staticflickr.com/65535/52507741300_a9a65d1fd3_z.jpg',
+    images: [{sort: 1, url: 'https://live.staticflickr.com/65535/52507741300_a9a65d1fd3_z.jpg'}],
     description:
       'Meet Echo Dot - Our most popular smart speaker with a fabric design. It is our most compact smart speaker that fits perfectly into small space',
     brand: 'Amazon',
