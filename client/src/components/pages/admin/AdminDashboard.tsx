@@ -11,8 +11,8 @@ export const AdminDashboard: React.FC<Props> = ({children}) => {
     return (<>
         <h1 className="mb-3">Admin Dashboard</h1>
         <div className="d-flex">
-            <Col md={2} style={{marginRight: "1rem"}}>
-                <Nav variant="pills" activeKey={location.pathname} className="flex-column">
+            <Col md={2}>
+                <Nav variant="pills" activeKey={location.pathname} className="flex-column" style={{marginRight: "1rem"}}>
                     <Nav.Link href="/admin/orders">Orders</Nav.Link>
                     <Nav.Link href="/admin/products">Products</Nav.Link>
                     <Nav.Link href="/admin/users">Users</Nav.Link>
