@@ -6,7 +6,7 @@ import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { IAddress } from "../../../types/IAddress";
 import { IOrder } from "../../../types/IOrder";
-import { getDisplayImageUrl } from "../../../utils/imageUtils";
+import { getDisplayImageUrl, handleError } from "../../../utils/imageUtils";
 import { Address } from "../../shared/Address";
 import { Last4 } from "../../shared/Last4";
 import { Loader } from "../../shared/Loader";
@@ -89,7 +89,7 @@ const OrderDetailsInternal = ({order}: {order: IOrder}) => {
                                     </Link>
                                 </td>
                                 <td>
-                                    <Image width={50} src={getDisplayImageUrl(o.images) ?? "/images/image-placeholder.png"} alt={o.name} onError={e => { e.currentTarget.src = "/images/image-placeholder.png"; }} fluid className="hover-zoom" />
+                                    <Image width={50} src={getDisplayImageUrl(o.images)} alt={o.name} onError={handleError} fluid className="hover-zoom" />
                                 </td>
                                 <td>{o.name}</td>
                                 <td className="text-center">{o.quantity}</td>

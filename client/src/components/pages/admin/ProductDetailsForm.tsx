@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Button, Col, Form, Image, InputGroup } from "react-bootstrap";
 import { IProduct } from "../../../types/IProduct";
+import { handleError } from "../../../utils/imageUtils";
 
 interface Props {
     product: IProduct
@@ -14,7 +15,7 @@ export const ProductDetailsForm: React.FC<Props> = ({product, onChange, onSave})
             <div className="d-flex justify-content-start align-items-center">
                 {product.images?.map(image =>
                     <Col key={image.sort} lg={2} style={{marginRight: "2.75rem"}}>
-                        <Image src={image.url ?? "/images/image-placeholder.png"} alt={product.name + "-" + image.sort}  onError={e => { e.currentTarget.src = "/images/image-placeholder.png"; }} width={250} fluid /> 
+                        <Image src={image.url} alt={product.name + "-" + image.sort}  onError={handleError} width={250} fluid /> 
                     </Col>)}               
             </div>            
             <Form.Group className="my-3">

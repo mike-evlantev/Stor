@@ -1,6 +1,12 @@
 import { IImage } from "../types/IImage";
 
-export const getDisplayImageUrl = (images: IImage[]): string | undefined => {
+const PLACEHOLDER = "/images/image-placeholder.png";
+
+export const getDisplayImageUrl = (images: IImage[]): string => {
     // assumes images are sorted in order
-    return images?.find(i => i.url)?.url;
+    return images?.find(i => i.url)?.url ?? PLACEHOLDER;
+}
+
+export const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = PLACEHOLDER;
 }
