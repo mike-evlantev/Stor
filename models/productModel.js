@@ -1,16 +1,10 @@
 import mongoose from 'mongoose';
+import { imageSchema } from './shared/imageSchema.js';
 
 const reviewSchema = mongoose.Schema({
   name: {type: String, required: true},
   rating: {type: Number, required: true},
   comment: {type: String, required: true},
-},{
-  timestamps: true
-});
-
-const imageSchema = mongoose.Schema({
-  url: {type: String, required: true},
-  sort: {type: Number, required: true}
 },{
   timestamps: true
 });

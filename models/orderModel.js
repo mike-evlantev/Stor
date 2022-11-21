@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 import Inc from "mongoose-sequence";
+import { imageSchema } from "./shared/imageSchema.js";
 const AutoIncrement = Inc(mongoose); 
 
 const orderItemSchema = mongoose.Schema(
   {
     name: { type: String, required: true },
     quantity: { type: Number, required: true },
-    image: { type: String, required: true },
+    images: [imageSchema],
     price: { type: Number, required: true },
     id: {
       type: mongoose.Schema.Types.ObjectId,
