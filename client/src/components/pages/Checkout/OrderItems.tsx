@@ -2,6 +2,7 @@ import * as React from "react";
 import { Col, Image, ListGroup, Row } from "react-bootstrap";
 import { IBagItem } from "../../../types/IBagItem";
 import { IShippingOption } from "../../../types/IShippingOption";
+import { getDisplayImageUrl } from "../../../utils/imageUtils";
 
 interface Props {
     items: IBagItem[];
@@ -33,7 +34,7 @@ export const OrderItems: React.FC<Props> = ({items, subtotal, shipping, tax, tot
                     <ListGroup.Item key={item.id}>
                         <Row>
                             <Col md={3}>
-                                <Image src={item.image} alt={item.name} fluid />
+                                <Image src={getDisplayImageUrl(item.images) ?? "/images/image-placeholder.png"} alt={item.name} onError={e => { e.currentTarget.src = "/images/image-placeholder.png"; }} fluid />
                             </Col>
                             <Col md={9} className="d-flex flex-column p-0">
                                 <strong>{item.name}</strong>

@@ -4,6 +4,7 @@ import { Link, useHistory } from "react-router-dom";
 import { getProducts } from "../../../features/products/productsSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
+import { getDisplayImageUrl } from "../../../utils/imageUtils";
 import { Loader } from "../../shared/Loader";
 
 export const Products: React.FC = () => {
@@ -40,7 +41,7 @@ export const Products: React.FC = () => {
 										</Link>
 									</td>
 									<td>
-										<Image width={50} src={p.image} alt={p.name} fluid className="hover-zoom" />
+										<Image width={50} src={getDisplayImageUrl(p.images) ?? "/images/image-placeholder.png"} alt={p.name} onError={e => { e.currentTarget.src = "/images/image-placeholder.png"; }} fluid className="hover-zoom" />
 									</td>
 									<td>{p.name}</td>
 									<td className="text-center">{p.countInStock}</td>

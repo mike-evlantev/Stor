@@ -6,6 +6,7 @@ import { getProductById } from "../../../features/products/productsSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { IBagItem } from "../../../types/IBagItem";
+import { getDisplayImageUrl } from "../../../utils/imageUtils";
 import Rating from "../../Rating";
 import { Loader } from "../../shared/Loader";
 import { QtySelect } from "../../shared/QtySelect";
@@ -48,7 +49,7 @@ export const ProductDetails: React.FC = () => {
                 ? <Loader />
                 : <Row>
                     <Col md={6}>
-                        <Image src={product.image} alt={product.name} fluid />
+                        <Image src={getDisplayImageUrl(product.images) ?? "/images/image-placeholder.png"} alt={product.name} onError={e => { e.currentTarget.src = "/images/image-placeholder.png"; }} fluid />
                     </Col>
                     <Col md={3}>
                         <ListGroup variant="flush">
@@ -138,7 +139,7 @@ const AddToBagModal: React.FC<ModalProps> = ({bagItem, handleModalClose}) => {
                 <Container>
                     <Row>
                         <Col xs={6} md={4}>
-                            <Image src={bagItem.image} alt={bagItem.name} fluid />
+                            <Image src={getDisplayImageUrl(bagItem.images) ?? "/images/image-placeholder.png"} alt={bagItem.name} onError={e => { e.currentTarget.src = "/images/image-placeholder.png"; }} fluid />
                         </Col>
                         <Col xs={12} md={8}>
                             <Table className="table-borderless table-hover">

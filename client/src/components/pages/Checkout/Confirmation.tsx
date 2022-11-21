@@ -7,6 +7,7 @@ import { IName } from "../../../types/IName";
 import { Address } from "../../shared/Address";
 import { Loader } from "../../shared/Loader";
 import { Last4 } from "../../shared/Last4";
+import { getDisplayImageUrl } from "../../../utils/imageUtils";
 
 export const Confirmation: React.FC = () => {
     const history = useHistory();
@@ -74,7 +75,7 @@ export const Confirmation: React.FC = () => {
                                     {order.orderItems?.map(item =>
                                         <div className="d-flex my-2" key={item.id}>
                                             <Col md={3}>
-                                                <Image src={item.image} alt={item.name} fluid />
+                                                <Image src={getDisplayImageUrl(item.images) ?? "/images/image-placeholder.png"} alt={item.name} onError={e => { e.currentTarget.src = "/images/image-placeholder.png"; }} fluid />
                                             </Col>
                                             <Col md={9} className="d-flex flex-column" style={{paddingLeft: "0.75rem"}} >
                                                 <strong>{item.name}</strong>

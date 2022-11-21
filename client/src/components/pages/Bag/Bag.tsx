@@ -5,6 +5,7 @@ import { addToBag, removeFromBag } from "../../../features/bag/bagSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { IBagItem } from "../../../types/IBagItem";
+import { getDisplayImageUrl } from "../../../utils/imageUtils";
 import { QtySelect } from "../../shared/QtySelect";
 import { EmptyBag } from "./EmptyBag";
 
@@ -41,7 +42,7 @@ export const Bag: React.FC = () => {
                             <Card className="border-0">
                                 <Row>
                                     <Col md={4}>
-                                        <Image src={item.image} alt={item.name} fluid />
+                                        <Image src={getDisplayImageUrl(item.images) ?? "/images/image-placeholder.png"} alt={item.name} onError={e => { e.currentTarget.src = "/images/image-placeholder.png"; }} fluid />
                                     </Col>
                                     <Col md={8}>
                                         <Card.Title>
