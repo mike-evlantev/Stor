@@ -5,39 +5,45 @@ import Order from "../models/orderModel.js";
 // @desc        Create an order
 // @access      Public
 export const createOrder = asyncHandler(async (req, res) => {
-  const {
-    first,
-    middle,
-    last,
-    orderItems,
-    shippingAddress,
-    paymentMethod,
-    subtotal,
-    tax,
-    shippingOption,
-    total,
-    email,
-    phone
-  } = req.body;
-
-  const order = new Order({
-    first,
-    middle,
-    last,
-    orderItems,
-    userId: req.user?._id,
-    shippingAddress,
-    paymentMethod,
-    subtotal,
-    tax,
-    shippingOption,
-    total,
-    email,
-    phone
-  });
-
-  const createdOrder = await order.save();
-  res.status(201).json(createdOrder);
+  try {
+    const {
+      first,
+      middle,
+      last,
+      orderItems,
+      shippingAddress,
+      paymentMethod,
+      subtotal,
+      tax,
+      shippingOption,
+      total,
+      email,
+      phone
+    } = req.body;
+  
+    const order = new Order({
+      first,
+      middle,
+      last,
+      orderItems,
+      userId: req.user?._id,
+      shippingAddress,
+      paymentMethod,
+      subtotal,
+      tax,
+      shippingOption,
+      total,
+      email,
+      phone
+    });
+  
+    const createdOrder = await order.save();
+    res.status(201).json(createdOrder);
+  } 
+  catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }  
 });
 
 // @route       GET api/orders
