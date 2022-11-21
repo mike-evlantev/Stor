@@ -15,6 +15,7 @@ export const getProducts = asyncHandler(async (req, res) => {
 export const getProductById = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (product) {
+    product.images.sort((a,b) => a.sort - b.sort);
     res.json(product);
   } else {
     res.status(404);
@@ -33,8 +34,7 @@ export const createProduct = asyncHandler(async (req, res) => {
   } 
   catch (error) {
     throw new Error(error);
-  }
-  
+  }  
 });
 
 // @route       PUT api/products/update
