@@ -7,11 +7,14 @@ import { alert } from "../messages/messagesSlice";
 import { IProduct } from "../../types/IProduct";
 import { getProductById, getProducts } from "../products/productsSlice";
 import { IKeyValuePair } from "../../types/IKeyValuePair";
+import { IUser } from "../../types/IUser";
 
 interface AdminState extends BaseState {
     orders: IOrder[];
     products: IProduct[];
     product: IProduct;
+    users: IUser[];
+    user: IUser;
 }
 
 const initialState: AdminState = {
@@ -20,7 +23,9 @@ const initialState: AdminState = {
     error: undefined,
     orders: [],
     products: [],
-    product: {} as IProduct
+    product: {} as IProduct,
+    users: [],
+    user: {} as IUser
 }
 
 // Get orders
@@ -67,6 +72,34 @@ export const updateProduct = createAsyncThunk(
                 thunkAPI.dispatch(alert({text: "Product updated successfully", type: "success"}));
             }
             return updatedProduct;
+        } catch (error) {
+            const message = narrowError(error);
+            thunkAPI.dispatch(alert({text: message, type: "danger"}));
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Get all users
+export const getUsers = createAsyncThunk(
+    "admin/getUsers",
+    async (_, thunkAPI) => {
+        try {
+            return await adminService.getUsers();
+        } catch (error) {
+            const message = narrowError(error);
+            thunkAPI.dispatch(alert({text: message, type: "danger"}));
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Get user by id
+export const getUserById = createAsyncThunk(
+    "admin/getUserById",
+    async (id: string, thunkAPI) => {
+        try {
+            return await adminService.getUser(id);
         } catch (error) {
             const message = narrowError(error);
             thunkAPI.dispatch(alert({text: message, type: "danger"}));
@@ -133,6 +166,20 @@ export const adminSlice = createSlice({
                 return {...state, loading: false, success: true, product: action.payload || {} as IProduct};
             })
             .addCase(updateProduct.rejected, (state, action) => {
+                return {...state, loading: false, success: false, error: narrowError(action.payload)};
+            })
+            .addCase(getUsers.pending, (state) => { state.loading = true; })
+            .addCase(getUsers.fulfilled, (state, action: PayloadAction<IUser[]>) => {
+                return {...state, loading: false, success: true, users: action.payload || []};
+            })
+            .addCase(getUsers.rejected, (state, action: PayloadAction<unknown>) => {
+                return {...state, loading: false, success: false, error: narrowError(action.payload)};
+            })
+            .addCase(getUserById.pending, (state) => { state.loading = true; })
+            .addCase(getUserById.fulfilled, (state, action: PayloadAction<IUser>) => {
+                return {...state, loading: false, success: true, user: action.payload || {} as IProduct};
+            })
+            .addCase(getUserById.rejected, (state, action: PayloadAction<unknown>) => {
                 return {...state, loading: false, success: false, error: narrowError(action.payload)};
             })
     }

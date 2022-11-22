@@ -88,8 +88,38 @@ const updateProduct = async (product: IProduct, dispatch: ThunkDispatch<unknown,
     }        
 };
 
+// Get all users
+const getUsers = async () => {
+    setAuthToken(loggedInUserFromStorage()?.token);
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    };
+  
+    const { data } = await axios.get("/api/users", config);
+
+    return data;
+}
+
+// Get user by id
+const getUser = async (id: string) => {
+    setAuthToken(loggedInUserFromStorage()?.token);
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    };
+  
+    const { data } = await axios.get("/api/users/" + id, config);
+
+    return data;
+}
+
 export const adminService = {
     getOrders,
     createProduct,
-    updateProduct
+    updateProduct,
+    getUsers,
+    getUser
 }
