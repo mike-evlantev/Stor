@@ -12,7 +12,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   user = await User.create({ first, last, email, password }); // Password is encrypted as part of the User model middleware
   if (user) {
     res.json({
-      _id: user._id,
+      id: user.id,
       first: user.first,
       middle: user.middle,
       last: user.last,
@@ -41,7 +41,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
   if (user && (await user.matchPassword(password))) {
     res.json({
-      _id: user._id,
+      id: user.id,
       first: user.first,
       middle: user.middle,
       last: user.last,
@@ -98,7 +98,7 @@ export const updateUser = asyncHandler(async (req, res) => {
 
       const updatedUser = await user.save();
       res.json({
-        _id: updatedUser._id,
+        id: updatedUser.id,
         first: updatedUser.first,
         middle: updatedUser.middle,
         last: updatedUser.last,
@@ -119,5 +119,36 @@ export const updateUser = asyncHandler(async (req, res) => {
   } else {
     res.status(404);
     throw new Error("User not found");
+  }
+});
+
+// @route       GET api/users
+// @desc        Get all users
+// @access      Private (Admin)
+export const getUsers = asyncHandler(async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+});
+
+// @route       GET api/users/:id
+// @desc        Get user by id
+// @access      Private (Admin)
+export const getUserById = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
   }
 });

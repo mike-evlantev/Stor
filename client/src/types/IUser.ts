@@ -2,7 +2,7 @@
  * Represents a registered user (auth user)
  */
 export interface IUser {
-    _id: string;
+    id: string;
     email: string;
     isActive: boolean;
     isAdmin: boolean;

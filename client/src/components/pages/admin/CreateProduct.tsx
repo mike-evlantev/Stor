@@ -41,7 +41,7 @@ export const CreateProduct: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        dispatch(createProduct({...product, userId: loggedInUserFromStorage()._id}));
+        dispatch(createProduct({...product, userId: loggedInUserFromStorage().id}));
     }
 
     return (
