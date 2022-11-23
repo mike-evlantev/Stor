@@ -1,11 +1,11 @@
 import * as React from "react";
-import { Button, Modal } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { updateCurrentProduct, updateCurrentProductImages, updateProduct } from "../../../features/admin/adminSlice";
 import { getProductById } from "../../../features/products/productsSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { Loader } from "../../shared/Loader";
+import { ConfirmationModal } from "./ConfirmationModal";
 import { ProductDetailsForm } from "./ProductDetailsForm";
 
 interface Params {
@@ -52,26 +52,3 @@ export const EditProduct: React.FC = () => {
     );
 };
 
-interface ModalProps {
-    onHide: () => void;
-    onConfirm: () => void;
-}
-
-const ConfirmationModal: React.FC<ModalProps> = ({onConfirm, onHide}) => {
-    return (
-        <Modal show size="lg" centered>
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Confirm
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <span>You sure, bro?</span>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="primary" onClick={onConfirm} className="ml-2">Confirm</Button>
-                <Button variant="secondary" onClick={onHide}>Cancel</Button>
-            </Modal.Footer>
-        </Modal>
-    );
-}
