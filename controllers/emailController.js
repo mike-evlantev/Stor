@@ -26,3 +26,5 @@ export const sendEmail = asyncHandler(async (req, res) => {
         console.error(error);
     })
 });
+
+//https://stackoverflow.com/questions/71513412/how-do-i-properly-implement-the-email-verifcation-link-sent-to-user-to-work-in-n
