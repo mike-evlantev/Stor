@@ -1,7 +1,10 @@
+import { IAddress } from "./IAddress";
+import { IName } from "./IName";
+
 /*
  * Represents a registered user (auth user)
  */
-export interface IUser {
+export interface IUser extends Partial<IName>, Partial<IAddress> {
     id: string;
     email: string;
     isActive: boolean;
