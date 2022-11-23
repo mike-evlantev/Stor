@@ -127,7 +127,7 @@ export const updateUser = asyncHandler(async (req, res) => {
 // @access      Private (Admin)
 export const getUsers = asyncHandler(async (req, res) => {
   try {
-    const users = await User.find({});
+    const users = await User.find({}).select("-password");
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -140,7 +140,7 @@ export const getUsers = asyncHandler(async (req, res) => {
 // @access      Private (Admin)
 export const getUserById = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).select("-password");
     if (user) {
       res.json(user);
     } else {
