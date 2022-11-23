@@ -26,6 +26,8 @@ import { Users } from "../pages/admin/Users";
 import { OrderDetails } from "../pages/admin/OrderDetails";
 import { EditProduct } from "../pages/admin/EditProduct";
 import { CreateProduct } from "../pages/admin/CreateProduct";
+import { CreateUser } from "../pages/admin/CreateUser";
+import { EditUser } from "../pages/admin/EditUser";
 
 export const Routes: React.FC = () => {
     return (
@@ -74,7 +76,7 @@ export const Routes: React.FC = () => {
                     exact 
                     path="/admin/products" 
                     component={() => <AdminDashboard><Products /></AdminDashboard>} />
-                 <AdminRoute 
+                <AdminRoute 
                     exact 
                     path="/admin/products/create" 
                     component={() => <AdminDashboard><CreateProduct /></AdminDashboard>} />
@@ -86,6 +88,14 @@ export const Routes: React.FC = () => {
                     exact 
                     path="/admin/users" 
                     component={() => <AdminDashboard><Users /></AdminDashboard>} />
+                <AdminRoute 
+                    exact 
+                    path="/admin/users/create" 
+                    component={() => <AdminDashboard><CreateUser /></AdminDashboard>} />
+                <AdminRoute 
+                    exact 
+                    path="/admin/users/:id" 
+                    component={() => <AdminDashboard><EditUser /></AdminDashboard>} />
                 <Route path="*" component={PageNotFound} />
             </Switch>
         </Container>
