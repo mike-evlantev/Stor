@@ -85,7 +85,7 @@ export const getUsers = createAsyncThunk(
     "admin/getUsers",
     async (_, thunkAPI) => {
         try {
-            return await adminService.getUsers();
+            return await adminService.getUsers(thunkAPI.dispatch);
         } catch (error) {
             const message = narrowError(error);
             thunkAPI.dispatch(alert({text: message, type: "danger"}));
@@ -99,7 +99,43 @@ export const getUserById = createAsyncThunk(
     "admin/getUserById",
     async (id: string, thunkAPI) => {
         try {
-            return await adminService.getUser(id);
+            return await adminService.getUser(id, thunkAPI.dispatch);
+        } catch (error) {
+            const message = narrowError(error);
+            thunkAPI.dispatch(alert({text: message, type: "danger"}));
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Create user
+export const createCreate = createAsyncThunk(
+    "admin/createUser",
+    async (user: IUser, thunkAPI) => {
+        try {
+            const createdUser = await adminService.createUser(user, thunkAPI.dispatch);
+            if (createdUser?.id) {
+                thunkAPI.dispatch(alert({text: "User created successfully", type: "success"}));
+            }
+            return createdUser;
+        } catch (error) {
+            const message = narrowError(error);
+            thunkAPI.dispatch(alert({text: message, type: "danger"}));
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+// Update user
+export const updateUser = createAsyncThunk(
+    "admin/updateUser",
+    async (user: IUser, thunkAPI) => {
+        try {
+            const updatedUser = await adminService.updateUser(user, thunkAPI.dispatch);
+            if (updatedUser?.id) {
+                thunkAPI.dispatch(alert({text: "User updated successfully", type: "success"}));
+            }
+            return updatedUser;
         } catch (error) {
             const message = narrowError(error);
             thunkAPI.dispatch(alert({text: message, type: "danger"}));
@@ -129,6 +165,9 @@ export const adminSlice = createSlice({
             }
 
             return {...state, product: {...state.product, images}};
+        },
+        updateCurrentUser: (state, action: PayloadAction<IKeyValuePair<string>>) => {
+            return {...state, product: {...state.product, ...action.payload}};
         }
     },
     extraReducers: (builder) => {
@@ -182,8 +221,15 @@ export const adminSlice = createSlice({
             .addCase(getUserById.rejected, (state, action: PayloadAction<unknown>) => {
                 return {...state, loading: false, success: false, error: narrowError(action.payload)};
             })
+            .addCase(updateUser.pending, (state) => { state.loading = true; })
+            .addCase(updateUser.fulfilled, (state, action: PayloadAction<IUser | undefined>) =>{
+                return {...state, loading: false, success: true, user: action.payload || {} as IUser};
+            })
+            .addCase(updateUser.rejected, (state, action) => {
+                return {...state, loading: false, success: false, error: narrowError(action.payload)};
+            })
     }
 });
 
-export const { updateCurrentProduct, updateCurrentProductImages } = adminSlice.actions;
+export const { updateCurrentProduct, updateCurrentProductImages, updateCurrentUser } = adminSlice.actions;
 export default adminSlice.reducer;

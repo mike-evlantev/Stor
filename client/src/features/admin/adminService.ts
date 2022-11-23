@@ -2,6 +2,7 @@ import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 import axios from "axios";
 import { IOrder } from "../../types/IOrder";
 import { IProduct } from "../../types/IProduct";
+import { IUser } from "../../types/IUser";
 import { loggedInUserFromStorage, setAuthToken } from "../../utils/authUtils";
 import { narrowError } from "../../utils/errorUtils";
 import { logout } from "../auth/authSlice";
@@ -20,7 +21,7 @@ const getOrders = async (dispatch: ThunkDispatch<unknown, unknown, AnyAction>): 
             },
         };
     
-        const response = await axios
+        const data = await axios
             .get(API_URL, config)
             .then(response => response.data)
             .catch((error) => {
@@ -29,7 +30,7 @@ const getOrders = async (dispatch: ThunkDispatch<unknown, unknown, AnyAction>): 
                     dispatch(logout());
                 }
             });
-        return response;
+        return data;
     } catch (error) {
         const message = narrowError(error);
         dispatch(alert({text: message, type: "danger"}));
@@ -46,7 +47,7 @@ const createProduct = async (product: IProduct, dispatch: ThunkDispatch<unknown,
             },
         };
 
-        const response = await axios
+        const data = await axios
             .post("/api/products/create", product, config)
             .then(response => response.data)
             .catch((error) => {
@@ -55,7 +56,7 @@ const createProduct = async (product: IProduct, dispatch: ThunkDispatch<unknown,
                     dispatch(logout());
                 }
             });
-        return response;
+        return data;
     } catch (error) {
         const message = narrowError(error);
         dispatch(alert({text: message, type: "danger"}));
@@ -72,7 +73,7 @@ const updateProduct = async (product: IProduct, dispatch: ThunkDispatch<unknown,
             },
         };
 
-        const response = await axios
+        const data = await axios
             .put("/api/products/update", product, config)
             .then(response => response.data)
             .catch((error) => {
@@ -81,7 +82,7 @@ const updateProduct = async (product: IProduct, dispatch: ThunkDispatch<unknown,
                     dispatch(logout());
                 }
             });
-        return response;
+        return data;
     } catch (error) {
         const message = narrowError(error);
         dispatch(alert({text: message, type: "danger"}));
@@ -89,37 +90,117 @@ const updateProduct = async (product: IProduct, dispatch: ThunkDispatch<unknown,
 };
 
 // Get all users
-const getUsers = async () => {
-    setAuthToken(loggedInUserFromStorage()?.token);
-    const config = {
-        headers: {
-            "Content-Type": "application/json",
-        },
-    };
-  
-    const { data } = await axios.get("/api/users", config);
+const getUsers = async (dispatch: ThunkDispatch<unknown, unknown, AnyAction>) => {
+    try {
+        setAuthToken(loggedInUserFromStorage()?.token);
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
 
-    return data;
+        const data = await axios
+            .get("/api/users", config)
+            .then(response => response.data)
+            .catch((error) => {
+                console.error(error);
+                if (error.response.status === 401 || error.response.status === 403) {
+                    dispatch(logout());
+                }
+            });
+
+        return data;
+    } catch (error) {
+        const message = narrowError(error);
+        dispatch(alert({text: message, type: "danger"}));
+    }
 }
 
 // Get user by id
-const getUser = async (id: string) => {
-    setAuthToken(loggedInUserFromStorage()?.token);
-    const config = {
-        headers: {
-            "Content-Type": "application/json",
-        },
-    };
-  
-    const { data } = await axios.get("/api/users/" + id, config);
+const getUser = async (id: string, dispatch: ThunkDispatch<unknown, unknown, AnyAction>) => {
+    try {
+        setAuthToken(loggedInUserFromStorage()?.token);
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+    
+        const data = await axios
+            .get("/api/users/" + id, config)
+            .then(response => response.data)
+            .catch((error) => {
+                console.error(error);
+                if (error.response.status === 401 || error.response.status === 403) {
+                    dispatch(logout());
+                }
+            });
 
-    return data;
+        return data;
+    } catch (error) {
+        const message = narrowError(error);
+        dispatch(alert({text: message, type: "danger"}));
+    }
 }
+
+// Create user
+const createUser = async (user: IUser, dispatch: ThunkDispatch<unknown, unknown, AnyAction>): Promise<IUser | undefined> => {
+    try {
+        setAuthToken(loggedInUserFromStorage()?.token);
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+
+        const data = await axios
+            .post("/api/users/create", user, config)
+            .then(response => response.data)
+            .catch((error) => {
+                console.error(error);
+                if (error.response.status === 401 || error.response.status === 403) {
+                    dispatch(logout());
+                }
+            });
+        return data;
+    } catch (error) {
+        const message = narrowError(error);
+        dispatch(alert({text: message, type: "danger"}));
+    }        
+};
+
+// Update user
+const updateUser = async (user: IUser, dispatch: ThunkDispatch<unknown, unknown, AnyAction>): Promise<IUser | undefined> => {
+    try {
+        setAuthToken(loggedInUserFromStorage()?.token);
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+
+        const data = await axios
+            .put("/api/users/update", user, config)
+            .then(response => response.data)
+            .catch((error) => {
+                console.error(error);
+                if (error.response.status === 401 || error.response.status === 403) {
+                    dispatch(logout());
+                }
+            });
+        return data;
+    } catch (error) {
+        const message = narrowError(error);
+        dispatch(alert({text: message, type: "danger"}));
+    }        
+};
 
 export const adminService = {
     getOrders,
     createProduct,
     updateProduct,
     getUsers,
-    getUser
+    getUser,
+    createUser,
+    updateUser
 }
