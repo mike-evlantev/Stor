@@ -4,7 +4,7 @@ import { IProduct } from "../../../types/IProduct";
 import { handleError } from "../../../utils/imageUtils";
 
 interface Props {
-    product: IProduct
+    product: IProduct;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onSave: () => void;
 }
