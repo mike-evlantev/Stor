@@ -109,7 +109,7 @@ export const getUserById = createAsyncThunk(
 );
 
 // Create user
-export const createCreate = createAsyncThunk(
+export const createUser = createAsyncThunk(
     "admin/createUser",
     async (user: IUser, thunkAPI) => {
         try {
@@ -226,6 +226,13 @@ export const adminSlice = createSlice({
                 return {...state, loading: false, success: true, user: action.payload || {} as IUser};
             })
             .addCase(updateUser.rejected, (state, action) => {
+                return {...state, loading: false, success: false, error: narrowError(action.payload)};
+            })
+            .addCase(createUser.pending, (state) => { state.loading = true; })
+            .addCase(createUser.fulfilled, (state, action: PayloadAction<IUser | undefined>) =>{
+                return {...state, loading: false, success: true, user: action.payload || {} as IUser};
+            })
+            .addCase(createUser.rejected, (state, action) => {
                 return {...state, loading: false, success: false, error: narrowError(action.payload)};
             })
     }
