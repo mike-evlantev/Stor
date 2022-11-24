@@ -166,8 +166,8 @@ export const adminSlice = createSlice({
 
             return {...state, product: {...state.product, images}};
         },
-        updateCurrentUser: (state, action: PayloadAction<IKeyValuePair<string>>) => {
-            return {...state, product: {...state.product, ...action.payload}};
+        updateCurrentUser: (state, action: PayloadAction<IKeyValuePair<string | boolean>>) => {
+            return {...state, user: {...state.user, ...action.payload}};
         }
     },
     extraReducers: (builder) => {
