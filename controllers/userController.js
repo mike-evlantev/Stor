@@ -66,59 +66,25 @@ export const loginUser = asyncHandler(async (req, res) => {
 // @desc        Update user
 // @access      Private
 export const updateUser = asyncHandler(async (req, res) => {
-  const user = await User.findOne(req.user._id);
-  if (user) {
-    if (req.body._id == req.user._id) {
-      const {
-        first,
-        middle,
-        last,
-        address1,
-        address2,
-        city,
-        state,
-        zip,
-        phone,
-        // email, <-- cannot be updated. for now...
-        password,
-      } = req.body;
-
-      // TODO: validate fields
-
-      user.first = first;
-      user.middle = middle;
-      user.last = last;
-      user.address1 = address1;
-      user.address2 = address2;
-      user.city = city;
-      user.state = state;
-      user.zip = zip;
-      user.phone = phone;
-      // if (password) user.password = password || user.password;
-
-      const updatedUser = await user.save();
-      res.json({
-        id: updatedUser.id,
-        first: updatedUser.first,
-        middle: updatedUser.middle,
-        last: updatedUser.last,
-        address1: updatedUser.address1,
-        address2: updatedUser.address2,
-        city: updatedUser.city,
-        state: updatedUser.state,
-        zip: updatedUser.zip,
-        phone: updatedUser.phone,
-        email: updatedUser.email,
-        isActive: updatedUser.isActive,
-        isAdmin: updatedUser.isAdmin,
-      });
+  try {
+    // if the requesting user is an admin allow to update any user OR update self
+    if (req.user.isAdmin || req.body._id == req.user._id) {     
+      const user = req.body; 
+      const filter = { _id: user.id };
+      const updated = await User.findOneAndUpdate(filter, user, { new: true });
+      if (updated) {
+        res.json(updated);
+      } else {
+        res.status(500);
+        throw new Error("Unable to update user");
+      }
     } else {
-      res.status(403);
-      throw new Error("Unable to modify user");
+      res.status(401);
+      throw new Error("Unauthorized to update user");
     }
-  } else {
-    res.status(404);
-    throw new Error("User not found");
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
   }
 });
 
@@ -151,4 +117,18 @@ export const getUserById = asyncHandler(async (req, res) => {
     console.error(error);
     throw new Error(error);
   }
+});
+
+// @route       POST api/users/create
+// @desc        Create user
+// @access      Private (Admin)
+export const createUser = asyncHandler(async (req, res) => {
+  const product = new Product(req.body);
+  try {
+    const created = await product.save();
+    res.status(201).json(created);
+  } 
+  catch (error) {
+    throw new Error(error);
+  }  
 });
