@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap";
 import { Route, Switch } from "react-router-dom";
 import { Message } from "../layout/Message";
 //import { Bag } from "../pages/bag/Bag";
-import { BillingInfoForm } from "../pages/checkout/BillingInfoForm";
+
 import { Checkout } from "../pages/checkout/Checkout";
 import { ReviewOrder } from "../pages/checkout/ReviewOrder";
 import { ShippingInfoForm } from "../pages/checkout/ShippingInfoForm";
@@ -31,6 +31,7 @@ import { EditUser } from "../pages/admin/EditUser";
 import { ResetPassword } from "../pages/ResetPassword";
 import { ErrorPage } from "../pages/ErrorPage";
 import { Bag } from "../pages/bag/Bag";
+import { BillingInfoForm } from "../pages/checkout/BillingInfoForm";
 
 export const Routes: React.FC = () => {
     return (
