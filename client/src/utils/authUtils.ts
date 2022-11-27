@@ -17,3 +17,13 @@ export const loggedInUserFromStorage = (): IUser => {
     ? JSON.parse(user as string)
     : undefined;
 }
+
+export const isExpired = (e: number): boolean => {
+  if (e) {
+    const now = Date.now();
+    const exp = e * 1000;
+    return now > exp;
+  }
+  
+  return true;
+}

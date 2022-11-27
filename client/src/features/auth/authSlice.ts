@@ -53,7 +53,26 @@ export const logout = createAsyncThunk(
     async () => {
         return await authService.logout();
     }
-)
+);
+
+// Reset password
+export const resetPassword = createAsyncThunk(
+    "auth/resetPassword",
+    async (creds: {token: string, password: string}, thunkAPI) => {
+        try {
+            const {token, password} = creds;
+            const updated = await authService.resetPassword(token, password);
+            if (updated?.id) {
+                thunkAPI.dispatch(alert({text: "Password reset successfully", type: "success"}));
+            }
+            return updated;
+        } catch (error) {
+            const message = narrowError(error);
+            thunkAPI.dispatch(alert({text: message, type: "danger"}));
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
 
 export const authSlice = createSlice({
     name: "auth",
@@ -94,6 +113,13 @@ export const authSlice = createSlice({
             .addCase(logout.fulfilled, (state) => { 
                 state.isAuthenticated = false;
                 state.loggedInUser = {} as IUser; 
+            })
+            .addCase(resetPassword.pending, (state) => { state.loading = true; })
+            .addCase(resetPassword.fulfilled, (state, action) => {
+                return {...state, loading: false, success: true, isAuthenticated: true, loggedInUser: action.payload as IUser};
+            })
+            .addCase(resetPassword.rejected, (state, action) => {
+                return {...state, loading: false, success: false, error: narrowError(action.payload), isAuthenticated: false, loggedInUser: {} as IUser};
             })
     }
 });

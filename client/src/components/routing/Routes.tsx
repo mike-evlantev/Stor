@@ -18,7 +18,7 @@ import { Profile } from "../pages/Profile";
 import { SignIn } from "../pages/SignIn";
 import { TermsOfUse } from "../pages/TermsOfUse";
 import { WishList } from "../pages/WishList";
-import { AdminRoute, PrivateRoute } from "./PrivateRoute";
+import { AdminRoute, PrivateRoute, ProtectedRoute } from "./PrivateRoute";
 import { ReturnPolicy } from "../pages/ReturnPolicy";
 import { Orders } from "../pages/admin/Orders";
 import { Products } from "../pages/admin/Products";
@@ -28,6 +28,8 @@ import { EditProduct } from "../pages/admin/EditProduct";
 import { CreateProduct } from "../pages/admin/CreateProduct";
 import { CreateUser } from "../pages/admin/CreateUser";
 import { EditUser } from "../pages/admin/EditUser";
+import { ResetPassword } from "../pages/ResetPassword";
+import { ErrorPage } from "../pages/ErrorPage";
 
 export const Routes: React.FC = () => {
     return (
@@ -64,6 +66,7 @@ export const Routes: React.FC = () => {
                 <PrivateRoute exact path="/dashboard" component={Dashboard} />
                 <PrivateRoute exact path="/profile" component={Profile} />
                 <PrivateRoute exact path="/wishlist" component={WishList} />
+                <ProtectedRoute exact path="/reset/:token" component={ResetPassword} />
                 <AdminRoute 
                     exact 
                     path="/admin/orders" 
@@ -96,6 +99,7 @@ export const Routes: React.FC = () => {
                     exact 
                     path="/admin/users/:id" 
                     component={() => <AdminDashboard><EditUser /></AdminDashboard>} />
+                <Route exact path="/error" component={ErrorPage} />
                 <Route path="*" component={PageNotFound} />
             </Switch>
         </Container>
