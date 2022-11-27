@@ -7,7 +7,9 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { disableReactDevTools } from "@fvilers/disable-react-devtools";
 
+if (process.env.NODE_ENV === "production") { disableReactDevTools() };
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ?? "");
 
