@@ -10,7 +10,7 @@ interface Props {
 
 export const ErrorPage: React.FC = () => {
     const location = useLocation<Props>();
-    const {status, statusText, message, stack} = location.state;
+    const {status, statusText, message} = location.state;
     return (<>
         <h2>{status} {statusText}</h2>
         <p>{message}</p>

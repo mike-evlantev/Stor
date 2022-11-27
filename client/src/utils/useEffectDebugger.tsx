@@ -30,5 +30,5 @@ export const useEffectDebugger = (effectHook: any, dependencies: any[], dependen
       console.log('[use-effect-debugger] ', changedDeps);
     }
   
-    React.useEffect(effectHook, dependencies);
+    React.useEffect(effectHook, [...dependencies, effectHook]);
   };

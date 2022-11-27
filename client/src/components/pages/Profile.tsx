@@ -56,6 +56,9 @@ export const Profile: React.FC = () => {
     const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       const { name, value } = e.target;
+
+      // TODO: legit validate
+      validateForm();
   
       setUserData((prevState) => ({
         ...prevState,

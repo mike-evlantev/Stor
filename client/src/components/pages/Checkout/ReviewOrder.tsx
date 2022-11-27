@@ -46,7 +46,7 @@ export const ReviewOrder: React.FC = () => {
 
     const handleSubmitOrder = async () => {
         setLoading(true);
-        const paymentResult = await processStripeCreditCardPayment();  
+        await processStripeCreditCardPayment();  
 
         // Although async, do not await these functions 
         // as they need to finish running prior to redirecting to confirmation

@@ -22,7 +22,7 @@ export const EditUser: React.FC = () => {
 
     React.useEffect(() => {
         dispatch(getUserById(id));
-    }, []);
+    }, [dispatch, id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();

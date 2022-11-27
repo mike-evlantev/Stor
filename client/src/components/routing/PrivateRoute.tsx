@@ -58,7 +58,7 @@ export const ProtectedRoute: React.FC<Props> = ({ component: Component, ...rest 
         };
 
         decode();        
-    }, []);
+    }, [history, token]);
 
     return (
         <Route

@@ -39,7 +39,7 @@ export const EditProduct: React.FC = () => {
 
     React.useEffect(() => {
         dispatch(getProductById(id));
-    }, []);
+    }, [dispatch, id]);
 
     return (
         <>

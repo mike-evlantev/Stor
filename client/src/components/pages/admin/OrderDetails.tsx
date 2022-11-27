@@ -23,11 +23,11 @@ export const OrderDetails: React.FC = () => {
     
     React.useEffect(() => {
         dispatch(getOrders());
-    }, []);
+    }, [dispatch]);
 
     React.useEffect(() => {
         setOrder(orders.find(o => o.id === id));
-    }, [orders]);
+    }, [orders, id]);
     
     return(<>
         {loading

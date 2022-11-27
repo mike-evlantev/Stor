@@ -24,7 +24,7 @@ export const ProductDetails: React.FC = () => {
 
     React.useEffect(() => {
         dispatch(getProductById(id));
-    }, []);
+    }, [dispatch, id]);
 
     const inStock = product.countInStock > 0;
     const inStockDisplayName = inStock ? "In Stock" : "Out of Stock";

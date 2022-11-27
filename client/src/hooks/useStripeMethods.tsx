@@ -1,7 +1,6 @@
 import { useElements, useStripe } from "@stripe/react-stripe-js";
-import { Address, PaymentIntent, PaymentIntentResult, PaymentMethod, PaymentMethodCreateParams } from "@stripe/stripe-js";
+import { PaymentIntent, PaymentIntentResult, PaymentMethod, PaymentMethodCreateParams } from "@stripe/stripe-js";
 import axios, { AxiosResponse } from "axios";
-import React from "react";
 import { alert } from "../features/messages/messagesSlice";
 import { IAddress } from "../types/IAddress";
 import { narrowError } from "../utils/errorUtils";
@@ -21,7 +20,7 @@ export const useStripeMethods = (): useStripeMethodsResult => {
     const elements = useElements();
     const dispatch = useAppDispatch();
     const customer = useAppSelector(state => state.customer);
-    const {email, phone, billingAddress, card} = customer;
+    const {email, phone, card} = customer;
     const {total} = useAppSelector(state => state.bag);
 
     if (!stripe || !elements) {
