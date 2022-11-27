@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
-import { getUsers } from "../../../features/admin/adminSlice";
+import { getUsers, updateUserById } from "../../../features/admin/adminSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { Loader } from "../../shared/Loader";
@@ -11,6 +11,14 @@ export const Users: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const { loading, users } = useAppSelector(state => state.admin);
 	const { loggedInUser } = useAppSelector(state => state.auth);
+
+	const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, checked } = e.target;
+		const id = e.target.dataset.userid;
+        const obj = {[name]: checked};
+		console.log({id, ...obj});
+        dispatch(updateUserById({id, ...obj}));
+    };
 
 	React.useEffect(() => {
 		dispatch(getUsers());
@@ -46,16 +54,20 @@ export const Users: React.FC = () => {
 									<td>
 										<Form.Check 
 											type="switch"
-											id="user-active"
+											name="isActive"
 											checked={u.isActive}
+											data-userid={u.id}
+											onChange={handleChecked}
 										/>
 									</td>
 									<td>
 										<Form.Check 
 											type="switch"
-											id="user-admin"
+											name="isAdmin"
 											checked={u.isAdmin}
 											disabled={!loggedInUser?.isAdmin}
+											data-userid={u.id}
+											onChange={handleChecked}
 										/>
 									</td>
 								</tr>)}

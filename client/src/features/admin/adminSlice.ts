@@ -166,8 +166,14 @@ export const adminSlice = createSlice({
 
             return {...state, product: {...state.product, images}};
         },
+        // update user from the user details page
         updateCurrentUser: (state, action: PayloadAction<IKeyValuePair<string | boolean>>) => {
             return {...state, user: {...state.user, ...action.payload}};
+        },
+        // update user from the users list
+        updateUserById: (state, action) => {
+            const {id, ...rest} = action.payload;
+            return {...state, users: state.users.map(u => u.id === id ? {...u, ...rest} : u)};
         }
     },
     extraReducers: (builder) => {
@@ -238,5 +244,5 @@ export const adminSlice = createSlice({
     }
 });
 
-export const { updateCurrentProduct, updateCurrentProductImages, updateCurrentUser } = adminSlice.actions;
+export const { updateCurrentProduct, updateCurrentProductImages, updateCurrentUser, updateUserById } = adminSlice.actions;
 export default adminSlice.reducer;
