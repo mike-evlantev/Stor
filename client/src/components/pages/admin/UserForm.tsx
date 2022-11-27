@@ -17,7 +17,7 @@ export const UserForm: React.FC<Props> = ({user, onChange, onStateChange, onChec
             <Row>
                 <Form.Group className="mb-3" as={Col} lg={6}>
                     <Form.Label>Email address</Form.Label>
-                    <Form.Control disabled={!!user.id} type="email" name="email" value={user.email} onChange={onChange} />
+                    <Form.Control disabled={!!user.id} type="email" name="email" value={user.email || ""} onChange={onChange} />
                 </Form.Group>
                 <Col lg={6} className="d-flex justify-content-evenly align-items-center">
                     <Form.Check
@@ -37,11 +37,11 @@ export const UserForm: React.FC<Props> = ({user, onChange, onStateChange, onChec
             <Row>
                 <Form.Group as={Col} lg={6} className="mb-3">
                     <Form.Label>First Name</Form.Label>
-                    <Form.Control type="text" name="first" value={user.first} onChange={onChange} />
+                    <Form.Control type="text" name="first" value={user.first || ""} onChange={onChange} />
                 </Form.Group>
                 <Form.Group as={Col} lg={6} className="mb-3">
                     <Form.Label>Last Name</Form.Label>
-                    <Form.Control type="email" name="last" value={user.last} onChange={onChange} />
+                    <Form.Control type="email" name="last" value={user.last || ""} onChange={onChange} />
                 </Form.Group>
             </Row>
             <Row>
@@ -49,14 +49,14 @@ export const UserForm: React.FC<Props> = ({user, onChange, onStateChange, onChec
                     <Form.Label>Address</Form.Label>
                     <Form.Control
                         name="address1"
-                        value={user.address1}
+                        value={user.address1 || ""}
                         onChange={onChange} />
                 </Form.Group>
                 <Form.Group as={Col} lg={6} className="mb-3">
                     <Form.Label>Address 2</Form.Label>
                     <Form.Control
                         name="address2"
-                        value={user.address2}
+                        value={user.address2 || ""}
                         onChange={onChange} />
                 </Form.Group>
             </Row>
@@ -65,19 +65,19 @@ export const UserForm: React.FC<Props> = ({user, onChange, onStateChange, onChec
                     <Form.Label>City</Form.Label>
                     <Form.Control
                         name="city"
-                        value={user.city}
+                        value={user.city || ""}
                         onChange={onChange} />
                 </Form.Group>
                 <Form.Group as={Col} lg={4} className="mb-3">
                     <Form.Label>State</Form.Label>
                     <Form.Select
-                        value={user.state}
+                        value={user.state || ""}
                         name="state"
                         onChange={onStateChange}
                     >
                         <option>Select...</option>
                         {stateAbbreviations.map((st, i) => (
-                        <option key={i} value={st}>
+                        <option key={i} value={st || ""}>
                             {st}
                         </option>
                         ))}
@@ -87,7 +87,7 @@ export const UserForm: React.FC<Props> = ({user, onChange, onStateChange, onChec
                     <Form.Label>Zip</Form.Label>
                     <Form.Control
                         name="zip"
-                        value={user.zip}
+                        value={user.zip || ""}
                         onChange={onChange} />
                 </Form.Group>
             </Row>

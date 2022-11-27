@@ -16,7 +16,7 @@ export const CreateUser: React.FC = () => {
         e.preventDefault();
         const { name, value } = e.target;
         const obj = {[name]: value} as IKeyValuePair<string>;
-        setUser(prev => ({...prev, ...obj}));
+        setUser(prev => ({...prev, ...obj} as IUser));
     };
 
     const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
