@@ -1,6 +1,10 @@
 import asyncHandler from "express-async-handler"; // instead of writing try/catches
 import { generateToken } from "../utils/generateToken.js";
 import User from "../models/userModel.js";
+import { sendResetPasswordEmail } from "./emailController.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 // @route       POST /api/users
 // @desc        Register user and get token
@@ -123,12 +127,66 @@ export const getUserById = asyncHandler(async (req, res) => {
 // @desc        Create user
 // @access      Private (Admin)
 export const createUser = asyncHandler(async (req, res) => {
-  const product = new Product(req.body);
+  const user = new User(req.body);
+  user.password = crypto.randomBytes(20).toString('hex');
   try {
-    const created = await product.save();
+    const created = await user.save();
+    // send reset password email
+    sendResetPasswordEmail(created);
     res.status(201).json(created);
   } 
   catch (error) {
+    console.error(error);
     throw new Error(error);
   }  
+});
+
+// @route       POST api/users/reset/:token
+// @desc        Reset password
+// @access      Private
+export const resetPassword = asyncHandler(async (req, res) => {
+  try {
+    const token = req.params.token;
+    const {password} = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let user = await User.findOne({ _id: decoded.id });
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    const updated = await user.save();
+    if (updated) {
+      res.status(200).json({
+        id: updated.id,
+        first: user.first,
+        middle: user.middle,
+        last: user.last,
+        address1: user.address1,
+        address2: user.address2,
+        city: user.city,
+        state: user.state,
+        zip: user.zip,
+        phone: user.phone,
+        email: user.email,
+        isActive: user.isActive,
+        isAdmin: user.isAdmin,
+        token: generateToken(updated._id),
+      });
+    };
+  } catch (error) {
+    console.error(error);
+    throw new Error(error); 
+  }  
+});
+
+// @route       GET api/users/reset/:token
+// @desc        Reset password
+// @access      Protected (tokenized)
+export const decodeToken = asyncHandler(async (req, res) => {
+  try {
+    const token = req.params.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json(decoded);
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);    
+  }
 });
