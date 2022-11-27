@@ -16,7 +16,8 @@ export const store = configureStore({
     messages: messagesReducer,
     order: orderReducer,
     products: productsReducer
-  }
+  },
+  devTools: process.env.NODE_ENV === "production" ? false : true
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
