@@ -41,36 +41,36 @@ export const BillingInfoForm: React.FC = () => {
     const [errors, setErrors] = React.useState<BillingInfoFormErrors>(initErrors);
     const [creditCardValidation, setCreditCardValidation] = React.useState<ICreditCardValidation>(initCreditCardValidation);
 
-    const {createPaymentMethod, toAddress} = useStripeMethods();
+    const {createPaymentMethod} = useStripeMethods();
 
-    const appearance = {
-        theme: 'none',
+    // const appearance = {
+    //     theme: 'none',
     
-        rules: {
-          '.Tab': {
-            border: '10px solid green',
-            boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 6px rgba(18, 42, 66, 0.02)',
-          },
+    //     rules: {
+    //       '.Tab': {
+    //         border: '10px solid green',
+    //         boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 6px rgba(18, 42, 66, 0.02)',
+    //       },
     
-          '.Tab:hover': {
-            color: 'var(--colorText)',
-          },
+    //       '.Tab:hover': {
+    //         color: 'var(--colorText)',
+    //       },
     
-          '.Tab--selected': {
-            borderColor: '#E0E6EB',
-            boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 6px rgba(18, 42, 66, 0.02), 0 0 0 2px var(--colorPrimary)',
-          },
+    //       '.Tab--selected': {
+    //         borderColor: '#E0E6EB',
+    //         boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 6px rgba(18, 42, 66, 0.02), 0 0 0 2px var(--colorPrimary)',
+    //       },
     
-          '.Input--invalid': {
-            borderColor: 'green',
-            //boxShadow: '0 1px 1px 0 rgba(0, 0, 0, 0.07), 0 0 0 2px var(--colorDanger)',
-          }
-        }
-      };
+    //       '.Input--invalid': {
+    //         borderColor: 'green',
+    //         //boxShadow: '0 1px 1px 0 rgba(0, 0, 0, 0.07), 0 0 0 2px var(--colorDanger)',
+    //       }
+    //     }
+    // };
 
     React.useEffect(() => {
         dispatch(updateCustomer({card: {...customer.card, ...creditCardValidation}}));
-    }, [creditCardValidation]);
+    }, [creditCardValidation, customer.card, dispatch]);
 
     const handleNextStepClick = async (step: number) => {
         const finalAddress = sameAsShipping ? customer.shippingAddress : address;
@@ -199,53 +199,53 @@ export const BillingInfoForm: React.FC = () => {
         setErrors(prev => ({...prev, ...obj}));
     }
     
-    const items: AccordionItem[] = [
-        {
-            key: 1,
-            TitleComponent: () => { return <div><i className="fab fa-paypal"></i>&nbsp; PayPal</div> },
-            ContentComponent: () => { 
-                return (
-                    <>
-                        Sign in to PayPal and return to complete your order
-                        <Button variant="info" type="submit" className="btn btn-block">
-                            PayPal
-                        </Button>
-                    </>
-                )},
-        },
-        {
-            key: 2,
-            TitleComponent: () => { return <div><i className="fas fa-credit-card"></i>&nbsp; Credit Card</div> },
-            ContentComponent: () => { 
-                return (
-                    <>
-                        <CreditCardForm initValidation={initCreditCardValidation} creditCardValidation={creditCardValidation} onCreditCardValidation={setCreditCardValidation} />
-                        <Form.Group>
-                            <Form.Label>Name on Card</Form.Label>
-                            <Form.Control type="text" onBlur={handleNameOnCardFocus} onChange={handleNameOnCardChange} value={nameOnCard} isInvalid={!!errors?.nameOnCard} />
-                            <Form.Control.Feedback type="invalid">{errors?.nameOnCard}</Form.Control.Feedback>
-                            <div className="mt-3 mb-2"><strong>Billing Address</strong></div>
-                            <Form.Check
-                                type="checkbox"
-                                label="Same as shipping"
-                                className="mb-2"
-                                checked={sameAsShipping}
-                                onChange={() => handleSameAsShipping(!sameAsShipping)} />
-                            {sameAsShipping
-                                ? <Address className={"ml-4"} address={customer.shippingAddress} />
-                                : <>
-                                    <AddressForm address={address} onBlur={handleBillingAddressFocus} onChange={handleBillingAddressChange} errors={errors} onErrorsChange={handleErrorsChange} />
-                                    <Dev className={"d-flex flex-column w-25 p-2"}>
-                                        <Button variant="secondary" className="my-2 btn-sm" onClick={handleTestDataClick}>
-                                            Use test data
-                                        </Button>
-                                    </Dev>
-                                </>}
-                        </Form.Group>  
-                    </>
-                )},
-        }
-    ];
+    // const items: AccordionItem[] = [
+    //     {
+    //         key: 1,
+    //         TitleComponent: () => { return <div><i className="fab fa-paypal"></i>&nbsp; PayPal</div> },
+    //         ContentComponent: () => { 
+    //             return (
+    //                 <>
+    //                     Sign in to PayPal and return to complete your order
+    //                     <Button variant="info" type="submit" className="btn btn-block">
+    //                         PayPal
+    //                     </Button>
+    //                 </>
+    //             )},
+    //     },
+    //     {
+    //         key: 2,
+    //         TitleComponent: () => { return <div><i className="fas fa-credit-card"></i>&nbsp; Credit Card</div> },
+    //         ContentComponent: () => { 
+    //             return (
+    //                 <>
+    //                     <CreditCardForm initValidation={initCreditCardValidation} creditCardValidation={creditCardValidation} onCreditCardValidation={setCreditCardValidation} />
+    //                     <Form.Group>
+    //                         <Form.Label>Name on Card</Form.Label>
+    //                         <Form.Control type="text" onBlur={handleNameOnCardFocus} onChange={handleNameOnCardChange} value={nameOnCard} isInvalid={!!errors?.nameOnCard} />
+    //                         <Form.Control.Feedback type="invalid">{errors?.nameOnCard}</Form.Control.Feedback>
+    //                         <div className="mt-3 mb-2"><strong>Billing Address</strong></div>
+    //                         <Form.Check
+    //                             type="checkbox"
+    //                             label="Same as shipping"
+    //                             className="mb-2"
+    //                             checked={sameAsShipping}
+    //                             onChange={() => handleSameAsShipping(!sameAsShipping)} />
+    //                         {sameAsShipping
+    //                             ? <Address className={"ml-4"} address={customer.shippingAddress} />
+    //                             : <>
+    //                                 <AddressForm address={address} onBlur={handleBillingAddressFocus} onChange={handleBillingAddressChange} errors={errors} onErrorsChange={handleErrorsChange} />
+    //                                 <Dev className={"d-flex flex-column w-25 p-2"}>
+    //                                     <Button variant="secondary" className="my-2 btn-sm" onClick={handleTestDataClick}>
+    //                                         Use test data
+    //                                     </Button>
+    //                                 </Dev>
+    //                             </>}
+    //                     </Form.Group>  
+    //                 </>
+    //             )},
+    //     }
+    // ];
 
     const [openKey, setOpenKey] = React.useState<number | undefined>(undefined);
 
@@ -319,34 +319,34 @@ export const BillingInfoForm: React.FC = () => {
     );
 };
 
-interface AccordionItem {
-    key: number;
-    TitleComponent: React.ComponentType;
-    ContentComponent: React.ComponentType;
-}
+// interface AccordionItem {
+//     key: number;
+//     TitleComponent: React.ComponentType;
+//     ContentComponent: React.ComponentType;
+// }
 
-interface AccordionProps {
-    items: AccordionItem[];
-}
+// interface AccordionProps {
+//     items: AccordionItem[];
+// }
 
-const Accordion: React.FC<AccordionProps> = ({items}) => {
-    const [openKey, setOpenKey] = React.useState<number | undefined>(undefined);
+// const Accordion: React.FC<AccordionProps> = ({items}) => {
+//     const [openKey, setOpenKey] = React.useState<number | undefined>(undefined);
 
-    const handleToggle = (key: number | undefined) => {
-        setOpenKey(openKey !== key ? key : undefined);
-    }
+//     const handleToggle = (key: number | undefined) => {
+//         setOpenKey(openKey !== key ? key : undefined);
+//     }
 
-    return (
-        <div style={{margin: "2rem auto"}}>
-            {items.map(item => <div key={item.key}>
-                <div onClick={() => handleToggle(item.key)} className="d-flex flex-row justify-content-between p-3" style={{cursor: "pointer"}}>
-                    <item.TitleComponent />
-                    <div>{openKey === item.key ? '-' : '+'}</div>
-                </div>
-                {openKey === item.key && <div className="p-3">
-                    <item.ContentComponent />
-                </div>}
-            </div>)}
-        </div>
-    );
-}
+//     return (
+//         <div style={{margin: "2rem auto"}}>
+//             {items.map(item => <div key={item.key}>
+//                 <div onClick={() => handleToggle(item.key)} className="d-flex flex-row justify-content-between p-3" style={{cursor: "pointer"}}>
+//                     <item.TitleComponent />
+//                     <div>{openKey === item.key ? '-' : '+'}</div>
+//                 </div>
+//                 {openKey === item.key && <div className="p-3">
+//                     <item.ContentComponent />
+//                 </div>}
+//             </div>)}
+//         </div>
+//     );
+// }
