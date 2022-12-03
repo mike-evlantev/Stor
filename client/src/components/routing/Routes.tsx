@@ -1,10 +1,7 @@
 import * as React from "react";
 import { AdminDashboard } from "../pages/admin/AdminDashboard";
 import { AdminRoute, PrivateRoute, ProtectedRoute } from "./PrivateRoute";
-
 import { BillingInfoForm } from "../pages/checkout/BillingInfoForm";
-import { Checkout } from "../pages/checkout/Checkout";
-import { Confirmation } from "../pages/checkout/Confirmation";
 import { Container } from "react-bootstrap";
 import { CreateProduct } from "../pages/admin/CreateProduct";
 import { CreateUser } from "../pages/admin/CreateUser";
@@ -23,14 +20,16 @@ import { Products } from "../pages/admin/Products";
 import { Profile } from "../pages/Profile";
 import { ResetPassword } from "../pages/ResetPassword";
 import { ReturnPolicy } from "../pages/ReturnPolicy";
-import { ReviewOrder } from "../pages/checkout/ReviewOrder";
 import { Route, Switch } from "react-router-dom";
-import { ShippingInfoForm } from "../pages/checkout/ShippingInfoForm";
 import { SignIn } from "../pages/SignIn";
 import { TermsOfUse } from "../pages/TermsOfUse";
 import { Users } from "../pages/admin/Users";
 import { WishList } from "../pages/WishList";
 import { Bag } from "../pages/bag/Bag";
+import { Checkout } from "../pages/checkout/Checkout";
+import { ShippingInfoForm } from "../pages/checkout/ShippingInfoForm";
+import { ReviewOrder } from "../pages/checkout/ReviewOrder";
+import { Confirmation } from "../pages/checkout/Confirmation";
 
 export const Routes: React.FC = () => {
     return (
