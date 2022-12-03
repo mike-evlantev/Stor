@@ -14,7 +14,6 @@ import { OrderDetails } from "../pages/admin/OrderDetails";
 import { Orders } from "../pages/admin/Orders";
 import { PageNotFound } from "../pages/PageNotFound";
 import { PrivacyPolicy } from "../pages/PrivacyPolicy";
-import { ProductDetails } from "../pages/products/ProductDetails";
 import { Products } from "../pages/admin/Products";
 import { Profile } from "../pages/Profile";
 import { ResetPassword } from "../pages/ResetPassword";
@@ -30,6 +29,7 @@ import { ShippingInfoForm } from "../pages/checkout/ShippingInfoForm";
 import { ReviewOrder } from "../pages/checkout/ReviewOrder";
 import { Confirmation } from "../pages/checkout/Confirmation";
 import { BillingInfoForm } from "../pages/checkout/BillingInfoForm";
+import { ProductDetails } from "../pages/products/ProductDetails";
 
 export const Routes: React.FC = () => {
     return (
