@@ -1,7 +1,7 @@
 import * as React from "react";
 import { AdminDashboard } from "../pages/admin/AdminDashboard";
 import { AdminRoute, PrivateRoute, ProtectedRoute } from "./PrivateRoute";
-import { Bag } from "../pages/bag/Bag";
+
 import { BillingInfoForm } from "../pages/checkout/BillingInfoForm";
 import { Checkout } from "../pages/checkout/Checkout";
 import { Confirmation } from "../pages/checkout/Confirmation";
@@ -30,6 +30,7 @@ import { SignIn } from "../pages/SignIn";
 import { TermsOfUse } from "../pages/TermsOfUse";
 import { Users } from "../pages/admin/Users";
 import { WishList } from "../pages/WishList";
+import { Bag } from "../pages/bag/Bag";
 
 export const Routes: React.FC = () => {
     return (
