@@ -1,7 +1,6 @@
 import * as React from "react";
 import { AdminDashboard } from "../pages/admin/AdminDashboard";
 import { AdminRoute, PrivateRoute, ProtectedRoute } from "./PrivateRoute";
-import { BillingInfoForm } from "../pages/checkout/BillingInfoForm";
 import { Container } from "react-bootstrap";
 import { CreateProduct } from "../pages/admin/CreateProduct";
 import { CreateUser } from "../pages/admin/CreateUser";
@@ -30,6 +29,7 @@ import { Checkout } from "../pages/checkout/Checkout";
 import { ShippingInfoForm } from "../pages/checkout/ShippingInfoForm";
 import { ReviewOrder } from "../pages/checkout/ReviewOrder";
 import { Confirmation } from "../pages/checkout/Confirmation";
+import { BillingInfoForm } from "../pages/checkout/BillingInfoForm";
 
 export const Routes: React.FC = () => {
     return (
