@@ -25,11 +25,11 @@ import { Users } from "../pages/admin/Users";
 import { WishList } from "../pages/WishList";
 import { Bag } from "../pages/bag/Bag";
 import { Checkout } from "../pages/checkout/Checkout";
+import { BillingInfoForm } from "../pages/checkout/BillingInfoForm";
+import { ProductDetails } from "../pages/products/ProductDetails";
 import { ShippingInfoForm } from "../pages/checkout/ShippingInfoForm";
 import { ReviewOrder } from "../pages/checkout/ReviewOrder";
 import { Confirmation } from "../pages/checkout/Confirmation";
-import { BillingInfoForm } from "../pages/checkout/BillingInfoForm";
-import { ProductDetails } from "../pages/products/ProductDetails";
 
 export const Routes: React.FC = () => {
     return (
