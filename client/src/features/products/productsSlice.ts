@@ -59,6 +59,8 @@ export const productsSlice = createSlice({
                 state.products = action.payload;
             })
             .addCase(getProducts.rejected, (state, action: PayloadAction<unknown>) => {
+                console.log('state', state);
+                console.log('action', action);
                 state.loading = false;
                 state.success = false;
                 state.error = narrowError(action.payload);
