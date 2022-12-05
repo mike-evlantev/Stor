@@ -8,7 +8,7 @@ import { ProductCard } from "./products/ProductCard";
 
 export const Home: React.FC = () => {
     const dispatch = useAppDispatch();
-    const { loading, products } = useAppSelector(state => state.products);
+    const { loading, products } = useAppSelector(state => {console.log(state); return state.products;});
     console.log(products);
 
     React.useEffect(() => {
