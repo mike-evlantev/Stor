@@ -24,7 +24,6 @@ const getProduct = async (id: string) => {
     };
   
     const { data } = await axios.get(API_URL + id, config);
-    console.log(data);
     return data;
 }
 

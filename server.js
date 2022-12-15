@@ -1,5 +1,4 @@
 import express from "express";
-import colors from "colors";
 import dotenv from "dotenv";
 import connectDb from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";

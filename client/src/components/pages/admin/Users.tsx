@@ -16,7 +16,6 @@ export const Users: React.FC = () => {
         const { name, checked } = e.target;
 		const id = e.target.dataset.userid;
         const obj = {[name]: checked};
-		console.log({id, ...obj});
         dispatch(updateUserById({id, ...obj}));
     };
 
